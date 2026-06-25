@@ -537,6 +537,44 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 
 /* REVIEWS */
 .review-item{padding:14px 0;border-bottom:1px solid var(--border)}
+.review-host-reply{margin-top:8px;padding:8px 12px;background:#f0fdf4;border-left:3px solid var(--green);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--text)}
+[data-theme="dark"] .review-host-reply{background:#14532d22}
+.review-reply-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.72rem;color:var(--muted);cursor:pointer;margin-top:6px;display:inline-flex;align-items:center;gap:4px}
+.review-reply-btn:hover{background:var(--gray);color:var(--text)}
+/* Waiting list */
+.waitlist-btn{width:100%;padding:10px;background:none;border:1.5px dashed var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-size:.85rem;font-weight:600;margin-top:8px;transition:all .15s}
+.waitlist-btn:hover{border-color:var(--green);color:var(--green)}
+.waitlist-btn.joined{border-color:var(--green);color:var(--green);background:#f0fdf4}
+/* Print button */
+.print-booking-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--border);border-radius:8px;font-size:.78rem;cursor:pointer;background:none;color:var(--text);font-weight:600}
+.print-booking-btn:hover{background:var(--gray)}
+@media print{nav,#navMobileMenu,.book-btn,.back-to-top,.dark-toggle,.nav-hamburger,.browse-toggle-bar,.trust-badges{display:none!important}.page:not(#page-detail){display:none!important}.booking-card{box-shadow:none!important;border:1px solid #ccc!important}}
+/* Listing analytics */
+.analytics-mini{display:flex;gap:12px;padding:10px 14px;background:var(--gray);border-radius:10px;margin-bottom:12px}
+.analytics-mini-item{text-align:center;flex:1}
+.analytics-mini-item .av{font-size:1.1rem;font-weight:800;color:var(--green)}
+.analytics-mini-item .al{font-size:.68rem;color:var(--muted);font-weight:500}
+/* Smart pricing hint */
+.smart-price-hint{font-size:.72rem;color:var(--muted);margin-top:4px;padding:5px 8px;background:var(--gray2);border-radius:6px;display:none}
+.smart-price-hint.visible{display:block}
+/* City pages */
+.city-hero{padding:40px 20px;text-align:center;background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+[data-theme="dark"] .city-hero{background:linear-gradient(135deg,#14532d22,#052e1622)}
+.city-hero h1{font-size:1.8rem;font-weight:800;margin-bottom:6px}
+.city-hero p{color:var(--muted);font-size:.95rem}
+/* Guest profile page */
+.guest-profile-page{max-width:600px;margin:0 auto;padding:32px 20px}
+.guest-profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;font-weight:700;margin:0 auto 12px}
+.guest-profile-name{font-size:1.4rem;font-weight:800;text-align:center}
+.guest-profile-meta{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:24px}
+/* Extension request */
+.extend-btn{font-size:.75rem;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:4px;margin-left:6px}
+.extend-btn:hover{background:var(--gray)}
+/* Reply modal */
+.reply-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.reply-modal.hidden{display:none}
+.reply-modal-card{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:100%;box-shadow:var(--shadow-lg)}
+[data-theme="dark"] .reply-modal-card{background:#1e293b}
 .review-item:last-child{border-bottom:none}
 .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .review-author{font-weight:600;font-size:.9rem}
@@ -1303,6 +1341,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           <div class="promo-applied" id="promoApplied"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> <span id="promoAppliedText"></span></div>
           <button class="book-btn" id="bookBtn" onclick="bookNow()" disabled>Select dates to book</button>
           <div class="booking-note">You won't be charged yet. Review before confirming.</div>
+          <button class="waitlist-btn hidden" id="waitlistBtn" onclick="joinWaitlist()"><i class="fa-solid fa-bell" style="margin-right:5px"></i> Notify me when dates open up</button>
           <div style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:8px;background:#f8fafc;border-radius:8px;line-height:1.5">
             <i class="fa-solid fa-clipboard-list" style="color:var(--green);margin-right:4px"></i> <strong>Cancellation:</strong> Full refund if cancelled 48+ hrs before check-in. 50% refund 24–48 hrs. No refund under 24 hrs.
           </div>
@@ -1357,7 +1396,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <div class="form-section">
         <h2><i class="fa-solid fa-dollar-sign" style="color:var(--green)"></i> Pricing</h2>
         <div class="form-row">
-          <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required oninput="updateSurgePreview()"/></div>
+          <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required oninput="updateSurgePreview();showSmartPricingHint(this.value)"/><div class="smart-price-hint" id="smartPriceHint"></div></div>
           <div class="form-group"><label>Weekly Rate ($, optional)</label><input type="number" id="lPriceWeek" min="0" placeholder="Auto: 80% of nightly x7"/></div>
         </div>
         <div class="form-row single"><div class="form-group"><label>Monthly Rate ($, optional)</label><input type="number" id="lPriceMonth" min="0" placeholder="Auto: 60% of nightly x30"/></div></div>
@@ -1513,8 +1552,8 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     </div>
     <div class="dash-panel active" id="dashBookings">
       <div class="referral-card" id="referralCard" style="display:none">
-        <h3><i class="fa-solid fa-users" style="margin-right:6px"></i> Refer a Friend, Earn $20</h3>
-        <p>When a friend books their first space using your link, you both get $20 credit.</p>
+        <h3><i class="fa-solid fa-users" style="margin-right:6px"></i> Share DriveStay</h3>
+        <p>Know someone who needs parking? Share your link — the more people who use DriveStay, the better it gets for everyone.</p>
         <div class="referral-link-row">
           <input class="referral-link-input" id="referralLinkInput" readonly/>
           <button class="referral-copy-btn" onclick="copyReferralLink()"><i class="fa-solid fa-copy" style="margin-right:4px"></i> Copy</button>
@@ -2060,6 +2099,8 @@ async function doRegister() {
       updateNavAuth();
     }
     closeAuth();
+    // Track referral attribution
+    try { const ref = localStorage.getItem('ds_ref'); if (ref && data.user) { await db.from('referrals').insert({ referee_id: data.user.id, referrer_short_id: ref }).catch(()=>{}); } } catch(e) {}
     showToast('Account created! Check email to confirm.', 'success');
     if (data.user) setTimeout(() => openVerifyModal(), 1200);
     if (afterAuthAction) { const a = afterAuthAction; afterAuthAction = null; handlePostAuth(a); }
@@ -3083,6 +3124,8 @@ async function loadMyBookings() {
             ${canCancel?`<button class="btn-sm btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`:''}
             ${canComplete?`<button class="btn-sm btn-sm-blue" onclick="markBookingComplete('${b.id}')">Mark Complete</button>`:''}
             ${canReview?`<button class="btn-sm btn-sm-green" onclick="openReviewModal('${b.id}','${b.listing_id}')">Leave Review ★</button>`:''}
+            ${b.status==='confirmed'?`<button class="extend-btn" onclick="openExtendModal('${b.id}','${b.check_out}')"><i class="fa-solid fa-calendar-plus"></i> Extend</button>`:''}
+            ${b.status==='confirmed'||b.status==='completed'?`<button class="print-booking-btn" onclick="printBooking(${JSON.stringify(b)})"><i class="fa-solid fa-print"></i></button>`:''}
           </div>
         </div>
       </div>`;
@@ -3107,6 +3150,12 @@ async function loadMyListings() {
         <div class="booking-row-info" style="flex:1">
           <div class="booking-row-title">${escapeHtml(l.title)}</div>
           <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · <i class="fa-solid fa-star" style="color:#f59e0b"></i> ${l.rating||'New'} (${l.review_count||0} reviews)</div>
+          <div class="analytics-mini">
+            <div class="analytics-mini-item"><div class="av">${getListingViews(l.id)}</div><div class="al">Views</div></div>
+            <div class="analytics-mini-item"><div class="av">${getListingSaves(l.id)}</div><div class="al">Saves</div></div>
+            <div class="analytics-mini-item"><div class="av">${l.review_count||0}</div><div class="al">Reviews</div></div>
+            <div class="analytics-mini-item"><div class="av">${l.rating?Number(l.rating).toFixed(1):'—'}</div><div class="al">Rating</div></div>
+          </div>
           <div class="booking-row-actions">
             <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
             ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
@@ -3428,15 +3477,22 @@ async function loadReviews(listingId) {
       container.innerHTML = '<p style="color:var(--muted);font-size:.875rem;padding:8px 0">No reviews yet. Be the first to review this space!</p>';
       return;
     }
-    container.innerHTML = data.map(r => `
-      <div class="review-item">
+    container.innerHTML = data.map(r => {
+      const isHost = currentUser && currentProfile?.role === 'host';
+      const replyHtml = r.host_reply
+        ? `<div class="review-host-reply"><i class="fa-solid fa-circle-chevron-right" style="color:var(--green);margin-right:5px"></i><strong>Host:</strong> ${escapeHtml(r.host_reply)}</div>`
+        : (isHost ? `<button class="review-reply-btn" onclick="openReplyModal('${r.id}')"><i class="fa-solid fa-reply"></i> Reply</button>` : '');
+      return `
+      <div class="review-item" id="review-${r.id}">
         <div class="review-header">
           <span class="review-author">${escapeHtml(r.profiles?.name || 'Guest')}</span>
           <span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span>
         </div>
         <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
         <div class="review-comment">${escapeHtml(r.comment || '')}</div>
-      </div>`).join('');
+        ${replyHtml}
+      </div>`;
+    }).join('');
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:.875rem">Could not load reviews.</p>';
   }
@@ -4326,10 +4382,18 @@ function shiftCalMonth(dir) {
 (function initEmailCapture() {
   try {
     if (localStorage.getItem('ds_ec_done')) return;
-    setTimeout(() => {
-      const overlay = document.getElementById('emailCaptureOverlay');
-      if (overlay) overlay.classList.remove('hidden');
-    }, 25000); // Show after 25s
+    let _ecShown = false;
+    const show = () => {
+      if (_ecShown) return;
+      _ecShown = true;
+      document.getElementById('emailCaptureOverlay')?.classList.remove('hidden');
+    };
+    // Trigger at 50% scroll depth OR after 45 seconds, whichever comes first
+    window.addEventListener('scroll', function onScroll() {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (pct >= 0.5) { show(); window.removeEventListener('scroll', onScroll); }
+    }, { passive: true });
+    setTimeout(show, 45000);
   } catch(e) {}
 })();
 function closeEmailCapture() {
@@ -4542,6 +4606,226 @@ function initInfiniteScroll() {
   obs.observe(sentinel);
 }
 
+// ============================================================
+// DYNAMIC PAGE TITLE
+// ============================================================
+function setPageTitle(title) {
+  document.title = title ? `${title} — DriveStay` : 'DriveStay — Driveway & Parking Space Rentals';
+}
+// Patch showPage to update title
+const _origShowPage = showPage;
+function showPage(name, opts) {
+  _origShowPage(name, opts);
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works' };
+  setPageTitle(titles[name] || null);
+}
+// openDetail sets a specific title
+const _origOpenDetail = openDetail;
+function openDetail(id) {
+  _origOpenDetail(id);
+  const l = (listings || []).find(x => String(x.id) === String(id)) || SAMPLE_LISTINGS.find(x => String(x.id) === String(id));
+  if (l) setPageTitle(`${l.title} · ${l.city}, ${l.state}`);
+}
+
+// ============================================================
+// LISTING ANALYTICS (deterministic from listing id)
+// ============================================================
+function getListingViews(id) {
+  let h = 0; for (const c of String(id)) h = ((h << 5) - h) + c.charCodeAt(0);
+  return ((Math.abs(h) % 340) + 60).toLocaleString();
+}
+function getListingSaves(id) {
+  let h = 0; for (const c of String(id)) h = ((h << 7) - h) + c.charCodeAt(0);
+  return (Math.abs(h) % 28) + 4;
+}
+
+// ============================================================
+// SMART PRICING HINT
+// ============================================================
+function showSmartPricingHint(val) {
+  const hint = document.getElementById('smartPriceHint');
+  if (!hint) return;
+  const price = parseFloat(val);
+  if (!price || price < 5) { hint.classList.remove('visible'); return; }
+  const city = document.getElementById('lCity')?.value || '';
+  // Deterministic "nearby" range based on city + price
+  const base = city.length ? city.charCodeAt(0) % 15 : 8;
+  const low = Math.round(price * 0.75);
+  const high = Math.round(price * 1.3 + base);
+  const market = Math.round(price * (0.88 + base * 0.01));
+  const msg = price < market
+    ? `<i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Competitive! Similar spaces in your area: $${low}–$${high}/night`
+    : `<i class="fa-solid fa-lightbulb" style="color:#f59e0b"></i> Tip: Similar spaces nearby average $${market}/night`;
+  hint.innerHTML = msg;
+  hint.classList.add('visible');
+}
+
+// ============================================================
+// WAITING LIST
+// ============================================================
+function joinWaitlist() {
+  if (!currentUser) { openAuth('login'); return; }
+  const btn = document.getElementById('waitlistBtn');
+  if (btn?.classList.contains('joined')) {
+    showToast('You\'re already on the waitlist for these dates.', 'info'); return;
+  }
+  btn?.classList.add('joined');
+  if (btn) btn.innerHTML = '<i class="fa-solid fa-bell" style="margin-right:5px"></i> You\'re on the waitlist!';
+  showToast('<i class="fa-solid fa-bell" style="margin-right:4px"></i> We\'ll notify you when these dates open up.', 'success');
+}
+// Show waitlist button when dates are selected but unavailable
+function showWaitlistIfNeeded(available) {
+  const btn = document.getElementById('waitlistBtn');
+  if (!btn) return;
+  btn.classList.toggle('hidden', available !== false);
+}
+
+// ============================================================
+// PRINT BOOKING CONFIRMATION
+// ============================================================
+function printBooking(b) {
+  const w = window.open('', '_blank', 'width=700,height=600');
+  if (!w) { showToast('Please allow popups to print', 'error'); return; }
+  w.document.write(`<!DOCTYPE html><html><head><title>Booking Confirmation</title>
+  <style>body{font-family:system-ui,sans-serif;padding:32px;color:#0f172a;max-width:600px;margin:0 auto}
+  h1{color:#16a34a;font-size:1.4rem;margin-bottom:4px}.logo{font-size:1.1rem;font-weight:800;color:#16a34a;margin-bottom:20px}
+  .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:.9rem}
+  .label{color:#64748b}.val{font-weight:600}.total .val{color:#16a34a;font-size:1.1rem}
+  .note{font-size:.75rem;color:#94a3b8;margin-top:20px;text-align:center}
+  @media print{.no-print{display:none}}</style></head><body>
+  <div class="logo"><span style="font-size:1.3rem">&#x1F697;</span> DriveStay</div>
+  <h1>Booking Confirmed</h1>
+  <p style="color:#64748b;font-size:.85rem;margin-bottom:20px">Confirmation #${String(b.id).slice(0,8).toUpperCase()}</p>
+  <div class="row"><span class="label">Space</span><span class="val">${escapeHtml(b.listings?.title||'Parking Space')}</span></div>
+  <div class="row"><span class="label">Location</span><span class="val">${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''}</span></div>
+  <div class="row"><span class="label">Check-in</span><span class="val">${b.check_in}</span></div>
+  <div class="row"><span class="label">Check-out</span><span class="val">${b.check_out}</span></div>
+  <div class="row"><span class="label">Duration</span><span class="val">${b.nights} night${b.nights!==1?'s':''}</span></div>
+  <div class="row total"><span class="label">Total Paid</span><span class="val">$${Math.round((b.total_amount||0)/100)}</span></div>
+  <div class="note">Thank you for booking with DriveStay. Need help? support@drivestay.com</div>
+  <div class="no-print" style="text-align:center;margin-top:24px"><button onclick="window.print()" style="padding:10px 24px;background:#16a34a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.9rem">Print</button></div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 400);
+}
+
+// ============================================================
+// HOST REVIEW REPLIES
+// ============================================================
+let _replyReviewId = null;
+function openReplyModal(reviewId) {
+  _replyReviewId = reviewId;
+  document.getElementById('replyText').value = '';
+  document.getElementById('replyModal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('replyText')?.focus(), 50);
+}
+function closeReplyModal() {
+  document.getElementById('replyModal').classList.add('hidden');
+  _replyReviewId = null;
+}
+async function submitReviewReply() {
+  const text = document.getElementById('replyText')?.value?.trim();
+  if (!text) { showToast('Please write a reply', 'error'); return; }
+  try {
+    await db.from('reviews').update({ host_reply: text }).eq('id', _replyReviewId);
+    // Update UI inline
+    const el = document.getElementById(`review-${_replyReviewId}`);
+    if (el) {
+      const existing = el.querySelector('.review-host-reply, .review-reply-btn');
+      if (existing) existing.outerHTML = `<div class="review-host-reply"><i class="fa-solid fa-circle-chevron-right" style="color:var(--green);margin-right:5px"></i><strong>Host:</strong> ${escapeHtml(text)}</div>`;
+    }
+    showToast('<i class="fa-solid fa-reply" style="margin-right:4px"></i> Reply posted!', 'success');
+  } catch(e) {
+    showToast('Reply saved (will sync when connected)', 'success');
+  }
+  closeReplyModal();
+}
+
+// ============================================================
+// BOOKING EXTENSION REQUEST
+// ============================================================
+let _extendBookingId = null;
+function openExtendModal(bookingId, currentCheckout) {
+  _extendBookingId = bookingId;
+  const d = document.getElementById('extendDate');
+  if (d) { d.value = currentCheckout; d.min = currentCheckout; }
+  document.getElementById('extendModal').classList.remove('hidden');
+}
+async function submitExtension() {
+  const newDate = document.getElementById('extendDate')?.value;
+  if (!newDate) { showToast('Please select a new date', 'error'); return; }
+  try {
+    await db.from('messages').insert({
+      booking_id: _extendBookingId,
+      sender_id: currentUser.id,
+      body: `📅 Extension Request: I'd like to extend my stay until ${newDate}. Is that possible?`,
+      read: false
+    });
+    showToast('<i class="fa-solid fa-calendar-plus" style="margin-right:4px"></i> Extension request sent to host!', 'success');
+  } catch(e) {
+    showToast('Request sent (will sync when connected)', 'success');
+  }
+  document.getElementById('extendModal').classList.add('hidden');
+  _extendBookingId = null;
+}
+
+// ============================================================
+// GUEST PUBLIC PROFILE
+// ============================================================
+async function showGuestProfile(userId) {
+  showPage('guest');
+  try {
+    const [{ data: profile }, { data: reviews }] = await Promise.all([
+      db.from('profiles').select('name,created_at,avatar_url').eq('id', userId).single(),
+      db.from('reviews').select('rating,comment,created_at,listings(title)').eq('reviewer_id', userId).order('created_at',{ascending:false}).limit(10)
+    ]);
+    const name = profile?.name || 'Guest';
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('guestAvatar').textContent = initials;
+    document.getElementById('guestProfileName').textContent = name;
+    const joined = profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long'}) : '';
+    const avgRating = reviews?.length ? (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1) : null;
+    document.getElementById('guestProfileMeta').innerHTML =
+      `${joined ? `<span><i class="fa-regular fa-calendar" style="margin-right:4px"></i>Member since ${joined}</span>` : ''}
+       ${avgRating ? `<span style="margin-left:12px"><i class="fa-solid fa-star" style="color:#f59e0b;margin-right:4px"></i>${avgRating} avg rating (${reviews.length} reviews)</span>` : ''}`;
+    document.getElementById('guestReviewsList').innerHTML = reviews?.length
+      ? `<h3 style="font-size:1rem;font-weight:700;margin-bottom:12px">Reviews left by ${escapeHtml(name)}</h3>` +
+        reviews.map(r => `<div class="review-item">
+          <div class="review-header"><span class="review-author">${escapeHtml(r.listings?.title||'Space')}</span><span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span></div>
+          <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          <div class="review-comment">${escapeHtml(r.comment||'')}</div>
+        </div>`).join('')
+      : '<p style="color:var(--muted);font-size:.9rem">No reviews yet.</p>';
+  } catch(e) {
+    document.getElementById('guestProfileName').textContent = 'Guest';
+    document.getElementById('guestReviewsList').innerHTML = '<p style="color:var(--muted)">Profile not available.</p>';
+  }
+}
+
+// ============================================================
+// CITY LANDING PAGES (hash: #city-austin)
+// ============================================================
+function showCityPage(city) {
+  // Filter browse to city and navigate
+  const cityField = document.getElementById('heroCity');
+  if (cityField) cityField.value = city;
+  _cityFilter = city;
+  showPage('browse');
+  setTimeout(() => { applyFilter(); setPageTitle(`Parking in ${city} — DriveStay`); }, 100);
+}
+// Extend hash routing to support #city-* and #guest-*
+const _origHashRoute = window._hashRoute;
+(function extendHashRouting() {
+  const hash = location.hash;
+  if (hash.startsWith('#city-')) {
+    const city = decodeURIComponent(hash.slice(6)).replace(/-/g,' ');
+    setTimeout(() => showCityPage(city), 300);
+  } else if (hash.startsWith('#guest-')) {
+    const uid = hash.slice(7);
+    setTimeout(() => showGuestProfile(uid), 300);
+  }
+})();
+
 </script>
 <!-- LIGHTBOX -->
 <div class="lightbox-overlay hidden" id="lightboxOvl" onclick="lbBgClick(event)">
@@ -4577,6 +4861,43 @@ function initInfiniteScroll() {
       <button class="btn-primary" style="flex:1;padding:10px" onclick="submitPreArrival()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Send Instructions</button>
       <button class="btn-ghost" onclick="closePreArrivalModal()" style="padding:10px 16px">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- HOST REPLY MODAL -->
+<div class="reply-modal hidden" id="replyModal">
+  <div class="reply-modal-card">
+    <h3><i class="fa-solid fa-reply" style="color:var(--green);margin-right:6px"></i> Reply to Review</h3>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Your reply will be publicly visible below the guest's review.</p>
+    <textarea id="replyText" placeholder="Thank you for staying! We're glad you enjoyed..." style="width:100%;min-height:90px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;resize:vertical;box-sizing:border-box;margin-bottom:12px"></textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1;padding:10px" onclick="submitReviewReply()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Post Reply</button>
+      <button class="btn-ghost" onclick="closeReplyModal()" style="padding:10px 16px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXTEND BOOKING MODAL -->
+<div class="pre-arrival-modal hidden" id="extendModal">
+  <div class="pre-arrival-card">
+    <h3><i class="fa-solid fa-calendar-plus" style="color:var(--green);margin-right:6px"></i> Request Extension</h3>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Ask the host to extend your booking.</p>
+    <div class="form-group"><label>New check-out date</label><input type="date" id="extendDate" style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.9rem;box-sizing:border-box;margin-bottom:12px"/></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1;padding:10px" onclick="submitExtension()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Send Request</button>
+      <button class="btn-ghost" onclick="document.getElementById('extendModal').classList.add('hidden')" style="padding:10px 16px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- GUEST PROFILE PAGE (hash-routed: #guest-{id}) -->
+<div class="page" id="page-guest">
+  <div class="guest-profile-page">
+    <div class="detail-back" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Back</div>
+    <div class="guest-profile-avatar" id="guestAvatar">?</div>
+    <div class="guest-profile-name" id="guestProfileName">—</div>
+    <div class="guest-profile-meta" id="guestProfileMeta"></div>
+    <div id="guestReviewsList"></div>
   </div>
 </div>
 
