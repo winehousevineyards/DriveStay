@@ -309,6 +309,135 @@ self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWi
   });
 }
 
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  try { localStorage.setItem('ds_theme', newTheme); } catch(e) {}
+  const icon = document.getElementById('darkIcon');
+  const label = document.getElementById('darkModeLabel');
+  if (icon) icon.className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  if (label) label.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+// Init dark mode from storage
+(function initDarkMode() {
+  try {
+    const saved = localStorage.getItem('ds_theme');
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const icon = document.getElementById('darkIcon');
+      if (icon) icon.className = 'fa-solid fa-sun';
+      const label = document.getElementById('darkModeLabel');
+      if (label) label.textContent = 'Light Mode';
+    }
+  } catch(e) {}
+})();
+
+// ============================================================
+// RECENTLY VIEWED
+// ============================================================
+const _RV_KEY = 'ds_rv';
+const _RV_MAX = 6;
+
+function addRecentlyViewed(listing) {
+  try {
+    let rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
+    rv = rv.filter(x => x.id !== listing.id);
+    rv.unshift({ id: listing.id, title: listing.title, city: listing.city, state: listing.state, price_nightly: listing.price_nightly, photos: listing.photos });
+    if (rv.length > _RV_MAX) rv = rv.slice(0, _RV_MAX);
+    localStorage.setItem(_RV_KEY, JSON.stringify(rv));
+  } catch(e) {}
+}
+
+function renderRecentlyViewed() {
+  const section = document.getElementById('recentlyViewedSection');
+  const grid = document.getElementById('rvGrid');
+  if (!section || !grid) return;
+  try {
+    const rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
+    if (!rv.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    grid.innerHTML = rv.map(l => `
+      <div class="rv-card" onclick="openDetail('${l.id}')">
+        <div class="rv-card-img">
+          ${l.photos?.length
+            ? `<img src="${l.photos[0]}" alt="${escapeHtml(l.title)}" loading="lazy"/>`
+            : `<div class="rv-icon"><i class="fa-solid fa-car"></i></div>`}
+        </div>
+        <div class="rv-card-body">
+          <div class="rv-card-title">${escapeHtml(l.title)}</div>
+          <div class="rv-card-loc"><i class="fa-solid fa-location-dot" style="color:var(--green);font-size:.7rem;margin-right:3px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state||'')}</div>
+          <div class="rv-card-price">$${l.price_nightly}/night</div>
+        </div>
+      </div>`).join('');
+  } catch(e) { section.style.display = 'none'; }
+}
+// Render on page load if on home
+renderRecentlyViewed();
+
+// ============================================================
+// USER LOCATION STATE
+// ============================================================
+let _userLat = null, _userLng = null;
+
+// ============================================================
+// NOTIFICATION DOT (pending bookings)
+// ============================================================
+async function checkNotifications() {
+  if (!currentUser) return;
+  try {
+    const { data } = await db.from('bookings').select('id', {count:'exact'}).eq('status','pending').eq('guest_id', currentUser.id);
+    const dot = document.getElementById('notifDot');
+    if (dot) dot.style.display = (data?.length > 0) ? 'block' : 'none';
+  } catch(e) {}
+}
+
+// ============================================================
+// UNREAD MESSAGE COUNT
+// ============================================================
+async function checkUnreadMessages() {
+  if (!currentUser) return;
+  try {
+    const { count } = await db.from('messages').select('*', {count:'exact', head:true})
+      .eq('read', false).neq('sender_id', currentUser.id);
+    const badge = document.getElementById('msgUnreadBadge');
+    if (badge) {
+      badge.textContent = count > 0 ? (count > 9 ? '9+' : count) : '';
+      badge.classList.toggle('hidden', !count);
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// HASH ROUTING (on load, open correct page or listing)
+// ============================================================
+(function handleHashOnLoad() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  if (hash.startsWith('#listing-')) {
+    const id = hash.replace('#listing-', '');
+    // Wait for listings to load then open
+    const tryOpen = () => {
+      if (allListings.length) {
+        const l = allListings.find(x => String(x.id) === id);
+        if (l) { showPage('browse'); setTimeout(() => openDetail(id), 100); }
+      } else {
+        setTimeout(tryOpen, 300);
+      }
+    };
+    // Load listings first
+    showPage('browse');
+    setTimeout(tryOpen, 500);
+  } else if (hash === '#page-browse') {
+    showPage('browse');
+  } else if (hash === '#page-dashboard') {
+    showPage('dashboard');
+  }
+})();
+
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1001,6 +1130,90 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   .nav-search{max-width:150px}
 }
 
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] {
+  --green:#22c55e;--green-lt:#4ade80;--green-dk:#86efac;
+  --gray:#1e293b;--gray2:#0f172a;--border:#334155;--border2:#475569;
+  --text:#f1f5f9;--muted:#94a3b8;--muted2:#64748b;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.4);
+  --shadow:0 4px 16px rgba(0,0,0,.4);
+  --shadow-lg:0 20px 40px rgba(0,0,0,.5);
+}
+[data-theme="dark"] body { background:#0f172a; color:var(--text); }
+[data-theme="dark"] nav { background:#1e293b; border-bottom-color:var(--border); }
+[data-theme="dark"] .listing-card { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .listing-title { color:var(--text); }
+[data-theme="dark"] .booking-card { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .detail-wrap { background:#0f172a; }
+[data-theme="dark"] .detail-section { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .dash-wrap { background:#0f172a; }
+[data-theme="dark"] .profile-card { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .dash-tabs { border-bottom-color:var(--border); }
+[data-theme="dark"] .dash-tab { color:var(--muted); }
+[data-theme="dark"] .dash-tab.active { color:var(--text); border-bottom-color:var(--green); }
+[data-theme="dark"] .browse-sidebar { background:#1e293b; }
+[data-theme="dark"] .browse-filters { background:#1e293b; }
+[data-theme="dark"] .price-filter-row { background:#1e293b; }
+[data-theme="dark"] .browse-count-row { background:#1e293b; }
+[data-theme="dark"] .autocomplete-dropdown { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .autocomplete-item:hover { background:#334155; }
+[data-theme="dark"] .msg-sidebar { background:#1e293b; }
+[data-theme="dark"] .msg-layout { border-color:var(--border); }
+[data-theme="dark"] .host-wrap { background:#0f172a; }
+[data-theme="dark"] .form-section { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select {
+  background:#334155; border-color:var(--border); color:var(--text);
+}
+[data-theme="dark"] .skeleton-img, [data-theme="dark"] .skeleton-line {
+  background:linear-gradient(90deg,#1e293b 25%,#334155 50%,#1e293b 75%);
+  background-size:200% 100%;
+}
+[data-theme="dark"] .lightbox-overlay { background:rgba(0,0,0,.97); }
+[data-theme="dark"] .fav-btn { background:rgba(30,41,59,.92); }
+[data-theme="dark"] .earnings-stat { background:#1e293b; }
+[data-theme="dark"] .earnings-chart-card { background:#1e293b; border-color:var(--border); }
+[data-theme="dark"] .dyn-pricing-box { background:#1e2d1e; border-color:#4ade80; }
+[data-theme="dark"] .detail-back { color:var(--muted); }
+[data-theme="dark"] .detail-back:hover { color:var(--text); }
+
+/* dark mode toggle button */
+.dark-toggle{background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .15s;display:flex;align-items:center;gap:5px}
+.dark-toggle:hover{background:var(--gray);color:var(--text)}
+
+/* ===== NOTIFICATION DOT ===== */
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff;display:none}
+[data-theme="dark"] .notif-dot{border-color:#1e293b}
+#btnUser{position:relative}
+
+/* ===== RECENTLY VIEWED ===== */
+.recently-viewed{padding:48px 24px;max-width:1100px;margin:0 auto}
+.recently-viewed h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
+.recently-viewed .rv-sub{font-size:.9rem;color:var(--muted);margin-bottom:24px}
+.rv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.rv-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm)}
+.rv-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.rv-card-img{height:120px;background:var(--gray2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.rv-card-img img{width:100%;height:100%;object-fit:cover}
+.rv-card-img .rv-icon{font-size:2rem;color:var(--muted)}
+.rv-card-body{padding:10px 12px}
+.rv-card-title{font-size:.85rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-card-loc{font-size:.75rem;color:var(--muted);margin-bottom:4px}
+.rv-card-price{font-size:.82rem;font-weight:700;color:var(--green-dk)}
+[data-theme="dark"] .rv-card{background:#1e293b}
+@media(max-width:640px){.rv-grid{grid-template-columns:repeat(2,1fr)}.recently-viewed{padding:32px 16px}}
+
+/* ===== PHOTO STRIP COUNTER ===== */
+.photo-strip-wrap{position:relative}
+.photo-count-badge{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:12px;backdrop-filter:blur(4px);pointer-events:none}
+
+/* ===== NEAR ME SORT ===== */
+.nearby-badge{display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;font-size:.72rem;padding:3px 10px;font-weight:600}
+
+/* ===== MESSAGE UNREAD BADGE ===== */
+.msg-tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#ef4444;color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;min-width:16px;height:16px;padding:0 4px;margin-left:6px;line-height:1}
+.msg-tab-badge.hidden{display:none}
+
 </style>
 </head>
 <body>
@@ -1014,6 +1227,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <div class="autocomplete-dropdown hidden" id="acDrop"></div>
   </div>
   <button class="nav-hamburger" id="navBurger" onclick="toggleMobileMenu()" aria-label="Menu"><i class="fa-solid fa-bars" id="burgerIcon"></i></button>
+  <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" title="Toggle dark mode"><i class="fa-solid fa-moon" id="darkIcon"></i></button>
   <div class="nav-links">
     <button class="btn-ghost" id="btnBrowse" onclick="showPage('browse')">Browse</button>
     <button class="btn-ghost" id="btnHowItWorks" onclick="showPage('legal')">How It Works</button>
@@ -1023,6 +1237,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <button class="btn-primary hidden" id="btnUser" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px">
       <span id="navAvatarWrap" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.85rem;overflow:hidden;flex-shrink:0"><span id="navAvatarInitial"><i class="fa-solid fa-user" style="font-size:.75rem"></i></span></span>
       <span>My Account</span>
+      <span class="notif-dot" id="notifDot"></span>
     </button>
     <button class="btn-ghost hidden" id="btnLogout" onclick="logout()">Log Out</button>
   </div>
@@ -1033,6 +1248,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   <button class="btn-ghost" onclick="showPage('legal');closeMobileMenu()"><i class="fa-solid fa-circle-question" style="margin-right:6px;color:var(--muted)"></i> How It Works</button>
   <button class="btn-outline" onclick="requireAuth('host');closeMobileMenu()"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List Your Space</button>
   <hr style="border:none;border-top:1px solid var(--border);margin:4px 0"/>
+  <button class="btn-ghost" onclick="toggleDarkMode();closeMobileMenu()" style="justify-content:flex-start"><i class="fa-solid fa-moon" style="margin-right:6px;color:var(--muted)"></i> <span id="darkModeLabel">Dark Mode</span></button>
   <button class="btn-ghost" id="mobileLoginBtn" onclick="openAuth('login');closeMobileMenu()"><i class="fa-solid fa-right-to-bracket" style="margin-right:6px;color:var(--muted)"></i> Log In</button>
   <button class="btn-primary" id="mobileSignupBtn" onclick="openAuth('register');closeMobileMenu()"><i class="fa-solid fa-user-plus" style="margin-right:6px"></i> Sign Up</button>
   <button class="btn-primary hidden" id="mobileDashBtn" onclick="showPage('dashboard');closeMobileMenu()"><i class="fa-solid fa-gauge" style="margin-right:6px"></i> My Account</button>
@@ -1242,6 +1458,14 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   </div>
 </div>
 
+  <!-- RECENTLY VIEWED -->
+  <div class="recently-viewed" id="recentlyViewedSection" style="display:none">
+    <div class="section-eyebrow"><i class="fa-solid fa-clock-rotate-left" style="margin-right:4px"></i> Recently Viewed</div>
+    <h2>Pick up where you left off</h2>
+    <div class="rv-sub">Spaces you've looked at recently</div>
+    <div class="rv-grid" id="rvGrid"></div>
+  </div>
+
 <!-- ===== BROWSE ===== -->
 <div class="page" id="page-browse">
   <div class="browse-layout">
@@ -1275,6 +1499,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           <option value="price_desc">Price: High to Low</option>
           <option value="rating">Rating: Highest</option>
           <option value="newest">Newest</option>
+          <option value="distance">Nearest to Me</option>
         </select>
       </div>
       <div id="listingsList"></div>
@@ -1299,7 +1524,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 <div class="page" id="page-detail">
   <div class="detail-wrap">
     <div class="detail-back" onclick="showPage('browse')">&larr; Back to listings</div>
-    <div id="detailPhotoStrip" class="photo-strip hidden"></div>
+    <div class="photo-strip-wrap" id="detailPhotoStripWrap" style="position:relative"><div id="detailPhotoStrip" class="photo-strip hidden"></div><div class="photo-count-badge hidden" id="photoCountBadge"></div></div>
     <div class="detail-hero" id="detailEmoji"><i class="fa-solid fa-car" style="font-size:4rem;color:var(--muted)"></i></div>
     <div class="detail-title" id="detailTitle"></div>
     <div class="detail-meta" id="detailMeta"></div>
@@ -1555,7 +1780,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <button class="dash-tab active" onclick="switchDashTab('bookings',this)">My Bookings</button>
       <button class="dash-tab" onclick="switchDashTab('listings',this)">My Listings</button>
       <button class="dash-tab" onclick="switchDashTab('hosting',this)">Hosting</button>
-      <button class="dash-tab" onclick="switchDashTab('messages',this)">Messages</button>
+      <button class="dash-tab" onclick="switchDashTab('messages',this)">Messages<span class="msg-tab-badge hidden" id="msgUnreadBadge"></span></button>
       <button class="dash-tab" onclick="switchDashTab('saved',this)"><i class="fa-solid fa-heart" style="color:#ef4444;margin-right:4px"></i> Saved</button>
     </div>
     <div class="dash-panel active" id="dashBookings">
@@ -2019,11 +2244,15 @@ function showPage(name) {
   document.getElementById('page-' + name).classList.add('active');
   if (name === 'browse') { setTimeout(() => { if (!leafletMap) initMap(); }, 50); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
+  if (name === 'home') renderRecentlyViewed();
   // Update nav active state
   const navMap = { browse: 'btnBrowse', legal: 'btnHowItWorks' };
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('nav-active'));
   if (navMap[name]) { const nb = document.getElementById(navMap[name]); if (nb) nb.classList.add('nav-active'); }
   window.scrollTo(0, 0);
+  // Update URL hash
+  if (name !== 'home') history.replaceState(null,'','#page-'+name);
+  else history.replaceState(null,'',location.pathname);
 }
 
 // ============================================================
@@ -2143,6 +2372,8 @@ function updateNavAuth() {
   document.getElementById('mobileSignupBtn')?.classList.toggle('hidden', in_);
   document.getElementById('mobileDashBtn')?.classList.toggle('hidden', !in_);
   document.getElementById('mobileLogoutBtn')?.classList.toggle('hidden', !in_);
+  // Check notifications when auth state changes
+  if (in_) { setTimeout(() => { checkNotifications(); checkUnreadMessages(); }, 1000); }
 }
 
 // ============================================================
@@ -2284,6 +2515,9 @@ function applyFilter() {
     filteredListings.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
   } else if (sortVal === 'newest') {
     filteredListings.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  } else if (sortVal === 'distance' && _userLat && _userLng) {
+    const dist = l => Math.sqrt(Math.pow((l.lat||0)-_userLat,2)+Math.pow((l.lng||0)-_userLng,2));
+    filteredListings.sort((a,b) => dist(a)-dist(b));
   }
 
   renderListings();
@@ -2524,11 +2758,16 @@ function locateMe() {
   showToast('Finding your location...', 'info');
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude: lat, longitude: lng } = pos.coords;
+    _userLat = lat; _userLng = lng;
     leafletMap.setView([lat, lng], 13);
     L.circleMarker([lat, lng], {
       radius:10, fillColor:'#3b82f6', color:'#fff', weight:3, fillOpacity:1
     }).addTo(leafletMap).bindPopup('<i class="fa-solid fa-location-crosshairs" style="color:#3b82f6"></i> <b>You are here</b>').openPopup();
-    showToast('Showing spaces near you', 'success');
+    // Sort by distance and show nearby badge
+    const sortEl = document.getElementById('browseSort');
+    if (sortEl) { sortEl.value = 'distance'; }
+    applyFilter();
+    showToast('<i class="fa-solid fa-location-crosshairs" style="margin-right:4px"></i> Sorted by distance', 'success');
   }, () => { showToast('Could not get your location', 'error'); });
 }
 
@@ -2539,12 +2778,21 @@ function openDetail(id) {
   const l = allListings.find(x => x.id === id);
   if (!l) return;
   selectedListing = l;
+
+  // Track recently viewed
+  addRecentlyViewed(l);
+
   const photoStrip = document.getElementById('detailPhotoStrip');
   const emojiHero  = document.getElementById('detailEmoji');
+  const photoBadge = document.getElementById('photoCountBadge');
   if (l.photos?.length) {
     photoStrip.innerHTML = l.photos.map((url, i) => `<img src="${url}" alt="Space photo" loading="lazy" onclick="openLightbox(${JSON.stringify(l.photos)},${i})" style="cursor:pointer"/>`).join('');
     photoStrip.classList.remove('hidden');
     emojiHero.classList.add('hidden');
+    if (photoBadge && l.photos.length > 1) {
+      photoBadge.textContent = `1 / ${l.photos.length}`;
+      photoBadge.classList.remove('hidden');
+    } else if (photoBadge) { photoBadge.classList.add('hidden'); }
   } else {
     photoStrip.innerHTML = '';
     photoStrip.classList.add('hidden');
@@ -4021,6 +4269,135 @@ self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWi
     navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
   });
 }
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  try { localStorage.setItem('ds_theme', newTheme); } catch(e) {}
+  const icon = document.getElementById('darkIcon');
+  const label = document.getElementById('darkModeLabel');
+  if (icon) icon.className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  if (label) label.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+// Init dark mode from storage
+(function initDarkMode() {
+  try {
+    const saved = localStorage.getItem('ds_theme');
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const icon = document.getElementById('darkIcon');
+      if (icon) icon.className = 'fa-solid fa-sun';
+      const label = document.getElementById('darkModeLabel');
+      if (label) label.textContent = 'Light Mode';
+    }
+  } catch(e) {}
+})();
+
+// ============================================================
+// RECENTLY VIEWED
+// ============================================================
+const _RV_KEY = 'ds_rv';
+const _RV_MAX = 6;
+
+function addRecentlyViewed(listing) {
+  try {
+    let rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
+    rv = rv.filter(x => x.id !== listing.id);
+    rv.unshift({ id: listing.id, title: listing.title, city: listing.city, state: listing.state, price_nightly: listing.price_nightly, photos: listing.photos });
+    if (rv.length > _RV_MAX) rv = rv.slice(0, _RV_MAX);
+    localStorage.setItem(_RV_KEY, JSON.stringify(rv));
+  } catch(e) {}
+}
+
+function renderRecentlyViewed() {
+  const section = document.getElementById('recentlyViewedSection');
+  const grid = document.getElementById('rvGrid');
+  if (!section || !grid) return;
+  try {
+    const rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
+    if (!rv.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    grid.innerHTML = rv.map(l => `
+      <div class="rv-card" onclick="openDetail('${l.id}')">
+        <div class="rv-card-img">
+          ${l.photos?.length
+            ? `<img src="${l.photos[0]}" alt="${escapeHtml(l.title)}" loading="lazy"/>`
+            : `<div class="rv-icon"><i class="fa-solid fa-car"></i></div>`}
+        </div>
+        <div class="rv-card-body">
+          <div class="rv-card-title">${escapeHtml(l.title)}</div>
+          <div class="rv-card-loc"><i class="fa-solid fa-location-dot" style="color:var(--green);font-size:.7rem;margin-right:3px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state||'')}</div>
+          <div class="rv-card-price">$${l.price_nightly}/night</div>
+        </div>
+      </div>`).join('');
+  } catch(e) { section.style.display = 'none'; }
+}
+// Render on page load if on home
+renderRecentlyViewed();
+
+// ============================================================
+// USER LOCATION STATE
+// ============================================================
+let _userLat = null, _userLng = null;
+
+// ============================================================
+// NOTIFICATION DOT (pending bookings)
+// ============================================================
+async function checkNotifications() {
+  if (!currentUser) return;
+  try {
+    const { data } = await db.from('bookings').select('id', {count:'exact'}).eq('status','pending').eq('guest_id', currentUser.id);
+    const dot = document.getElementById('notifDot');
+    if (dot) dot.style.display = (data?.length > 0) ? 'block' : 'none';
+  } catch(e) {}
+}
+
+// ============================================================
+// UNREAD MESSAGE COUNT
+// ============================================================
+async function checkUnreadMessages() {
+  if (!currentUser) return;
+  try {
+    const { count } = await db.from('messages').select('*', {count:'exact', head:true})
+      .eq('read', false).neq('sender_id', currentUser.id);
+    const badge = document.getElementById('msgUnreadBadge');
+    if (badge) {
+      badge.textContent = count > 0 ? (count > 9 ? '9+' : count) : '';
+      badge.classList.toggle('hidden', !count);
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// HASH ROUTING (on load, open correct page or listing)
+// ============================================================
+(function handleHashOnLoad() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  if (hash.startsWith('#listing-')) {
+    const id = hash.replace('#listing-', '');
+    // Wait for listings to load then open
+    const tryOpen = () => {
+      if (allListings.length) {
+        const l = allListings.find(x => String(x.id) === id);
+        if (l) { showPage('browse'); setTimeout(() => openDetail(id), 100); }
+      } else {
+        setTimeout(tryOpen, 300);
+      }
+    };
+    // Load listings first
+    showPage('browse');
+    setTimeout(tryOpen, 500);
+  } else if (hash === '#page-browse') {
+    showPage('browse');
+  } else if (hash === '#page-dashboard') {
+    showPage('dashboard');
+  }
+})();
 
 </script>
 <!-- LIGHTBOX -->
