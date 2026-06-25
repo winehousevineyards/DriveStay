@@ -460,6 +460,75 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
 /* MISC */
 .hidden{display:none!important}
 .loader{text-align:center;padding:40px;color:var(--muted);font-size:.9rem}
+
+/* BOOKING TYPE TABS (hero) */
+.booking-type-wrap{display:flex;justify-content:center;margin-bottom:20px}
+.booking-type-tabs{display:inline-flex;background:rgba(255,255,255,.15);border-radius:30px;padding:4px;gap:4px}
+.btype-tab{padding:8px 22px;border-radius:24px;font-size:.85rem;font-weight:600;color:rgba(255,255,255,.75);cursor:pointer;transition:.15s;border:none}
+.btype-tab.active{background:#fff;color:var(--green)}
+.btype-tab:hover:not(.active){background:rgba(255,255,255,.12);color:#fff}
+.hero-field.event-field{display:none}
+.hero-field.event-field.visible{display:flex}
+
+/* TRUST BADGES */
+.trust-badges{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:18px 24px;background:#f0fdf4;border-bottom:1px solid #dcfce7}
+.trust-badge{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--green-dk);padding:6px 14px;background:#fff;border:1px solid #dcfce7;border-radius:30px;white-space:nowrap}
+
+/* FEE SECTION */
+.fee-section{padding:64px 24px;background:#fff;text-align:center}
+.fee-section h2{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+.fee-section .section-sub{color:var(--muted);margin-bottom:40px;font-size:1rem;max-width:480px;margin-left:auto;margin-right:auto}
+.fee-table{max-width:620px;margin:0 auto;border-radius:16px;overflow:hidden;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.fee-row{display:grid;grid-template-columns:2fr 1fr 1fr;padding:14px 20px;font-size:.875rem;border-bottom:1px solid var(--border);text-align:left;align-items:center}
+.fee-row:last-child{border-bottom:none}
+.fee-row.header{background:#f8fafc;font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.fee-row.us-row{background:#f0fdf4}
+.fee-row.us-row td{font-weight:700}
+.fee-green{color:var(--green-dk);font-weight:800}
+.fee-red{color:var(--red)}
+.fee-badge{display:inline-block;background:var(--green);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+
+/* PROTECTION SECTION */
+.protection-section{padding:64px 24px;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;text-align:center}
+.protection-section h2{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+.protection-section .section-sub{color:#94a3b8;margin-bottom:40px;font-size:1rem}
+.protection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:840px;margin:0 auto}
+.protection-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;text-align:center}
+.protection-icon{font-size:2rem;margin-bottom:12px}
+.protection-title{font-weight:700;font-size:.95rem;margin-bottom:6px;color:#f1f5f9}
+.protection-desc{font-size:.82rem;color:#94a3b8;line-height:1.6}
+@media(max-width:640px){.protection-grid{grid-template-columns:1fr}}
+
+/* EARNINGS ESTIMATOR (on CTA / host page) */
+.earnings-est{max-width:560px;margin:28px auto 0;background:rgba(255,255,255,.12);border-radius:16px;padding:24px;text-align:left}
+.earnings-est h3{font-size:.95rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:16px;text-align:center}
+.est-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.est-row label{font-size:.8rem;color:rgba(255,255,255,.7);width:110px;flex-shrink:0}
+.est-row input[type=range]{flex:1;accent-color:#22c55e;height:4px}
+.est-row .est-val{font-size:.88rem;font-weight:700;color:#fff;width:52px;text-align:right;flex-shrink:0}
+.est-result{background:#22c55e;color:#fff;border-radius:12px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.est-result .est-amount{font-size:1.6rem;font-weight:800}
+.est-result .est-label{font-size:.78rem;opacity:.85;text-align:right;line-height:1.4}
+
+/* PARTNERSHIP SECTION */
+.partner-section{padding:64px 24px;background:#f8fafc}
+.partner-section h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:8px}
+.partner-section .section-sub{color:var(--muted);text-align:center;margin-bottom:40px;font-size:1rem;max-width:480px;margin-left:auto;margin-right:auto}
+.partner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto 32px}
+.partner-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:.15s}
+.partner-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-2px)}
+.partner-icon{font-size:2.5rem;margin-bottom:12px}
+.partner-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.partner-card p{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.partner-card .partner-cta{font-size:.82rem;font-weight:700;color:var(--green);text-decoration:none}
+.partner-card .partner-cta:hover{text-decoration:underline}
+@media(max-width:640px){.partner-grid{grid-template-columns:1fr}}
+
+/* INSTANT BOOK BADGE */
+.instant-badge{display:inline-flex;align-items:center;gap:3px;background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;letter-spacing:.01em}
+
+/* MONTHLY PRICE TAG */
+.monthly-price{font-size:.72rem;color:var(--green-dk);font-weight:600;background:#f0fdf4;padding:2px 6px;border-radius:6px;margin-left:6px}
 </style>
 </head>
 <body>
@@ -494,17 +563,28 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
       <button class="hero-search-btn" onclick="showPage('browse')">Find Parking &rarr;</button>
       <button class="hero-search-btn" onclick="requireAuth('host')" style="background:#fff;color:var(--green)">List My Driveway</button>
     </div>
+    <div class="booking-type-wrap">
+      <div class="booking-type-tabs" id="heroTypeTabs">
+        <button class="btype-tab active" data-type="daily" onclick="setHeroBkType('daily',this)">📅 Daily</button>
+        <button class="btype-tab" data-type="monthly" onclick="setHeroBkType('monthly',this)">🗓️ Monthly</button>
+        <button class="btype-tab" data-type="event" onclick="setHeroBkType('event',this)">🎟️ Event</button>
+      </div>
+    </div>
     <div class="hero-search">
-      <div class="hero-field">
+      <div class="hero-field" id="heroLocationField">
         <label>Location</label>
         <input type="text" id="heroCity" placeholder="City or address"/>
       </div>
-      <div class="hero-field">
-        <label>Check In</label>
+      <div class="hero-field event-field" id="heroEventField">
+        <label>Event or Venue</label>
+        <input type="text" id="heroEvent" placeholder="e.g. Super Bowl, Wrigley Field…"/>
+      </div>
+      <div class="hero-field" id="heroInField">
+        <label id="heroInLabel">Check In</label>
         <input type="date" id="heroIn"/>
       </div>
-      <div class="hero-field">
-        <label>Check Out</label>
+      <div class="hero-field" id="heroOutField">
+        <label id="heroOutLabel">Check Out</label>
         <input type="date" id="heroOut"/>
       </div>
       <div class="hero-field" style="flex:0 0 auto">
@@ -517,6 +597,13 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
       </div>
       <button class="hero-search-btn" onclick="doHeroSearch()">Search &rarr;</button>
     </div>
+  </div>
+  <div class="trust-badges">
+    <span class="trust-badge">🔒 Every booking protected</span>
+    <span class="trust-badge">💰 Only 10% service fee — lowest in the market</span>
+    <span class="trust-badge">⚡ List your space in 5 minutes</span>
+    <span class="trust-badge">🌎 340+ cities nationwide</span>
+    <span class="trust-badge">⭐ 4.9★ avg host rating</span>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-n">2,400+</div><div class="stat-l">Spaces Listed</div></div>
@@ -533,10 +620,135 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
       <div class="how-card"><div class="how-icon">⭐</div><h3>Review</h3><p>Leave a review to help the community and build your reputation.</p></div>
     </div>
   </div>
+  <!-- FEE TRANSPARENCY SECTION -->
+  <div class="fee-section">
+    <h2>The Honest Fee Structure</h2>
+    <p class="section-sub">We take 10%. That's it. No listing fees, no monthly subscriptions, no surprise charges.</p>
+    <div class="fee-table">
+      <div class="fee-row header">
+        <span>Platform</span><span>Guest Fee</span><span>Host Fee</span>
+      </div>
+      <div class="fee-row us-row">
+        <span>🚗 DriveStay <span class="fee-badge">US</span></span>
+        <span class="fee-green">10%</span>
+        <span class="fee-green">Free</span>
+      </div>
+      <div class="fee-row">
+        <span>Parkt</span>
+        <span class="fee-red">7.5%</span>
+        <span class="fee-red">5%</span>
+      </div>
+      <div class="fee-row">
+        <span>Spacer</span>
+        <span class="fee-red">Markup +%</span>
+        <span>Free</span>
+      </div>
+      <div class="fee-row">
+        <span>SpotHero</span>
+        <span class="fee-red">15–20%</span>
+        <span class="fee-red">Listed price cut</span>
+      </div>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:16px">*Fees based on published platform rates as of 2026. DriveStay guest fee covers booking protection.</p>
+  </div>
+
+  <!-- BOOKING PROTECTION SECTION -->
+  <div class="protection-section">
+    <h2>Every Booking Is Protected</h2>
+    <p class="section-sub">DriveStay builds safety in — for hosts and guests alike.</p>
+    <div class="protection-grid">
+      <div class="protection-card">
+        <div class="protection-icon">🔒</div>
+        <div class="protection-title">Booking Protection</div>
+        <div class="protection-desc">Every reservation includes booking protection coverage. Hosts are shielded from property damage, guests from no-shows.</div>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">✅</div>
+        <div class="protection-title">Identity Verified Guests</div>
+        <div class="protection-desc">All guests must verify their driver's license and vehicle before booking. You always know who's parking in your space.</div>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">💳</div>
+        <div class="protection-title">Secure Payments via Stripe</div>
+        <div class="protection-desc">Payments processed by Stripe — the same platform trusted by Amazon, Shopify, and millions of businesses worldwide.</div>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">📸</div>
+        <div class="protection-title">Photo Documentation</div>
+        <div class="protection-desc">Hosts upload listing photos. Guests have a clear record of the space before and after. Disputes resolved with evidence.</div>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">⭐</div>
+        <div class="protection-title">Two-Way Reviews</div>
+        <div class="protection-desc">Hosts and guests rate each other after every stay — building a trusted community, not just a transaction.</div>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">🛡️</div>
+        <div class="protection-title">Host Insurance Required</div>
+        <div class="protection-desc">Every host must carry short-term rental insurance (via Thimble or equivalent) before their listing goes live.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARNINGS ESTIMATOR + CTA -->
   <div class="cta-section">
     <h2>Got a driveway? Earn with it.</h2>
-    <p>Hosts earn an average of $320/month renting idle space. It's free to list.</p>
+    <p>Hosts earn an average of $320/month renting idle space. It's free to list — we only earn when you do.</p>
     <button onclick="requireAuth('host')">Start Hosting &rarr;</button>
+    <div class="earnings-est">
+      <h3>📊 Estimate Your Monthly Earnings</h3>
+      <div class="est-row">
+        <label>Spaces available</label>
+        <input type="range" id="estSpaces" min="1" max="5" value="1" oninput="calcEarnings()"/>
+        <span class="est-val" id="estSpacesVal">1</span>
+      </div>
+      <div class="est-row">
+        <label>Nightly rate ($)</label>
+        <input type="range" id="estRate" min="15" max="120" value="35" step="5" oninput="calcEarnings()"/>
+        <span class="est-val" id="estRateVal">$35</span>
+      </div>
+      <div class="est-row">
+        <label>Occupancy</label>
+        <input type="range" id="estOcc" min="20" max="100" value="60" step="5" oninput="calcEarnings()"/>
+        <span class="est-val" id="estOccVal">60%</span>
+      </div>
+      <div class="est-result">
+        <div>
+          <div class="est-amount" id="estResult">$630</div>
+          <div style="font-size:.75rem;opacity:.85">estimated / month</div>
+        </div>
+        <div class="est-label">After DriveStay's<br>10% service fee</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNERSHIP SECTION -->
+  <div class="partner-section">
+    <h2>Partner With DriveStay</h2>
+    <p class="section-sub">Own a lot, a building, or represent a community? DriveStay partners get priority placement, dedicated support, and bulk listing tools.</p>
+    <div class="partner-grid">
+      <div class="partner-card">
+        <div class="partner-icon">⛪</div>
+        <h3>Church & Community Orgs</h3>
+        <p>Churches, mosques, temples, and community centers often have large parking lots sitting empty on weekdays. Turn idle space into mission funding — zero effort after setup.</p>
+        <a href="mailto:partnerships@drivestay.com" class="partner-cta">Apply for Partnership &rarr;</a>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🏢</div>
+        <h3>Businesses & Lot Owners</h3>
+        <p>Commercial lots, office buildings, and retail centers: list your unused spaces, set your own hours, and let DriveStay handle the bookings, payments, and guests.</p>
+        <a href="mailto:partnerships@drivestay.com" class="partner-cta">Apply for Partnership &rarr;</a>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🏡</div>
+        <h3>Realtors & Property Managers</h3>
+        <p>Add a passive income stream to every property you manage. DriveStay integrates with your workflow — list multiple properties from one account with bulk tools.</p>
+        <a href="mailto:partnerships@drivestay.com" class="partner-cta">Apply for Partnership &rarr;</a>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <a href="mailto:partnerships@drivestay.com" style="display:inline-block;padding:13px 32px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;font-size:.95rem;text-decoration:none">Get in Touch About Partnerships &rarr;</a>
+    </div>
   </div>
 </div>
 
@@ -546,12 +758,14 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
     <div class="browse-sidebar">
       <div class="browse-filters">
         <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('instant_book',this)">⚡ Instant Book</button>
         <button class="filter-chip" onclick="setFilter('wifi',this)">📶 WiFi</button>
         <button class="filter-chip" onclick="setFilter('covered',this)">🏠 Covered</button>
         <button class="filter-chip" onclick="setFilter('electric',this)">⚡ EV Charging</button>
         <button class="filter-chip" onclick="setFilter('pets',this)">🐾 Pet OK</button>
         <button class="filter-chip" onclick="setFilter('dump',this)">🚿 Dump Station</button>
         <button class="filter-chip" onclick="setFilter('water',this)">💧 Water Hook-up</button>
+        <button class="filter-chip" onclick="setFilter('rv_friendly',this)">🚐 RV Friendly</button>
       </div>
       <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
         <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
@@ -629,8 +843,8 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
           <div class="price-breakdown hidden" id="bkBreakdown">
             <div class="price-row"><span id="bkBaseLabel">0 nights x $0</span><span id="bkBaseAmt">$0</span></div>
             <div class="price-row hidden" id="bkDiscRow"><span id="bkDiscLabel"></span><span id="bkDiscAmt"></span></div>
-            <div class="price-row"><span>Broker fee (12%)</span><span id="bkBroker">$0</span></div>
-            <div class="price-row"><span>Insurance fee (3%)</span><span id="bkInsurance">$0</span></div>
+            <div class="price-row"><span>Service fee (10%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— lowest in market</span></span><span id="bkBroker">$0</span></div>
+            <div class="price-row"><span>Booking protection (3%)</span><span id="bkInsurance">$0</span></div>
             <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
           </div>
           <button class="book-btn" id="bookBtn" onclick="bookNow()" disabled>Select dates to book</button>
@@ -703,7 +917,14 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
           <label class="check-item"><input type="checkbox" id="lElec"/> Electric / EV</label>
           <label class="check-item"><input type="checkbox" id="lCovered"/> Covered / Garage</label>
           <label class="check-item"><input type="checkbox" id="lPets"/> Pets Allowed</label>
+          <label class="check-item"><input type="checkbox" id="lRvFriendly"/> 🚐 RV Friendly</label>
+          <label class="check-item"><input type="checkbox" id="lCamera"/> 📸 Security Camera</label>
         </div>
+      </div>
+      <div class="form-section">
+        <h2>⚡ Instant Book</h2>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">With Instant Book enabled, guests can reserve immediately without needing your approval. Listings with Instant Book get priority placement in search results.</p>
+        <label class="check-item" style="font-size:.9rem"><input type="checkbox" id="lInstantBook"/> Enable Instant Book for this listing</label>
       </div>
       <div class="form-section">
         <h2>📐 Space Dimensions</h2>
@@ -1070,10 +1291,17 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
     <a href="#" onclick="showPage('browse');return false;" style="color:#94a3b8">Browse Spaces</a>
     <a href="#" onclick="requireAuth('host');return false;" style="color:#94a3b8">List Your Driveway</a>
     <a href="#" onclick="showPage('legal');return false;" style="color:#94a3b8">How It Works</a>
+    <a href="mailto:partnerships@drivestay.com" style="color:#94a3b8">Partnerships</a>
     <a href="#" onclick="showPage('tos');return false;" style="color:#94a3b8">Terms of Service</a>
     <a href="#" onclick="showPage('privacy');return false;" style="color:#94a3b8">Privacy Policy</a>
     <a href="mailto:support@drivestay.com" style="color:#94a3b8">Support</a>
   </nav>
+  <div style="margin:20px 0;display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
+    <span style="font-size:.78rem;color:#475569">🔒 Bookings Protected</span>
+    <span style="font-size:.78rem;color:#475569">💳 Payments via Stripe</span>
+    <span style="font-size:.78rem;color:#475569">✅ Identity Verified Guests</span>
+    <span style="font-size:.78rem;color:#475569">💰 10% Service Fee</span>
+  </div>
   <p style="color:#64748b">&copy; 2026 DriveStay Inc. All rights reserved.</p>
   <p style="color:#475569;font-size:.75rem;margin-top:8px">Stripe test mode — payments are simulated in this demo.</p>
 </footer>
@@ -1100,38 +1328,38 @@ const SAMPLE_LISTINGS = [
   { id:'s1', emoji:'🏡', title:'Quiet Driveway Near Hollywood Bowl',
     description:'Wide concrete driveway, fits 2 cars. Walking distance to Hollywood Bowl. Well-lit, camera monitored.',
     address:'1234 Laurel Canyon Blvd', city:'Los Angeles', state:'CA',
-    lat:34.1122, lng:-118.3392, price_nightly:45, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
-    vehicles:['Sedan','SUV'], rating:4.9, review_count:23, status:'active',
+    lat:34.1122, lng:-118.3392, price_nightly:45, price_monthly:720, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
+    instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.9, review_count:23, status:'active',
     rules:['No overnight parties','No commercial vehicles'] },
   { id:'s2', emoji:'🅿️', title:'Covered Garage Spot – Downtown Austin',
     description:'Single covered garage spot. EV charger available. Minutes from 6th Street.',
     address:'800 Congress Ave', city:'Austin', state:'TX',
-    lat:30.2672, lng:-97.7431, price_nightly:28, wifi:true, covered:true, electric:true, dump:false, water:false, pets:false,
-    vehicles:['Sedan','SUV','Motorcycle'], rating:4.7, review_count:11, status:'active',
+    lat:30.2672, lng:-97.7431, price_nightly:28, price_monthly:480, wifi:true, covered:true, electric:true, dump:false, water:false, pets:false,
+    instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV','Motorcycle'], rating:4.7, review_count:11, status:'active',
     rules:['EV charger: $5/night extra'] },
   { id:'s3', emoji:'🌳', title:'Shaded Lot – Near Wrigley Field',
     description:'Large shaded lot, fits up to 3 vehicles. Close to Wrigley Field — perfect for Cubs games.',
     address:'1060 W Addison St', city:'Chicago', state:'IL',
-    lat:41.9484, lng:-87.6553, price_nightly:55, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
-    vehicles:['Sedan','SUV','Truck'], rating:4.8, review_count:34, status:'active',
+    lat:41.9484, lng:-87.6553, price_nightly:55, price_monthly:860, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
+    instant_book:false, rv_friendly:false, vehicles:['Sedan','SUV','Truck'], rating:4.8, review_count:34, status:'active',
     rules:['No overnight stays without permission','Quiet after 10pm'] },
-  { id:'s4', emoji:'🏠', title:'RV-Friendly Lot with Dump Station – Nashville',
-    description:'Full hookup RV spot: 30A electric, dump station, water. Near Grand Ole Opry.',
+  { id:'s4', emoji:'🚐', title:'RV-Friendly Full Hookup – Nashville',
+    description:'Full hookup RV spot: 30A electric, dump station, water. Near Grand Ole Opry. Fits rigs up to 40ft.',
     address:'2804 Opryland Dr', city:'Nashville', state:'TN',
-    lat:36.2010, lng:-86.6944, price_nightly:75, wifi:true, covered:false, electric:true, dump:true, water:true, pets:true,
-    vehicles:['RV','Van','Trailer'], rating:4.6, review_count:8, status:'active',
-    rules:['Max 35ft','Check-in after 2pm','Check-out by noon'] },
+    lat:36.2010, lng:-86.6944, price_nightly:75, price_monthly:1400, wifi:true, covered:false, electric:true, dump:true, water:true, pets:true,
+    instant_book:true, rv_friendly:true, vehicles:['RV','Van','Trailer'], rating:4.6, review_count:8, status:'active',
+    rules:['Max 40ft','Check-in after 2pm','Check-out by noon'] },
   { id:'s5', emoji:'🚗', title:'Budget Driveway – Brooklyn Heights',
     description:'Tight but fits a standard sedan or small SUV. Safe neighborhood, minutes from subway.',
     address:'100 Hicks St', city:'Brooklyn', state:'NY',
-    lat:40.6981, lng:-73.9966, price_nightly:35, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
-    vehicles:['Sedan','Motorcycle'], rating:4.5, review_count:19, status:'active',
+    lat:40.6981, lng:-73.9966, price_nightly:35, price_monthly:560, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
+    instant_book:false, rv_friendly:false, vehicles:['Sedan','Motorcycle'], rating:4.5, review_count:19, status:'active',
     rules:['Compact cars only','No tall vehicles'] },
   { id:'s6', emoji:'🏢', title:'Downtown Parking Spot – Denver',
     description:'Paved surface spot in private residential courtyard. Walking distance to Coors Field.',
     address:'2001 Blake St', city:'Denver', state:'CO',
-    lat:39.7563, lng:-104.9942, price_nightly:32, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
-    vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
+    lat:39.7563, lng:-104.9942, price_nightly:32, price_monthly:520, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
+    instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
     rules:['No commercial vehicles'] },
 ];
 
@@ -1533,11 +1761,15 @@ function renderListings() {
           ${l.electric?'<span class="tag">⚡ EV</span>':''}
           ${l.wifi?'<span class="tag">📶 WiFi</span>':''}
           ${l.dump?'<span class="tag">🚿 Dump</span>':''}
+          ${l.water?'<span class="tag">💧 Water</span>':''}
+          ${l.rv_friendly?'<span class="tag">🚐 RV OK</span>':''}
           ${l.pets?'<span class="tag">🐾 Pets OK</span>':''}
         </div>
-        <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
           <span class="listing-price">$${l.price_nightly}/night</span>
+          ${l.price_monthly?`<span class="monthly-price">$${l.price_monthly}/mo</span>`:''}
           ${l.rating?`<span class="listing-stars">⭐ ${l.rating} (${l.review_count||0})</span>`:''}
+          ${l.instant_book?`<span class="instant-badge">⚡ Instant Book</span>`:''}
         </div>
       </div>
     </div>`).join('');
@@ -1777,7 +2009,7 @@ function calcBooking() {
   const base     = nights * l.price_nightly;
   const discount = Math.round(base * discPct);
   const subtotal = base - discount;
-  const broker   = Math.round(subtotal * 0.12);
+  const broker   = Math.round(subtotal * 0.10);
   const ins      = Math.round(subtotal * 0.03);
   const total    = subtotal + broker + ins;
 
@@ -1970,6 +2202,9 @@ async function submitListing(e) {
     electric: document.getElementById('lElec').checked,
     covered: document.getElementById('lCovered').checked,
     pets: document.getElementById('lPets').checked,
+    rv_friendly: document.getElementById('lRvFriendly').checked,
+    security_camera: document.getElementById('lCamera').checked,
+    instant_book: document.getElementById('lInstantBook').checked,
     length_ft: parseInt(document.getElementById('lLen').value) || null,
     width_ft: parseInt(document.getElementById('lWid').value) || null,
     height_ft: parseInt(document.getElementById('lHgt').value) || null,
@@ -2337,7 +2572,8 @@ async function editListing(listingId) {
     document.getElementById('lInsPolicy').value = l.ins_policy || '';
     document.getElementById('lInsExpiry').value = l.ins_expiry || '';
     // Set checkboxes using real field IDs
-    [['lWifi','wifi'],['lDump','dump'],['lWater','water'],['lElec','electric'],['lCovered','covered'],['lPets','pets']]
+    [['lWifi','wifi'],['lDump','dump'],['lWater','water'],['lElec','electric'],['lCovered','covered'],['lPets','pets'],
+     ['lRvFriendly','rv_friendly'],['lCamera','security_camera'],['lInstantBook','instant_book']]
       .forEach(([id, f]) => { const el = document.getElementById(id); if (el) el.checked = !!l[f]; });
     // Set multi-select vehicles
     const vehiclesSel = document.getElementById('lVehicles');
@@ -2714,12 +2950,61 @@ async function sendMessage() {
 }
 
 // ============================================================
-// HERO SEARCH
+// HERO SEARCH + BOOKING TYPE
 // ============================================================
+let heroBookingType = 'daily';
+
+function setHeroBkType(type, el) {
+  heroBookingType = type;
+  document.querySelectorAll('.btype-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const locationField = document.getElementById('heroLocationField');
+  const eventField    = document.getElementById('heroEventField');
+  const inLabel       = document.getElementById('heroInLabel');
+  const outLabel      = document.getElementById('heroOutLabel');
+  if (type === 'event') {
+    locationField.style.display = 'none';
+    eventField.classList.add('visible');
+    inLabel.textContent  = 'Event Date';
+    outLabel.textContent = 'Until';
+  } else if (type === 'monthly') {
+    locationField.style.display = '';
+    eventField.classList.remove('visible');
+    inLabel.textContent  = 'Move-In Date';
+    outLabel.textContent = 'End Date';
+  } else {
+    locationField.style.display = '';
+    eventField.classList.remove('visible');
+    inLabel.textContent  = 'Check In';
+    outLabel.textContent = 'Check Out';
+  }
+}
+
 function doHeroSearch() {
-  const city = document.getElementById('heroCity').value.trim();
-  if (city) document.getElementById('navSearch').value = city;
+  let searchTerm = '';
+  if (heroBookingType === 'event') {
+    searchTerm = document.getElementById('heroEvent').value.trim() ||
+                 document.getElementById('heroCity').value.trim();
+  } else {
+    searchTerm = document.getElementById('heroCity').value.trim();
+  }
+  if (searchTerm) document.getElementById('navSearch').value = searchTerm;
   showPage('browse');
+}
+
+// ============================================================
+// EARNINGS ESTIMATOR
+// ============================================================
+function calcEarnings() {
+  const spaces = parseInt(document.getElementById('estSpaces').value) || 1;
+  const rate   = parseInt(document.getElementById('estRate').value)   || 35;
+  const occ    = parseInt(document.getElementById('estOcc').value)    || 60;
+  document.getElementById('estSpacesVal').textContent = spaces;
+  document.getElementById('estRateVal').textContent   = '$' + rate;
+  document.getElementById('estOccVal').textContent    = occ + '%';
+  const gross   = spaces * rate * 30 * (occ / 100);
+  const net     = Math.round(gross * 0.90); // after 10% service fee
+  document.getElementById('estResult').textContent = '$' + net.toLocaleString();
 }
 
 // ============================================================
