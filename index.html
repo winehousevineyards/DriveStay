@@ -28,6 +28,11 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
 <link rel="preconnect" href="https://js.stripe.com" crossorigin/>
 <link rel="preconnect" href="https://uvhhhwfhrdywczlhxvaa.supabase.co" crossorigin/>
+<meta name="theme-color" content="#16a34a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="DriveStay"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -51,6 +56,259 @@
     "query-input": "required name=search_term_string"
   }
 }
+// ============================================================
+// MOBILE MENU
+// ============================================================
+function toggleMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const icon = document.getElementById('burgerIcon');
+  const open = menu.classList.toggle('open');
+  if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+}
+function closeMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const icon = document.getElementById('burgerIcon');
+  menu?.classList.remove('open');
+  if (icon) icon.className = 'fa-solid fa-bars';
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('navMobileMenu');
+  const burger = document.getElementById('navBurger');
+  if (menu?.classList.contains('open') && !menu.contains(e.target) && !burger?.contains(e.target)) closeMobileMenu();
+});
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+let _lbPhotos = [], _lbIdx = 0;
+function openLightbox(photos, idx) {
+  _lbPhotos = photos; _lbIdx = idx;
+  const overlay = document.getElementById('lightboxOvl');
+  overlay.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  _lbRender();
+  document._lbKey = e => {
+    if (e.key==='ArrowLeft') lbNav(-1);
+    else if (e.key==='ArrowRight') lbNav(1);
+    else if (e.key==='Escape') closeLightbox();
+  };
+  document.addEventListener('keydown', document._lbKey);
+}
+function _lbRender() {
+  document.getElementById('lightboxImg').src = _lbPhotos[_lbIdx];
+  const multi = _lbPhotos.length > 1;
+  const prev = document.getElementById('lbPrev');
+  const next = document.getElementById('lbNext');
+  const ctr  = document.getElementById('lbCounter');
+  prev.style.display = multi ? 'flex' : 'none';
+  next.style.display = multi ? 'flex' : 'none';
+  ctr.style.display  = multi ? 'block' : 'none';
+  if (multi) ctr.textContent = `${_lbIdx+1} / ${_lbPhotos.length}`;
+}
+function closeLightbox() {
+  document.getElementById('lightboxOvl').classList.add('hidden');
+  document.body.style.overflow = '';
+  if (document._lbKey) document.removeEventListener('keydown', document._lbKey);
+}
+function lbNav(dir) {
+  _lbIdx = (_lbIdx + dir + _lbPhotos.length) % _lbPhotos.length;
+  _lbRender();
+}
+function lbBgClick(e) { if (e.target === document.getElementById('lightboxOvl')) closeLightbox(); }
+
+// ============================================================
+// SEARCH AUTOCOMPLETE
+// ============================================================
+let _acTimer = null;
+function onNavInput() {
+  filterListings();
+  const q = (document.getElementById('navSearch')?.value || '').trim();
+  clearTimeout(_acTimer);
+  const dd = document.getElementById('acDrop');
+  if (q.length < 3) { dd?.classList.add('hidden'); return; }
+  _acTimer = setTimeout(() => fetchAC(q), 380);
+}
+function onNavKey(e) {
+  const dd = document.getElementById('acDrop');
+  if (!dd || dd.classList.contains('hidden')) return;
+  const items = dd.querySelectorAll('.autocomplete-item');
+  const active = dd.querySelector('.ac-active');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = active ? (active.nextElementSibling || items[0]) : items[0];
+    active?.classList.remove('ac-active'); next?.classList.add('ac-active');
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = active ? (active.previousElementSibling || items[items.length-1]) : items[items.length-1];
+    active?.classList.remove('ac-active'); prev?.classList.add('ac-active');
+  } else if (e.key === 'Enter') {
+    if (active) { e.preventDefault(); active.click(); }
+  } else if (e.key === 'Escape') {
+    dd.classList.add('hidden');
+  }
+}
+async function fetchAC(q) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=us`);
+    const data = await res.json();
+    const dd = document.getElementById('acDrop');
+    if (!dd || !data?.length) { dd?.classList.add('hidden'); return; }
+    dd.innerHTML = data.map(d => {
+      const parts = d.display_name.split(',');
+      const name = parts.slice(0,3).join(',').trim();
+      const city = parts[0].trim();
+      return `<div class="autocomplete-item" onclick="selectAC(this,'${escapeHtml(city)}')"><i class="fa-solid fa-location-dot"></i>${escapeHtml(name)}</div>`;
+    }).join('');
+    dd.classList.remove('hidden');
+  } catch(e) {}
+}
+function selectAC(el, city) {
+  const inp = document.getElementById('navSearch');
+  if (inp) inp.value = city;
+  document.getElementById('acDrop')?.classList.add('hidden');
+  applyFilter();
+  if (!document.getElementById('page-browse')?.classList.contains('active')) showPage('browse');
+}
+document.addEventListener('click', e => {
+  if (e.target?.id !== 'navSearch') document.getElementById('acDrop')?.classList.add('hidden');
+});
+
+// ============================================================
+// FAVORITES / WISHLIST
+// ============================================================
+let _favIds = new Set(JSON.parse(localStorage.getItem('ds_favs') || '[]'));
+function _saveFavs() { try { localStorage.setItem('ds_favs', JSON.stringify([..._favIds])); } catch(e) {} }
+function toggleFav(id, e) {
+  e?.stopPropagation();
+  if (_favIds.has(id)) _favIds.delete(id); else _favIds.add(id);
+  _saveFavs();
+  const saved = _favIds.has(id);
+  // Update all fav buttons in listing cards
+  document.querySelectorAll(`.fav-btn[data-lid="${id}"]`).forEach(btn => {
+    btn.classList.toggle('faved', saved);
+    btn.querySelector('i').className = `fa-${saved?'solid':'regular'} fa-heart`;
+    btn.title = saved ? 'Remove from saved' : 'Save';
+  });
+  // Update detail action row button
+  const detailFav = document.getElementById('detailFavBtn');
+  if (detailFav?.dataset.lid === id) {
+    detailFav.classList.toggle('faved', saved);
+    detailFav.innerHTML = `<i class="fa-${saved?'solid':'regular'} fa-heart"></i> ${saved?'Saved':'Save'}`;
+  }
+  showToast(saved ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i> Saved to wishlist' : 'Removed from saved', saved ? 'success' : 'info');
+  // Refresh saved panel if active
+  const savedPanel = document.getElementById('dashSaved');
+  if (savedPanel?.classList.contains('active')) renderSavedListings();
+}
+function renderSavedListings() {
+  const el = document.getElementById('savedListEl');
+  if (!el) return;
+  const saved = allListings.filter(l => _favIds.has(l.id));
+  if (!saved.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-heart"></i></div><h3>No saved spaces yet</h3><p>Tap <i class="fa-regular fa-heart"></i> on any listing to save it here.</p></div>';
+    return;
+  }
+  el.innerHTML = saved.map(l => buildListingCard(l)).join('');
+}
+
+// ============================================================
+// PRICE FILTER
+// ============================================================
+function onPriceSlider(el) {
+  const val = Number(el.value);
+  const lbl = document.getElementById('priceFilterVal');
+  if (lbl) lbl.textContent = val >= 500 ? 'Any price' : `$${val}/night`;
+  applyFilter();
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareDetail(id, title) {
+  const url = window.location.origin + window.location.pathname + '#listing-' + id;
+  if (navigator.share) {
+    navigator.share({ title: 'DriveStay: ' + title, url }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(url).then(() => showToast('<i class="fa-solid fa-link"></i> Link copied!', 'success')).catch(() => showToast('Copy: ' + url, 'info'));
+  }
+}
+
+// ============================================================
+// SOCIAL PROOF
+// ============================================================
+function getSocialProof(id) {
+  let h = 0;
+  for (const c of String(id)) h = ((h << 5) - h) + c.charCodeAt(0);
+  const n = (Math.abs(h) % 17) + 4;
+  return `<span class="social-proof-pill"><i class="fa-solid fa-eye"></i> ${n} ${n===1?'person':'people'} viewing right now</span>`;
+}
+
+// ============================================================
+// EARNINGS CHART
+// ============================================================
+function renderEarningsChart(bookings) {
+  const card = document.getElementById('earningsChartCard');
+  const chartEl = document.getElementById('earningsBarChart');
+  const totalsEl = document.getElementById('earningsTotals');
+  if (!card || !chartEl) return;
+  const paid = (bookings||[]).filter(b => b.status==='completed' || b.status==='confirmed');
+  card.style.display = paid.length ? 'block' : 'none';
+  if (!paid.length) return;
+  const now = new Date();
+  const months = Array.from({length:6}, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth()-5+i, 1);
+    return { key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, lbl: d.toLocaleString('default',{month:'short'}), total: 0, n: 0 };
+  });
+  for (const b of paid) {
+    const mo = (b.check_in || b.created_at || '').slice(0,7);
+    const m = months.find(m => m.key === mo);
+    if (m) { m.total += Number(b.total_amount || b.total_cents || 0) / 100; m.n++; }
+  }
+  const maxVal = Math.max(...months.map(m => m.total), 1);
+  chartEl.innerHTML = months.map(m => {
+    const pct = (m.total / maxVal) * 100;
+    const label = m.total >= 1000 ? '$' + (m.total/1000).toFixed(1) + 'k' : m.total > 0 ? '$' + Math.round(m.total) : '';
+    return `<div class="bar-item"><div class="bar-fill" style="height:${Math.max(pct,2)}%">${label ? `<span class="bar-amount">${label}</span>` : ''}</div><span class="bar-month">${m.lbl}</span></div>`;
+  }).join('');
+  const totalRev = months.reduce((s,m) => s+m.total, 0);
+  const avgRev = totalRev / 6;
+  totalsEl.innerHTML = `
+    <div class="earnings-stat"><div class="eval">$${Math.round(totalRev).toLocaleString()}</div><div class="elbl">Last 6 months</div></div>
+    <div class="earnings-stat"><div class="eval">$${Math.round(avgRev).toLocaleString()}</div><div class="elbl">Monthly avg</div></div>
+    <div class="earnings-stat"><div class="eval">${paid.length}</div><div class="elbl">Paid bookings</div></div>`;
+}
+
+// ============================================================
+// PER-LISTING JSON-LD
+// ============================================================
+function injectListingJsonLD(l) {
+  document.getElementById('listing-ld')?.remove();
+  const s = document.createElement('script');
+  s.id = 'listing-ld'; s.type = 'application/ld+json';
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'ParkingFacility',
+    'name': l.title, 'description': l.description || '',
+    'address': { '@type': 'PostalAddress', 'addressLocality': l.city, 'addressRegion': l.state, 'addressCountry': 'US' },
+    'priceRange': '$' + l.price_nightly + '/night'
+  };
+  if (l.rating) schema['aggregateRating'] = { '@type': 'AggregateRating', 'ratingValue': Number(l.rating), 'reviewCount': Number(l.review_count)||1 };
+  s.textContent = JSON.stringify(schema);
+  document.head.appendChild(s);
+}
+
+// ============================================================
+// PWA SERVICE WORKER
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const sw = `const C='ds-v1';const P=['./'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(P))));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{if(resp.ok){const cl=resp.clone();caches.open(C).then(c=>c.put(e.request,cl));}return resp;})));});`;
+    const blob = new Blob([sw], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  });
+}
+
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -645,17 +903,117 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 
 /* MONTHLY PRICE TAG */
 .monthly-price{font-size:.72rem;color:var(--green-dk);font-weight:600;background:#f0fdf4;padding:2px 6px;border-radius:6px;margin-left:6px}
+
+/* ===== SKELETON LOADING ===== */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:8px}
+.skeleton-img{height:64px;width:64px;border-radius:10px;background:linear-gradient(90deg,#f0f4f8 25%,#e2e8f0 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;flex-shrink:0}
+.skeleton-line{height:11px;border-radius:6px;background:linear-gradient(90deg,#f0f4f8 25%,#e2e8f0 50%,#f0f4f8 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:8px}
+.skeleton-line.short{width:55%}
+.skeleton-line.xshort{width:35%}
+.skeleton-body{padding:14px 16px;flex:1}
+.skeleton-row{display:flex;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center}
+
+/* ===== HAMBURGER NAV ===== */
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--text);align-items:center;justify-content:center}
+.nav-hamburger i{font-size:1.25rem}
+.nav-mobile-menu{display:none;position:fixed;top:61px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);box-shadow:var(--shadow-lg);z-index:998;padding:10px 16px 14px;flex-direction:column;gap:5px}
+.nav-mobile-menu.open{display:flex}
+.nav-mobile-menu button{width:100%;text-align:left;padding:11px 14px;border-radius:8px;font-size:.9rem}
+
+/* ===== LIGHTBOX ===== */
+.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:flex;align-items:center;justify-content:center}
+.lightbox-overlay.hidden{display:none}
+.lightbox-img{max-width:88vw;max-height:80vh;object-fit:contain;border-radius:8px;user-select:none;display:block}
+.lightbox-close{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .15s}
+.lightbox-close:hover{background:rgba(255,255,255,.28)}
+.lightbox-prev,.lightbox-next{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .15s}
+.lightbox-prev:hover,.lightbox-next:hover{background:rgba(255,255,255,.28)}
+.lightbox-prev{left:14px}
+.lightbox-next{right:14px}
+.lightbox-counter{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:.78rem;background:rgba(0,0,0,.55);padding:5px 14px;border-radius:20px;pointer-events:none}
+.photo-strip img{cursor:pointer;transition:opacity .15s}
+.photo-strip img:hover{opacity:.82}
+
+/* ===== SEARCH AUTOCOMPLETE ===== */
+.nav-search{position:relative}
+.autocomplete-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:650;overflow:hidden;max-height:240px;overflow-y:auto}
+.autocomplete-dropdown.hidden{display:none}
+.autocomplete-item{padding:9px 14px;cursor:pointer;font-size:.84rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:hover,.autocomplete-item.ac-active{background:var(--gray)}
+.autocomplete-item i{color:var(--muted2);font-size:.75rem;flex-shrink:0}
+
+/* ===== FAVORITES ===== */
+.fav-btn{position:absolute;top:7px;right:7px;background:rgba(255,255,255,.92);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:transform .15s;z-index:3;box-shadow:0 2px 8px rgba(0,0,0,.13)}
+.fav-btn:hover{transform:scale(1.15)}
+.fav-btn.faved i{color:#ef4444}
+.fav-btn:not(.faved) i{color:var(--muted2)}
+.detail-action-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;margin-bottom:2px}
+.detail-fav-btn,.detail-share-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:7px 14px;font-size:.8rem;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.detail-fav-btn:hover,.detail-share-btn:hover{background:var(--gray);border-color:var(--border2)}
+.detail-fav-btn.faved{border-color:#ef4444;color:#ef4444}
+
+/* ===== VERIFIED BADGE ===== */
+.card-verified-badge{position:absolute;top:7px;left:7px;background:rgba(22,163,74,.9);color:#fff;padding:2px 7px;border-radius:7px;font-size:.63rem;font-weight:700;display:inline-flex;align-items:center;gap:3px;backdrop-filter:blur(4px);z-index:3;pointer-events:none}
+.host-verified-inline{display:inline-flex;align-items:center;gap:4px;background:#f0fdf4;color:var(--green-dk);padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;border:1px solid #bbf7d0}
+
+/* ===== SOCIAL PROOF ===== */
+.social-proof-pill{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:4px 10px;margin-top:4px}
+.social-proof-pill i{color:#f59e0b;font-size:.68rem}
+
+/* ===== CANCELLATION BADGE ===== */
+.cancel-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:.7rem;font-weight:600}
+.cancel-badge.flexible{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.cancel-badge.moderate{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.cancel-badge.strict{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+
+/* ===== EARNINGS CHART ===== */
+.earnings-chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:22px}
+.earnings-chart-card h3{font-size:.98rem;font-weight:700;margin-bottom:2px}
+.earnings-chart-card .chart-sub{font-size:.76rem;color:var(--muted);margin-bottom:14px}
+.bar-chart-wrap{display:flex;align-items:flex-end;gap:6px;height:100px;padding-bottom:24px;position:relative;border-bottom:2px solid var(--border2)}
+.bar-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;height:100%}
+.bar-fill{width:100%;background:linear-gradient(180deg,var(--green-lt),var(--green));border-radius:4px 4px 0 0;min-height:3px;transition:height .55s cubic-bezier(.4,0,.2,1);position:absolute;bottom:0}
+.bar-fill:hover{opacity:.82}
+.bar-month{font-size:.62rem;color:var(--muted);position:absolute;bottom:-20px;white-space:nowrap}
+.bar-amount{font-size:.61rem;font-weight:700;color:var(--green-dk);position:absolute;top:-17px;white-space:nowrap}
+.earnings-total-row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.earnings-stat{background:var(--gray);border-radius:10px;padding:12px 16px;flex:1;min-width:90px}
+.earnings-stat .eval{font-size:1.25rem;font-weight:800;color:var(--green-dk)}
+.earnings-stat .elbl{font-size:.7rem;color:var(--muted)}
+
+/* ===== PRICE FILTER ===== */
+.price-filter-row{padding:10px 14px 13px;border-bottom:1px solid var(--border);background:#fff}
+.price-filter-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.price-filter-top label{font-size:.75rem;color:var(--muted)}
+.price-filter-top span{font-size:.75rem;font-weight:600;color:var(--text)}
+input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:pointer;height:4px}
+
+/* ===== DYNAMIC PRICING ===== */
+.dyn-pricing-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 16px;margin-top:12px}
+.dyn-pricing-box h4{font-size:.84rem;font-weight:700;color:#92400e;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+
+/* ===== MEDIA — hamburger ===== */
+@media(max-width:780px){
+  .nav-links{display:none!important}
+  .nav-hamburger{display:flex!important}
+  .nav-search{max-width:150px}
+}
+
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo" onclick="showPage('home')">🚗 DriveStay</div>
+  <div class="nav-logo" onclick="showPage('home')"><i class="fa-solid fa-car" style="color:var(--green)"></i> DriveStay</div>
   <div class="nav-search">
-    <span class="nav-search-icon">🔍</span>
-    <input type="text" id="navSearch" placeholder="Search city or address..." oninput="filterListings()"/>
+    <span class="nav-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+    <input type="text" id="navSearch" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off"/>
+    <div class="autocomplete-dropdown hidden" id="acDrop"></div>
   </div>
+  <button class="nav-hamburger" id="navBurger" onclick="toggleMobileMenu()" aria-label="Menu"><i class="fa-solid fa-bars" id="burgerIcon"></i></button>
   <div class="nav-links">
     <button class="btn-ghost" id="btnBrowse" onclick="showPage('browse')">Browse</button>
     <button class="btn-ghost" id="btnHowItWorks" onclick="showPage('legal')">How It Works</button>
@@ -669,6 +1027,17 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <button class="btn-ghost hidden" id="btnLogout" onclick="logout()">Log Out</button>
   </div>
 </nav>
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="navMobileMenu">
+  <button class="btn-ghost" onclick="showPage('browse');closeMobileMenu()"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px;color:var(--muted)"></i> Browse Spaces</button>
+  <button class="btn-ghost" onclick="showPage('legal');closeMobileMenu()"><i class="fa-solid fa-circle-question" style="margin-right:6px;color:var(--muted)"></i> How It Works</button>
+  <button class="btn-outline" onclick="requireAuth('host');closeMobileMenu()"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List Your Space</button>
+  <hr style="border:none;border-top:1px solid var(--border);margin:4px 0"/>
+  <button class="btn-ghost" id="mobileLoginBtn" onclick="openAuth('login');closeMobileMenu()"><i class="fa-solid fa-right-to-bracket" style="margin-right:6px;color:var(--muted)"></i> Log In</button>
+  <button class="btn-primary" id="mobileSignupBtn" onclick="openAuth('register');closeMobileMenu()"><i class="fa-solid fa-user-plus" style="margin-right:6px"></i> Sign Up</button>
+  <button class="btn-primary hidden" id="mobileDashBtn" onclick="showPage('dashboard');closeMobileMenu()"><i class="fa-solid fa-gauge" style="margin-right:6px"></i> My Account</button>
+  <button class="btn-ghost hidden" id="mobileLogoutBtn" onclick="logout();closeMobileMenu()"><i class="fa-solid fa-right-from-bracket" style="margin-right:6px;color:var(--muted)"></i> Log Out</button>
+</div>
 
 <!-- ===== HOME ===== -->
 <div class="page active" id="page-home">
@@ -719,7 +1088,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <span class="trust-badge"><i class="fa-solid fa-tag"></i> Only 10% service fee — lowest in the market</span>
     <span class="trust-badge"><i class="fa-solid fa-bolt"></i> List your space in 5 minutes</span>
     <span class="trust-badge"><i class="fa-solid fa-earth-americas"></i> 340+ cities nationwide</span>
-    <span class="trust-badge"><i class="fa-solid fa-star"></i> 4.9★ avg host rating</span>
+    <span class="trust-badge"><i class="fa-solid fa-star"></i> 4.9 avg host rating</span>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-n">2,400+</div><div class="stat-l">Spaces Listed</div></div>
@@ -894,6 +1263,10 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         <button class="filter-chip" onclick="setFilter('outdoor_shower',this)"><i class="fa-solid fa-shower"></i> Outdoor Shower</button>
         <button class="filter-chip" onclick="setFilter('bathroom',this)"><i class="fa-solid fa-toilet"></i> Bathroom</button>
       </div>
+      <div class="price-filter-row">
+        <div class="price-filter-top"><label><i class="fa-solid fa-dollar-sign" style="margin-right:4px"></i> Max price / night</label><span id="priceFilterVal">Any price</span></div>
+        <input type="range" class="price-slider" id="priceSlider" min="10" max="500" value="500" step="5" oninput="onPriceSlider(this)"/>
+      </div>
       <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
         <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
         <select id="browseSort" onchange="sortListings()" style="font-size:.8rem;padding:4px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;cursor:pointer">
@@ -910,14 +1283,14 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
       <div id="map"></div>
       <div class="venue-toggles">
         <h4><i class="fa-solid fa-map-location-dot"></i> Show on Map</h4>
-        <button class="venue-toggle" data-type="concert" onclick="toggleVenue('concert',this)">🎵 Music Venues</button>
-        <button class="venue-toggle" data-type="stadium" onclick="toggleVenue('stadium',this)">🏟 Stadiums</button>
-        <button class="venue-toggle" data-type="arena" onclick="toggleVenue('arena',this)">🏀 Arenas</button>
-        <button class="venue-toggle" data-type="poi" onclick="toggleVenue('poi',this)">🏙 Downtown</button>
-        <button class="venue-toggle" data-type="park" onclick="toggleVenue('park',this)">🌳 Parks & Museums</button>
-        <button class="venue-toggle" data-type="airport" onclick="toggleVenue('airport',this)">✈️ Airports</button>
+        <button class="venue-toggle" data-type="concert" onclick="toggleVenue('concert',this)"><i class="fa-solid fa-music"></i> Music Venues</button>
+        <button class="venue-toggle" data-type="stadium" onclick="toggleVenue('stadium',this)"><i class="fa-solid fa-futbol"></i> Stadiums</button>
+        <button class="venue-toggle" data-type="arena" onclick="toggleVenue('arena',this)"><i class="fa-solid fa-basketball"></i> Arenas</button>
+        <button class="venue-toggle" data-type="poi" onclick="toggleVenue('poi',this)"><i class="fa-solid fa-city"></i> Downtown</button>
+        <button class="venue-toggle" data-type="park" onclick="toggleVenue('park',this)"><i class="fa-solid fa-tree"></i> Parks & Museums</button>
+        <button class="venue-toggle" data-type="airport" onclick="toggleVenue('airport',this)"><i class="fa-solid fa-plane-departure"></i> Airports</button>
       </div>
-      <button class="map-locate-btn" onclick="locateMe()">📍 Near Me</button>
+      <button class="map-locate-btn" onclick="locateMe()"><i class="fa-solid fa-location-crosshairs"></i> Near Me</button>
     </div>
   </div>
 </div>
@@ -930,6 +1303,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <div class="detail-hero" id="detailEmoji"><i class="fa-solid fa-car" style="font-size:4rem;color:var(--muted)"></i></div>
     <div class="detail-title" id="detailTitle"></div>
     <div class="detail-meta" id="detailMeta"></div>
+    <div class="detail-action-row" id="detailActionRow"></div>
     <div class="detail-body">
       <div>
         <div class="detail-section">
@@ -977,7 +1351,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
           <button class="book-btn" id="bookBtn" onclick="bookNow()" disabled>Select dates to book</button>
           <div class="booking-note">You won't be charged yet. Review before confirming.</div>
           <div style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:8px;background:#f8fafc;border-radius:8px;line-height:1.5">
-            📋 <strong>Cancellation:</strong> Full refund if cancelled 48+ hrs before check-in. 50% refund 24–48 hrs. No refund under 24 hrs.
+            <i class="fa-solid fa-clipboard-list" style="color:var(--green);margin-right:4px"></i> <strong>Cancellation:</strong> Full refund if cancelled 48+ hrs before check-in. 50% refund 24–48 hrs. No refund under 24 hrs.
           </div>
         </div>
       </div>
@@ -988,7 +1362,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 <!-- ===== HOST ===== -->
 <div class="page" id="page-host">
   <div class="host-wrap">
-    <h1>List Your Space 🏠</h1>
+    <h1><i class="fa-solid fa-house-chimney" style="color:var(--green);margin-right:8px"></i> List Your Space</h1>
     <p class="subtitle">Turn your idle driveway into extra income. Setup takes about 5 minutes.</p>
     <p style="font-size:.75rem;color:var(--muted);margin-bottom:24px"><span style="color:var(--red)">*</span> Required fields</p>
     <form id="hostForm" onsubmit="submitListing(event)">
@@ -1021,22 +1395,52 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         <div class="geocode-status" id="geocodeStatus"></div>
         <div class="form-row single"><div class="form-group"><label>Emoji Icon</label>
           <select id="lEmoji">
-            <option value="🏠">🏠 House</option><option value="🏡">🏡 House + Garden</option>
-            <option value="🏢">🏢 Building</option><option value="🅿️">🅿️ Parking</option>
-            <option value="🚗">🚗 Car</option><option value="🌳">🌳 Outdoor</option>
+            <option value="house">House</option><option value="house_garden">House + Garden</option>
+            <option value="building">Building</option><option value="🅿️">🅿️ Parking</option>
+            <option value="car">Car</option><option value="outdoor">Outdoor</option>
           </select>
         </div></div>
       </div>
       <div class="form-section">
-        <h2>💰 Pricing</h2>
+        <h2><i class="fa-solid fa-dollar-sign" style="color:var(--green)"></i> Pricing</h2>
         <div class="form-row">
           <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required/></div>
           <div class="form-group"><label>Weekly Rate ($, optional)</label><input type="number" id="lPriceWeek" min="0" placeholder="Auto: 80% of nightly x7"/></div>
         </div>
         <div class="form-row single"><div class="form-group"><label>Monthly Rate ($, optional)</label><input type="number" id="lPriceMonth" min="0" placeholder="Auto: 60% of nightly x30"/></div></div>
+        <div class="dyn-pricing-box">
+          <h4><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Event / Surge Pricing <span style="font-weight:400;font-size:.78rem;color:var(--muted)">(optional)</span></h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price Multiplier for Events</label>
+              <select id="lEventMultiplier">
+                <option value="1">No surge (1×)</option>
+                <option value="1.25">Minor event nearby (1.25×)</option>
+                <option value="1.5">Major event (1.5×)</option>
+                <option value="2">Big game / festival (2×)</option>
+                <option value="3">Super Bowl / mega event (3×)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Event Date Range</label>
+              <input type="text" id="lEventRange" placeholder="e.g. Jul 4 – Jul 6, 2026"/>
+            </div>
+          </div>
+          <p style="font-size:.75rem;color:var(--muted);margin-top:2px"><i class="fa-solid fa-circle-info" style="margin-right:4px"></i>Guests will see the adjusted price automatically during your event window.</p>
+        </div>
+        <div class="form-row" style="margin-top:14px">
+          <div class="form-group">
+            <label>Cancellation Policy</label>
+            <select id="lCancelPolicy">
+              <option value="flexible">Flexible — Full refund 48h+ before check-in</option>
+              <option value="moderate">Moderate — Full refund 5 days before check-in</option>
+              <option value="strict">Strict — 50% refund up to 1 week before check-in</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div class="form-section">
-        <h2>✅ Amenities</h2>
+        <h2><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Amenities</h2>
         <div class="check-grid">
           <label class="check-item"><input type="checkbox" id="lWifi"/> WiFi Access</label>
           <label class="check-item"><input type="checkbox" id="lDump"/> Dump Station</label>
@@ -1055,12 +1459,12 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         </div>
       </div>
       <div class="form-section">
-        <h2>⚡ Instant Book</h2>
+        <h2><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Instant Book</h2>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">With Instant Book enabled, guests can reserve immediately without needing your approval. Listings with Instant Book get priority placement in search results.</p>
         <label class="check-item" style="font-size:.9rem"><input type="checkbox" id="lInstantBook"/> Enable Instant Book for this listing</label>
       </div>
       <div class="form-section">
-        <h2>📐 Space Dimensions</h2>
+        <h2><i class="fa-solid fa-ruler-combined" style="color:var(--blue)"></i> Space Dimensions</h2>
         <div class="form-row">
           <div class="form-group"><label>Length (ft)</label><input type="number" id="lLen" placeholder="e.g. 25"/></div>
           <div class="form-group"><label>Width (ft)</label><input type="number" id="lWid" placeholder="e.g. 12"/></div>
@@ -1082,7 +1486,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         </div></div>
       </div>
       <div class="form-section">
-        <h2>🛡️ Host Insurance (Required)</h2>
+        <h2><i class="fa-solid fa-shield-halved" style="color:var(--blue)"></i> Host Insurance (Required)</h2>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Hosts must carry short-term rental insurance via <a href="https://www.thimble.com" target="_blank" style="color:var(--green)">Thimble.com</a> or equivalent.</p>
         <div class="form-row">
           <div class="form-group"><label>Insurance Provider</label><input type="text" id="lInsProvider" placeholder="e.g. Thimble"/></div>
@@ -1091,13 +1495,13 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         <div class="form-row single"><div class="form-group"><label>Policy Expiry Date</label><input type="date" id="lInsExpiry"/></div></div>
       </div>
       <div class="form-section">
-        <h2>📋 House Rules</h2>
+        <h2><i class="fa-solid fa-list-check" style="color:var(--muted)"></i> House Rules</h2>
         <div class="form-group"><label>Rules (one per line)</label>
           <textarea id="lRules" placeholder="No overnight parties&#10;Gate closes at 11pm&#10;No smoking on premises"></textarea>
         </div>
       </div>
       <div class="form-section">
-        <h2>📸 Listing Photos (up to 5)</h2>
+        <h2><i class="fa-solid fa-images" style="color:var(--purple)"></i> Listing Photos (up to 5)</h2>
         <div class="photo-upload-area" onclick="document.getElementById('listingPhotosInput').click()">
           <div style="font-size:2rem;margin-bottom:8px"><i class="fa-solid fa-camera"></i></div>
           <p style="font-weight:600">Click to add photos</p>
@@ -1114,7 +1518,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 <!-- ===== CONFIRM ===== -->
 <div class="page" id="page-confirm">
   <div class="confirm-wrap">
-    <div class="confirm-icon">🎉</div>
+    <div class="confirm-icon"><i class="fa-solid fa-circle-check" style="font-size:3rem;color:var(--green)"></i></div>
     <h1>You're All Set!</h1>
     <p id="confirmMsg">Your booking has been confirmed. The host has been notified and you'll receive a confirmation email shortly.</p>
     <div class="confirm-detail" id="confirmDetail"></div>
@@ -1132,7 +1536,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <div class="profile-card">
       <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarInput').click()" title="Click to change photo">
         <span id="profileAvatarInitial">?</span>
-        <div class="avatar-overlay">📷<br>Change<br>Photo</div>
+        <div class="avatar-overlay"><i class="fa-solid fa-camera"></i><br>Change<br>Photo</div>
       </div>
       <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar(this)"/>
       <div class="profile-info">
@@ -1144,7 +1548,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
         </div>
         <p id="profileEmail" style="font-size:.85rem;color:var(--muted)"></p>
         <p style="font-size:.72rem;color:var(--muted);margin-top:2px">Click name or photo to edit</p>
-        <div class="verify-badge unverified" id="verifyBadge" onclick="openVerifyModal()">⚠️ Identity Not Verified — Click to Verify</div>
+        <div class="verify-badge unverified" id="verifyBadge" onclick="openVerifyModal()"><i class="fa-solid fa-triangle-exclamation"></i> Identity Not Verified — Click to Verify</div>
       </div>
     </div>
     <div class="dash-tabs">
@@ -1152,6 +1556,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
       <button class="dash-tab" onclick="switchDashTab('listings',this)">My Listings</button>
       <button class="dash-tab" onclick="switchDashTab('hosting',this)">Hosting</button>
       <button class="dash-tab" onclick="switchDashTab('messages',this)">Messages</button>
+      <button class="dash-tab" onclick="switchDashTab('saved',this)"><i class="fa-solid fa-heart" style="color:#ef4444;margin-right:4px"></i> Saved</button>
     </div>
     <div class="dash-panel active" id="dashBookings">
       <div class="loader" id="bookingsLoader">Loading bookings...</div>
@@ -1163,9 +1568,17 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
       <div id="myListingsList"></div>
     </div>
     <div class="dash-panel" id="dashHosting">
+      <div class="earnings-chart-card" id="earningsChartCard" style="display:none">
+        <h3><i class="fa-solid fa-chart-column" style="color:var(--green);margin-right:6px"></i> Earnings Overview</h3>
+        <div class="chart-sub">Revenue from the last 6 months</div>
+        <div class="bar-chart-wrap" id="earningsBarChart"></div>
+        <div class="earnings-total-row" id="earningsTotals"></div>
+      </div>
+      <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px;color:var(--muted)"><i class="fa-solid fa-calendar-check" style="margin-right:6px"></i> Guest Bookings</h3>
       <div class="loader" id="hostingLoader">Loading guest bookings...</div>
       <div id="hostingList"></div>
     </div>
+    <div class="dash-panel" id="dashSaved"><div id="savedListEl"></div></div>
     <div class="dash-panel" id="dashMessages">
       <div class="msg-layout">
         <div class="msg-sidebar" id="msgSidebar">
@@ -1309,10 +1722,10 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <div class="auth-panel" id="authRegister">
       <div class="role-row">
         <div class="role-card active" onclick="selectRole('guest',this)">
-          <div class="role-icon">🚗</div><div class="role-name">Guest</div><div class="role-desc">Find &amp; book parking</div>
+          <div class="role-icon"><i class="fa-solid fa-car"></i></div><div class="role-name">Guest</div><div class="role-desc">Find &amp; book parking</div>
         </div>
         <div class="role-card" onclick="selectRole('host',this)">
-          <div class="role-icon">🏠</div><div class="role-name">Host</div><div class="role-desc">List your driveway</div>
+          <div class="role-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="role-name">Host</div><div class="role-desc">List your driveway</div>
         </div>
       </div>
       <div class="field-group"><label>Full Name</label><input type="text" id="regName" placeholder="Jane Smith" autocomplete="name"/></div>
@@ -1338,7 +1751,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <div class="verify-step active" id="vs0">
       <h3 style="margin-bottom:12px;font-size:1rem">Step 1: Driver's License</h3>
       <div class="upload-area" onclick="document.getElementById('dlFile').click()">
-        <div class="upload-icon">📄</div>
+        <div class="upload-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
         <p style="font-weight:600">Click to upload DL photo</p>
         <p style="font-size:.8rem;color:var(--muted)">JPG, PNG or PDF — front side</p>
       </div>
@@ -1375,7 +1788,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
       <div class="field-group"><label>Policy Expiry Date</label><input type="date" id="insExpiry"/></div>
       <div style="display:flex;gap:8px">
         <button class="btn-outline" onclick="verifyStep(1)" style="flex:1;padding:11px;border-radius:10px;font-weight:600">&larr; Back</button>
-        <button class="auth-submit" onclick="submitVerification()" style="flex:2">Submit Verification ✓</button>
+        <button class="auth-submit" onclick="submitVerification()" style="flex:2"><i class="fa-solid fa-check" style="margin-right:6px"></i>Submit Verification</button>
       </div>
     </div>
   </div>
@@ -1389,7 +1802,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <p class="modal-sub" id="payModalSub">Secure checkout via Stripe</p>
     <div id="stripe-payment-element" style="margin:20px 0"></div>
     <button class="pay-btn" id="payBtn" onclick="confirmStripePayment()">Pay Now</button>
-    <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:12px">🔒 Secured by Stripe. DriveStay never stores your card details.</p>
+    <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:12px"><i class="fa-solid fa-lock" style="margin-right:4px"></i> Secured by Stripe. DriveStay never stores your card details.</p>
   </div>
 </div>
 
@@ -1397,7 +1810,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 <div class="modal-overlay hidden" id="reviewModal">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Leave a Review" style="max-width:440px">
     <button class="modal-close" onclick="closeReviewModal()">&#10005;</button>
-    <h2>Leave a Review ★</h2>
+    <h2><i class="fa-solid fa-star" style="color:#f59e0b"></i> Leave a Review</h2>
     <p class="modal-sub">How was your stay?</p>
     <div class="star-picker" id="starPicker" role="radiogroup" aria-label="Rating">
       <span onclick="setReviewStar(1)" tabindex="0" role="radio" aria-label="1 star" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(1)">★</span>
@@ -1431,9 +1844,9 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
   </nav>
   <div style="margin:20px 0;display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
     <span style="font-size:.78rem;color:#475569">🔒 Bookings Protected</span>
-    <span style="font-size:.78rem;color:#475569">💳 Payments via Stripe</span>
-    <span style="font-size:.78rem;color:#475569">✅ Identity Verified Guests</span>
-    <span style="font-size:.78rem;color:#475569">💰 10% Service Fee</span>
+    <span style="font-size:.78rem;color:#475569"><i class="fa-brands fa-stripe" style="margin-right:4px"></i> Payments via Stripe</span>
+    <span style="font-size:.78rem;color:#475569"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-right:4px"></i> Identity Verified Guests</span>
+    <span style="font-size:.78rem;color:#475569"><i class="fa-solid fa-hand-holding-dollar" style="color:var(--green);margin-right:4px"></i> 10% Service Fee</span>
   </div>
   <p style="color:#64748b">&copy; 2026 DriveStay Inc. All rights reserved.</p>
   <p style="color:#475569;font-size:.75rem;margin-top:8px">Stripe test mode — payments are simulated in this demo.</p>
@@ -1725,6 +2138,11 @@ function updateNavAuth() {
   document.getElementById('btnSignup').classList.toggle('hidden', in_);
   document.getElementById('btnUser').classList.toggle('hidden', !in_);
   document.getElementById('btnLogout').classList.toggle('hidden', !in_);
+  // Mobile menu sync
+  document.getElementById('mobileLoginBtn')?.classList.toggle('hidden', in_);
+  document.getElementById('mobileSignupBtn')?.classList.toggle('hidden', in_);
+  document.getElementById('mobileDashBtn')?.classList.toggle('hidden', !in_);
+  document.getElementById('mobileLogoutBtn')?.classList.toggle('hidden', !in_);
 }
 
 // ============================================================
@@ -1829,7 +2247,15 @@ async function loadListings() {
     applyFilter(); return;
   }
   const listEl = document.getElementById('listingsList');
-  if (listEl) listEl.innerHTML = '<div class="loader">Finding spaces near you...</div>';
+  if (listEl) listEl.innerHTML = [1,2,3,4].map(() => `
+    <div class="skeleton-row">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line" style="width:70%"></div>
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line xshort"></div>
+      </div>
+    </div>`).join('');
   try {
     const { data, error } = await db.from('listings').select('*').eq('status','active').order('created_at',{ascending:false});
     allListings = (!error && data?.length) ? data : SAMPLE_LISTINGS;
@@ -1840,10 +2266,12 @@ async function loadListings() {
 
 function applyFilter() {
   const q = (document.getElementById('navSearch')?.value || '').toLowerCase();
+  const maxP = Number(document.getElementById('priceSlider')?.value || 500);
   filteredListings = allListings.filter(l => {
     const mf = currentFilter === 'all' || !!l[currentFilter];
     const ms = !q || (l.title||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q) || (l.state||'').toLowerCase().includes(q);
-    return mf && ms;
+    const mp = maxP >= 500 || Number(l.price_nightly||0) <= maxP;
+    return mf && ms && mp;
   });
 
   // Sort listings based on select menu
@@ -1874,44 +2302,53 @@ function setFilter(f, el) {
   applyFilter();
 }
 
+function buildListingCard(l) {
+  const faved = _favIds.has(l.id);
+  const photoHtml = l.photos?.length
+    ? `<img src="${l.photos[0]}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0" alt="${escapeHtml(l.title)} parking"/>`
+    : '<i class="fa-solid fa-car" style="font-size:1.6rem;color:var(--muted)"></i>';
+  return `<div class="listing-card" data-id="${l.id}" onclick="openDetail('${l.id}')" style="position:relative">
+    ${l.verified ? '<span class="card-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>' : ''}
+    <button class="fav-btn ${faved?'faved':''}" data-lid="${l.id}" onclick="toggleFav('${l.id}',event)" title="${faved?'Remove from saved':'Save'}"><i class="fa-${faved?'solid':'regular'} fa-heart"></i></button>
+    <div class="listing-emoji">${photoHtml}</div>
+    <div class="listing-info">
+      <div class="listing-title">${escapeHtml(l.title)}</div>
+      <div class="listing-loc"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(l.city)}, ${escapeHtml(l.state)}</div>
+      <div class="listing-tags">
+        ${l.covered?'<span class="tag"><i class="fa-solid fa-warehouse"></i> Covered</span>':''}
+        ${l.electric?'<span class="tag"><i class="fa-solid fa-charging-station"></i> EV</span>':''}
+        ${l.wifi?'<span class="tag"><i class="fa-solid fa-wifi"></i> WiFi</span>':''}
+        ${l.dump?'<span class="tag"><i class="fa-solid fa-recycle"></i> Dump</span>':''}
+        ${l.water?'<span class="tag"><i class="fa-solid fa-droplet"></i> Water</span>':''}
+        ${l.rv_friendly?'<span class="tag"><i class="fa-solid fa-van-shuttle"></i> RV OK</span>':''}
+        ${l.pets?'<span class="tag"><i class="fa-solid fa-paw"></i> Pets OK</span>':''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <span class="listing-price">$${l.price_nightly}/night</span>
+        ${l.price_monthly?`<span class="monthly-price">$${l.price_monthly}/mo</span>`:''}
+        ${l.rating?`<span class="listing-stars"><i class="fa-solid fa-star" style="color:#f59e0b;font-size:.7rem"></i> ${l.rating} (${l.review_count||0})</span>`:''}
+        ${l.pool?'<span class="tag"><i class="fa-solid fa-person-swimming"></i> Pool</span>':''}
+        ${l.spa?'<span class="tag"><i class="fa-solid fa-hot-tub-person"></i> Spa</span>':''}
+        ${l.sauna?'<span class="tag"><i class="fa-solid fa-fire"></i> Sauna</span>':''}
+        ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
+        ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
+        ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
+        ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderListings() {
   const el = document.getElementById('listingsList');
   const ct = document.getElementById('browseCount');
   if (!el) return;
-  ct.textContent = filteredListings.length + ' spaces available';
+  ct.textContent = filteredListings.length + ' space' + (filteredListings.length!==1?'s':'') + ' available';
   if (!filteredListings.length) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-circle-xmark"></i></div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
     return;
   }
-  el.innerHTML = filteredListings.map(l => `
-    <div class="listing-card" onclick="openDetail('${l.id}')">
-      <div class="listing-emoji">${l.photos?.length ? `<img src="${l.photos[0]}" style="width:64px;height:64px;border-radius:12px;object-fit:cover" alt="${escapeHtml(l.title)} parking space in ${escapeHtml(l.city)}, ${escapeHtml(l.state)}"/>` : '<i class="fa-solid fa-car" style="font-size:1.6rem;color:var(--muted)"></i>'}</div>
-      <div class="listing-info">
-        <div class="listing-title">${escapeHtml(l.title)}</div>
-        <div class="listing-loc"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(l.city)}, ${escapeHtml(l.state)}</div>
-        <div class="listing-tags">
-          ${l.covered?'<span class="tag"><i class="fa-solid fa-warehouse"></i> Covered</span>':''}
-          ${l.electric?'<span class="tag"><i class="fa-solid fa-charging-station"></i> EV</span>':''}
-          ${l.wifi?'<span class="tag"><i class="fa-solid fa-wifi"></i> WiFi</span>':''}
-          ${l.dump?'<span class="tag"><i class="fa-solid fa-recycle"></i> Dump</span>':''}
-          ${l.water?'<span class="tag"><i class="fa-solid fa-droplet"></i> Water</span>':''}
-          ${l.rv_friendly?'<span class="tag"><i class="fa-solid fa-van-shuttle"></i> RV OK</span>':''}
-          ${l.pets?'<span class="tag"><i class="fa-solid fa-paw"></i> Pets OK</span>':''}
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
-          <span class="listing-price">$${l.price_nightly}/night</span>
-          ${l.price_monthly?`<span class="monthly-price">$${l.price_monthly}/mo</span>`:''}
-          ${l.rating?`<span class="listing-stars"><i class="fa-solid fa-star" style="color:#f59e0b;font-size:.7rem"></i> ${l.rating} (${l.review_count||0})</span>`:''}
-          ${l.pool?'<span class="tag"><i class="fa-solid fa-person-swimming"></i> Pool</span>':''}
-          ${l.spa?'<span class="tag"><i class="fa-solid fa-hot-tub-person"></i> Spa</span>':''}
-          ${l.sauna?'<span class="tag"><i class="fa-solid fa-fire"></i> Sauna</span>':''}
-          ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
-          ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
-          ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-          ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''}
-        </div>
-      </div>
-    </div>`).join('');
+  el.innerHTML = filteredListings.map(l => buildListingCard(l)).join('');
 }
 
 // ============================================================
@@ -2105,7 +2542,7 @@ function openDetail(id) {
   const photoStrip = document.getElementById('detailPhotoStrip');
   const emojiHero  = document.getElementById('detailEmoji');
   if (l.photos?.length) {
-    photoStrip.innerHTML = l.photos.map(url => `<img src="${url}" alt="Space photo" loading="lazy"/>`).join('');
+    photoStrip.innerHTML = l.photos.map((url, i) => `<img src="${url}" alt="Space photo" loading="lazy" onclick="openLightbox(${JSON.stringify(l.photos)},${i})" style="cursor:pointer"/>`).join('');
     photoStrip.classList.remove('hidden');
     emojiHero.classList.add('hidden');
   } else {
@@ -2122,6 +2559,24 @@ function openDetail(id) {
     (l.length_ft ? `<span><i class="fa-solid fa-ruler-combined" style="margin-right:4px"></i>${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '');
   document.getElementById('detailDesc').textContent = l.description || 'No description provided.';
   document.getElementById('bkPrice').innerHTML = `$${l.price_nightly} <span>/ night</span>`;
+
+  // Action row: save + share + social proof
+  const faved = _favIds.has(l.id);
+  const cancelPolicy = l.cancel_policy || 'flexible';
+  const cancelLabels = {flexible:'Flexible', moderate:'Moderate', strict:'Strict'};
+  document.getElementById('detailActionRow').innerHTML =
+    `<button class="detail-fav-btn ${faved?'faved':''}" id="detailFavBtn" data-lid="${l.id}" onclick="toggleFav('${l.id}',event)">
+       <i class="fa-${faved?'solid':'regular'} fa-heart"></i> ${faved?'Saved':'Save'}
+     </button>
+     <button class="detail-share-btn" onclick="shareDetail('${l.id}',${JSON.stringify(l.title)})">
+       <i class="fa-solid fa-share-nodes"></i> Share
+     </button>
+     ${l.verified ? '<span class="host-verified-inline"><i class="fa-solid fa-circle-check"></i> Verified Host</span>' : ''}
+     <span class="cancel-badge ${cancelPolicy}"><i class="fa-solid fa-rotate-left"></i> ${cancelLabels[cancelPolicy]||'Flexible'} Cancellation</span>` +
+    '<br/>' + getSocialProof(l.id);
+
+  // Inject JSON-LD
+  injectListingJsonLD(l);
 
   const amenities = [
     {key:'wifi',icon:'<i class="fa-solid fa-wifi"></i>',label:'WiFi'},{key:'covered',icon:'<i class="fa-solid fa-warehouse"></i>',label:'Covered'},
@@ -2405,6 +2860,9 @@ async function submitListing(e) {
     price_nightly: parseInt(document.getElementById('lPriceNight').value) || 30,
     price_weekly: parseInt(document.getElementById('lPriceWeek').value) || null,
     price_monthly: parseInt(document.getElementById('lPriceMonth').value) || null,
+    event_multiplier: parseFloat(document.getElementById('lEventMultiplier')?.value || 1) || 1,
+    event_date_range: document.getElementById('lEventRange')?.value.trim() || null,
+    cancel_policy: document.getElementById('lCancelPolicy')?.value || 'flexible',
     wifi: document.getElementById('lWifi').checked,
     dump: document.getElementById('lDump').checked,
     water: document.getElementById('lWater').checked,
@@ -2609,7 +3067,7 @@ async function loadMyBookings() {
       const canComplete = b.status==='confirmed' && isPast;
       const canReview  = b.status==='completed';
       return `<div class="booking-row" style="flex-wrap:wrap">
-        <div class="booking-row-emoji">${b.listings?.emoji||'🏠'}</div>
+        <div class="booking-row-emoji"><i class="fa-solid fa-car" style="font-size:1.3rem;color:var(--muted)"></i></div>
         <div class="booking-row-info" style="flex:1">
           <div class="booking-row-title">${escapeHtml(b.listings?.title||'Space')}</div>
           <div class="booking-row-dates">${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''} · ${b.check_in} → ${b.check_out} (${b.nights} night${b.nights!==1?'s':''})</div>
@@ -2634,12 +3092,12 @@ async function loadMyListings() {
     const { data, error } = await db.from('listings').select('*').eq('host_id', currentUser.id).order('created_at',{ascending:false});
     loader.style.display = 'none';
     if (error || !data?.length) {
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">🏠</div><h3>No listings yet</h3><p>List your driveway and start earning!</p></div>';
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-house-chimney"></i></div><h3>No listings yet</h3><p>List your driveway and start earning!</p></div>';
       return;
     }
     list.innerHTML = data.map(l => `
       <div class="booking-row" style="flex-wrap:wrap">
-        <div class="booking-row-emoji">${l.photos?.length?`<img src="${l.photos[0]}" style="width:48px;height:48px;border-radius:10px;object-fit:cover" alt="${escapeHtml(l.title)}"/>`:escapeHtml(l.emoji||'🏠')}</div>
+        <div class="booking-row-emoji">${l.photos?.length?`<img src="${l.photos[0]}" style="width:48px;height:48px;border-radius:10px;object-fit:cover" alt="${escapeHtml(l.title)}"/>`:'<i class="fa-solid fa-car" style="color:var(--muted)"></i>'}</div>
         <div class="booking-row-info" style="flex:1">
           <div class="booking-row-title">${escapeHtml(l.title)}</div>
           <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · <i class="fa-solid fa-star" style="color:#f59e0b"></i> ${l.rating||'New'} (${l.review_count||0} reviews)</div>
@@ -2660,6 +3118,7 @@ function switchDashTab(tab, el) {
   document.getElementById('dash' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
   if (tab === 'messages' && currentUser && !_messagesLoaded) { _messagesLoaded = true; loadMessagesTab(); }
   if (tab === 'hosting' && currentUser) loadHostBookings();
+  if (tab === 'saved') renderSavedListings();
 }
 
 // ============================================================
@@ -2778,7 +3237,10 @@ async function editListing(listingId) {
     document.getElementById('lLat').value = l.lat || '';
     document.getElementById('lLng').value = l.lng || '';
     document.getElementById('lRules').value = (l.rules || []).join('\n');
-    document.getElementById('lEmoji').value = l.emoji || '🏠';
+    document.getElementById('lEmoji').value = l.emoji || '';
+    if (document.getElementById('lEventMultiplier')) document.getElementById('lEventMultiplier').value = l.event_multiplier || '1';
+    if (document.getElementById('lEventRange')) document.getElementById('lEventRange').value = l.event_date_range || '';
+    if (document.getElementById('lCancelPolicy')) document.getElementById('lCancelPolicy').value = l.cancel_policy || 'flexible';
     document.getElementById('lLen').value = l.length_ft || '';
     document.getElementById('lWid').value = l.width_ft || '';
     document.getElementById('lHgt').value = l.height_ft || '';
@@ -2818,7 +3280,7 @@ async function loadHostBookings() {
     const ids = (myLs || []).map(l => l.id);
     if (!ids.length) {
       loader.style.display = 'none';
-      list.innerHTML = `<div class="empty-state"><div class="empty-icon">🏠</div><h3>No listings yet</h3><p>Create a listing first to see guest bookings here.</p><button class="btn-primary" onclick="requireAuth('host')" style="margin-top:16px;padding:10px 24px;border-radius:8px">Create Listing</button></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-house-chimney"></i></div><h3>No listings yet</h3><p>Create a listing first to see guest bookings here.</p><button class="btn-primary" onclick="requireAuth('host')" style="margin-top:16px;padding:10px 24px;border-radius:8px">Create Listing</button></div>`;
       return;
     }
     const { data, error } = await db.from('bookings')
@@ -2827,9 +3289,10 @@ async function loadHostBookings() {
       .order('created_at', { ascending: false });
     loader.style.display = 'none';
     if (error || !data?.length) {
-      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><h3>No guest bookings yet</h3><p>Your bookings will appear here when guests book your spaces.</p></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-calendar-days"></i></div><h3>No guest bookings yet</h3><p>Your bookings will appear here when guests book your spaces.</p></div>`;
       return;
     }
+    renderEarningsChart(data);
     // Try to get guest names
     const guestIds = [...new Set(data.map(b => b.guest_id))];
     let guestMap = {};
@@ -2847,9 +3310,9 @@ async function loadHostBookings() {
       const canComplete = b.status === 'confirmed' && isPast;
       return `<div class="hosting-booking-card">
         <div class="hosting-booking-header">
-          <span style="font-size:1.6rem">${b.listings?.emoji||'🏠'}</span>
+          <span style="font-size:1.3rem;display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--gray);border-radius:8px"><i class="fa-solid fa-car" style="color:var(--muted)"></i></span>
           <div>
-            <div class="hosting-guest-name">👤 ${escapeHtml(guest.name||guest.email||'Guest')}</div>
+            <div class="hosting-guest-name"><i class="fa-solid fa-user" style="margin-right:4px;color:var(--muted)"></i>${escapeHtml(guest.name||guest.email||'Guest')}</div>
             <div class="hosting-listing-name">${escapeHtml(b.listings?.title||'Listing')} · ${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''}</div>
           </div>
           <div style="margin-left:auto;text-align:right">
@@ -2857,7 +3320,7 @@ async function loadHostBookings() {
             <span class="status-badge status-${b.status||'pending'}" style="margin-top:4px;display:inline-block">${b.status||'pending'}</span>
           </div>
         </div>
-        <div style="font-size:.82rem;color:var(--muted);margin-bottom:8px">📅 ${b.check_in} → ${b.check_out} (${b.nights} night${b.nights!==1?'s':''})</div>
+        <div style="font-size:.82rem;color:var(--muted);margin-bottom:8px"><i class="fa-regular fa-calendar" style="margin-right:4px"></i>${b.check_in} → ${b.check_out} (${b.nights} night${b.nights!==1?'s':''})</div>
         <div class="booking-row-actions">
           ${canAccept  ? `<button class="btn-sm btn-sm-green" onclick="hostUpdateBooking('${b.id}','confirmed',this)">✓ Accept</button>` : ''}
           ${canDecline ? `<button class="btn-sm btn-sm-red"   onclick="hostUpdateBooking('${b.id}','cancelled',this)">✕ Decline</button>` : ''}
@@ -3073,7 +3536,7 @@ async function loadMessagesTab() {
 
     sidebar.innerHTML = _msgConvos.map(c => `
       <div class="convo-item" id="convo-${c.bookingId}" onclick="selectConversation('${c.bookingId}')">
-        <div class="convo-name">${escapeHtml(c.emoji||'🏠')} ${escapeHtml(c.title)}</div>
+        <div class="convo-name">${escapeHtml(c.emoji||'')} ${escapeHtml(c.title)}</div>
         <div class="convo-preview">${lastMsgs[c.bookingId] ? escapeHtml(lastMsgs[c.bookingId]) : (c.role==='guest'?'You are the guest':'You are the host')}</div>
       </div>`).join('');
   } catch(e) {
@@ -3306,6 +3769,267 @@ function showToast(msg, type='info') {
     }
   });
 })();
+// ============================================================
+// MOBILE MENU
+// ============================================================
+function toggleMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const icon = document.getElementById('burgerIcon');
+  const open = menu.classList.toggle('open');
+  if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+}
+function closeMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const icon = document.getElementById('burgerIcon');
+  menu?.classList.remove('open');
+  if (icon) icon.className = 'fa-solid fa-bars';
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('navMobileMenu');
+  const burger = document.getElementById('navBurger');
+  if (menu?.classList.contains('open') && !menu.contains(e.target) && !burger?.contains(e.target)) closeMobileMenu();
+});
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+let _lbPhotos = [], _lbIdx = 0;
+function openLightbox(photos, idx) {
+  _lbPhotos = photos; _lbIdx = idx;
+  const overlay = document.getElementById('lightboxOvl');
+  overlay.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  _lbRender();
+  document._lbKey = e => {
+    if (e.key==='ArrowLeft') lbNav(-1);
+    else if (e.key==='ArrowRight') lbNav(1);
+    else if (e.key==='Escape') closeLightbox();
+  };
+  document.addEventListener('keydown', document._lbKey);
+}
+function _lbRender() {
+  document.getElementById('lightboxImg').src = _lbPhotos[_lbIdx];
+  const multi = _lbPhotos.length > 1;
+  const prev = document.getElementById('lbPrev');
+  const next = document.getElementById('lbNext');
+  const ctr  = document.getElementById('lbCounter');
+  prev.style.display = multi ? 'flex' : 'none';
+  next.style.display = multi ? 'flex' : 'none';
+  ctr.style.display  = multi ? 'block' : 'none';
+  if (multi) ctr.textContent = `${_lbIdx+1} / ${_lbPhotos.length}`;
+}
+function closeLightbox() {
+  document.getElementById('lightboxOvl').classList.add('hidden');
+  document.body.style.overflow = '';
+  if (document._lbKey) document.removeEventListener('keydown', document._lbKey);
+}
+function lbNav(dir) {
+  _lbIdx = (_lbIdx + dir + _lbPhotos.length) % _lbPhotos.length;
+  _lbRender();
+}
+function lbBgClick(e) { if (e.target === document.getElementById('lightboxOvl')) closeLightbox(); }
+
+// ============================================================
+// SEARCH AUTOCOMPLETE
+// ============================================================
+let _acTimer = null;
+function onNavInput() {
+  filterListings();
+  const q = (document.getElementById('navSearch')?.value || '').trim();
+  clearTimeout(_acTimer);
+  const dd = document.getElementById('acDrop');
+  if (q.length < 3) { dd?.classList.add('hidden'); return; }
+  _acTimer = setTimeout(() => fetchAC(q), 380);
+}
+function onNavKey(e) {
+  const dd = document.getElementById('acDrop');
+  if (!dd || dd.classList.contains('hidden')) return;
+  const items = dd.querySelectorAll('.autocomplete-item');
+  const active = dd.querySelector('.ac-active');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = active ? (active.nextElementSibling || items[0]) : items[0];
+    active?.classList.remove('ac-active'); next?.classList.add('ac-active');
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = active ? (active.previousElementSibling || items[items.length-1]) : items[items.length-1];
+    active?.classList.remove('ac-active'); prev?.classList.add('ac-active');
+  } else if (e.key === 'Enter') {
+    if (active) { e.preventDefault(); active.click(); }
+  } else if (e.key === 'Escape') {
+    dd.classList.add('hidden');
+  }
+}
+async function fetchAC(q) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=us`);
+    const data = await res.json();
+    const dd = document.getElementById('acDrop');
+    if (!dd || !data?.length) { dd?.classList.add('hidden'); return; }
+    dd.innerHTML = data.map(d => {
+      const parts = d.display_name.split(',');
+      const name = parts.slice(0,3).join(',').trim();
+      const city = parts[0].trim();
+      return `<div class="autocomplete-item" onclick="selectAC(this,'${escapeHtml(city)}')"><i class="fa-solid fa-location-dot"></i>${escapeHtml(name)}</div>`;
+    }).join('');
+    dd.classList.remove('hidden');
+  } catch(e) {}
+}
+function selectAC(el, city) {
+  const inp = document.getElementById('navSearch');
+  if (inp) inp.value = city;
+  document.getElementById('acDrop')?.classList.add('hidden');
+  applyFilter();
+  if (!document.getElementById('page-browse')?.classList.contains('active')) showPage('browse');
+}
+document.addEventListener('click', e => {
+  if (e.target?.id !== 'navSearch') document.getElementById('acDrop')?.classList.add('hidden');
+});
+
+// ============================================================
+// FAVORITES / WISHLIST
+// ============================================================
+let _favIds = new Set(JSON.parse(localStorage.getItem('ds_favs') || '[]'));
+function _saveFavs() { try { localStorage.setItem('ds_favs', JSON.stringify([..._favIds])); } catch(e) {} }
+function toggleFav(id, e) {
+  e?.stopPropagation();
+  if (_favIds.has(id)) _favIds.delete(id); else _favIds.add(id);
+  _saveFavs();
+  const saved = _favIds.has(id);
+  // Update all fav buttons in listing cards
+  document.querySelectorAll(`.fav-btn[data-lid="${id}"]`).forEach(btn => {
+    btn.classList.toggle('faved', saved);
+    btn.querySelector('i').className = `fa-${saved?'solid':'regular'} fa-heart`;
+    btn.title = saved ? 'Remove from saved' : 'Save';
+  });
+  // Update detail action row button
+  const detailFav = document.getElementById('detailFavBtn');
+  if (detailFav?.dataset.lid === id) {
+    detailFav.classList.toggle('faved', saved);
+    detailFav.innerHTML = `<i class="fa-${saved?'solid':'regular'} fa-heart"></i> ${saved?'Saved':'Save'}`;
+  }
+  showToast(saved ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i> Saved to wishlist' : 'Removed from saved', saved ? 'success' : 'info');
+  // Refresh saved panel if active
+  const savedPanel = document.getElementById('dashSaved');
+  if (savedPanel?.classList.contains('active')) renderSavedListings();
+}
+function renderSavedListings() {
+  const el = document.getElementById('savedListEl');
+  if (!el) return;
+  const saved = allListings.filter(l => _favIds.has(l.id));
+  if (!saved.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-heart"></i></div><h3>No saved spaces yet</h3><p>Tap <i class="fa-regular fa-heart"></i> on any listing to save it here.</p></div>';
+    return;
+  }
+  el.innerHTML = saved.map(l => buildListingCard(l)).join('');
+}
+
+// ============================================================
+// PRICE FILTER
+// ============================================================
+function onPriceSlider(el) {
+  const val = Number(el.value);
+  const lbl = document.getElementById('priceFilterVal');
+  if (lbl) lbl.textContent = val >= 500 ? 'Any price' : `$${val}/night`;
+  applyFilter();
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareDetail(id, title) {
+  const url = window.location.origin + window.location.pathname + '#listing-' + id;
+  if (navigator.share) {
+    navigator.share({ title: 'DriveStay: ' + title, url }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(url).then(() => showToast('<i class="fa-solid fa-link"></i> Link copied!', 'success')).catch(() => showToast('Copy: ' + url, 'info'));
+  }
+}
+
+// ============================================================
+// SOCIAL PROOF
+// ============================================================
+function getSocialProof(id) {
+  let h = 0;
+  for (const c of String(id)) h = ((h << 5) - h) + c.charCodeAt(0);
+  const n = (Math.abs(h) % 17) + 4;
+  return `<span class="social-proof-pill"><i class="fa-solid fa-eye"></i> ${n} ${n===1?'person':'people'} viewing right now</span>`;
+}
+
+// ============================================================
+// EARNINGS CHART
+// ============================================================
+function renderEarningsChart(bookings) {
+  const card = document.getElementById('earningsChartCard');
+  const chartEl = document.getElementById('earningsBarChart');
+  const totalsEl = document.getElementById('earningsTotals');
+  if (!card || !chartEl) return;
+  const paid = (bookings||[]).filter(b => b.status==='completed' || b.status==='confirmed');
+  card.style.display = paid.length ? 'block' : 'none';
+  if (!paid.length) return;
+  const now = new Date();
+  const months = Array.from({length:6}, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth()-5+i, 1);
+    return { key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, lbl: d.toLocaleString('default',{month:'short'}), total: 0, n: 0 };
+  });
+  for (const b of paid) {
+    const mo = (b.check_in || b.created_at || '').slice(0,7);
+    const m = months.find(m => m.key === mo);
+    if (m) { m.total += Number(b.total_amount || b.total_cents || 0) / 100; m.n++; }
+  }
+  const maxVal = Math.max(...months.map(m => m.total), 1);
+  chartEl.innerHTML = months.map(m => {
+    const pct = (m.total / maxVal) * 100;
+    const label = m.total >= 1000 ? '$' + (m.total/1000).toFixed(1) + 'k' : m.total > 0 ? '$' + Math.round(m.total) : '';
+    return `<div class="bar-item"><div class="bar-fill" style="height:${Math.max(pct,2)}%">${label ? `<span class="bar-amount">${label}</span>` : ''}</div><span class="bar-month">${m.lbl}</span></div>`;
+  }).join('');
+  const totalRev = months.reduce((s,m) => s+m.total, 0);
+  const avgRev = totalRev / 6;
+  totalsEl.innerHTML = `
+    <div class="earnings-stat"><div class="eval">$${Math.round(totalRev).toLocaleString()}</div><div class="elbl">Last 6 months</div></div>
+    <div class="earnings-stat"><div class="eval">$${Math.round(avgRev).toLocaleString()}</div><div class="elbl">Monthly avg</div></div>
+    <div class="earnings-stat"><div class="eval">${paid.length}</div><div class="elbl">Paid bookings</div></div>`;
+}
+
+// ============================================================
+// PER-LISTING JSON-LD
+// ============================================================
+function injectListingJsonLD(l) {
+  document.getElementById('listing-ld')?.remove();
+  const s = document.createElement('script');
+  s.id = 'listing-ld'; s.type = 'application/ld+json';
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'ParkingFacility',
+    'name': l.title, 'description': l.description || '',
+    'address': { '@type': 'PostalAddress', 'addressLocality': l.city, 'addressRegion': l.state, 'addressCountry': 'US' },
+    'priceRange': '$' + l.price_nightly + '/night'
+  };
+  if (l.rating) schema['aggregateRating'] = { '@type': 'AggregateRating', 'ratingValue': Number(l.rating), 'reviewCount': Number(l.review_count)||1 };
+  s.textContent = JSON.stringify(schema);
+  document.head.appendChild(s);
+}
+
+// ============================================================
+// PWA SERVICE WORKER
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const sw = `const C='ds-v1';const P=['./'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(P))));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{if(resp.ok){const cl=resp.clone();caches.open(C).then(c=>c.put(e.request,cl));}return resp;})));});`;
+    const blob = new Blob([sw], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  });
+}
+
 </script>
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay hidden" id="lightboxOvl" onclick="lbBgClick(event)">
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Space photo"/>
+  <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+  <button class="lightbox-prev" id="lbPrev" onclick="lbNav(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="lightbox-next" id="lbNext" onclick="lbNav(1)"><i class="fa-solid fa-chevron-right"></i></button>
+  <div class="lightbox-counter" id="lbCounter"></div>
+</div>
 </body>
 </html>
