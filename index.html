@@ -2,7 +2,7 @@
 <html lang="en" style="scroll-behavior:smooth">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://api.stripe.com; img-src 'self' data: blob: https://*.supabase.co https://basemaps.cartocdn.com https://images.unsplash.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://api.stripe.com; img-src 'self' data: blob: https://*.supabase.co https://basemaps.cartocdn.com https://images.unsplash.com https://server.arcgisonline.com https://tile.openstreetmap.org; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self';"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="description" content="DriveStay is the easiest way to find and book private driveway rental and parking spaces near venues, cities, airports, and events. Skip expensive lots — park safely from $18/night."/>
@@ -159,6 +159,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .listing-card{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;
   display:flex;gap:14px;transition:.18s;background:#fff}
 .listing-card:hover{background:var(--gray);transform:none}
+.listing-card.map-active{background:#f0fdf4;border-left:3px solid var(--green)}
 .listing-emoji{width:72px;height:72px;border-radius:14px;background:var(--gray2);
   display:flex;align-items:center;justify-content:center;font-size:1.6rem;
   flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
@@ -171,26 +172,96 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
   color:var(--muted);border:1px solid var(--border);display:inline-flex;align-items:center;gap:3px;font-weight:500}
 .listing-price{font-weight:800;font-size:.95rem;color:var(--green);letter-spacing:-.01em}
 .listing-stars{font-size:.73rem;color:var(--muted);display:inline-flex;align-items:center;gap:3px}
-.browse-map{flex:1}
+.browse-map{flex:1;position:relative}
 #map{width:100%;height:100%}
+
+/* ── Venue layer panel ── */
 .venue-toggles{position:absolute;top:12px;right:12px;z-index:500;
-  background:#fff;border-radius:12px;padding:10px;box-shadow:0 2px 12px rgba(0,0,0,.2);
-  display:flex;flex-direction:column;gap:6px;min-width:150px}
-.venue-toggles h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
-.venue-toggle{padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;
-  border:2px solid transparent;transition:.15s;text-align:left}
-.venue-toggle[data-type=concert]{background:#f3e8ff;color:var(--purple);border-color:var(--purple)}
-.venue-toggle[data-type=stadium]{background:#dcfce7;color:var(--green-dk);border-color:var(--green-dk)}
-.venue-toggle[data-type=poi]{background:#fff7ed;color:var(--orange);border-color:var(--orange)}
-.venue-toggle[data-type=park]{background:#ecfdf5;color:#065f46;border-color:#065f46}
-.venue-toggle[data-type=airport]{background:#eff6ff;color:#1d4ed8;border-color:#1d4ed8}
-.venue-toggle.off{opacity:.35}
-.map-locate-btn{position:absolute;bottom:32px;right:12px;z-index:500;
-  background:#fff;border:none;border-radius:10px;padding:8px 14px;
-  box-shadow:0 2px 10px rgba(0,0,0,.2);font-size:.8rem;font-weight:700;cursor:pointer;color:var(--text)}
-.map-locate-btn:hover{background:var(--gray)}
-.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 16px rgba(0,0,0,.15)!important}
-.leaflet-popup-content{font-family:-apple-system,sans-serif!important;font-size:.85rem!important;line-height:1.5!important}
+  background:rgba(255,255,255,.97);backdrop-filter:blur(12px);
+  border-radius:16px;padding:12px 10px;box-shadow:0 4px 20px rgba(0,0,0,.18);
+  display:flex;flex-direction:column;gap:4px;min-width:162px;border:1px solid rgba(255,255,255,.6)}
+.venue-toggles h4{font-size:.65rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:4px;padding:0 6px}
+.venue-toggle{padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:600;cursor:pointer;
+  border:1.5px solid transparent;transition:.18s;text-align:left;
+  display:flex;align-items:center;gap:7px}
+.venue-toggle[data-type=concert]{background:#fdf4ff;color:#7c3aed;border-color:#e9d5ff}
+.venue-toggle[data-type=stadium]{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.venue-toggle[data-type=arena]{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.venue-toggle[data-type=poi]{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.venue-toggle[data-type=park]{background:#f0fdf4;color:#065f46;border-color:#6ee7b7}
+.venue-toggle[data-type=airport]{background:#eff6ff;color:#1d4ed8;border-color:#93c5fd}
+.venue-toggle.off{opacity:.3;filter:grayscale(1)}
+.venue-toggle:hover:not(.off){transform:translateX(2px)}
+
+/* ── Map control buttons ── */
+.map-controls{position:absolute;bottom:20px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.map-ctrl-btn{background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border:none;border-radius:12px;
+  padding:8px 14px;box-shadow:0 2px 12px rgba(0,0,0,.18);font-size:.78rem;font-weight:700;
+  cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px;
+  transition:.18s;white-space:nowrap;border:1px solid rgba(255,255,255,.6)}
+.map-ctrl-btn:hover{background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.22);transform:translateY(-1px)}
+.map-ctrl-btn i{color:var(--green)}
+
+/* ── Layer switcher ── */
+.map-layer-switcher{position:absolute;bottom:20px;left:12px;z-index:500;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-radius:12px;
+  padding:4px;box-shadow:0 2px 12px rgba(0,0,0,.18);display:flex;gap:2px;
+  border:1px solid rgba(255,255,255,.6)}
+.map-layer-btn{padding:6px 12px;border-radius:9px;font-size:.72rem;font-weight:700;cursor:pointer;
+  color:var(--muted);transition:.15s;border:none;background:none}
+.map-layer-btn.active{background:var(--green);color:#fff;box-shadow:0 1px 4px rgba(22,163,74,.3)}
+
+/* ── Custom Leaflet overrides ── */
+.leaflet-popup-content-wrapper{border-radius:16px!important;box-shadow:0 8px 32px rgba(0,0,0,.18)!important;
+  border:1px solid var(--border)!important;padding:0!important;overflow:hidden!important}
+.leaflet-popup-content{margin:0!important;font-family:'Inter',system-ui,sans-serif!important;
+  font-size:.85rem!important;line-height:1.5!important}
+.leaflet-popup-tip-container{margin-top:-1px}
+.leaflet-control-zoom{border-radius:12px!important;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.15)!important;border:1px solid var(--border)!important}
+.leaflet-control-zoom a{font-size:1rem!important;line-height:26px!important;width:28px!important;height:28px!important;color:var(--text)!important}
+.leaflet-control-zoom a:hover{background:var(--gray)!important}
+.leaflet-control-attribution{border-radius:8px 0 0 0!important;background:rgba(255,255,255,.85)!important;backdrop-filter:blur(8px)!important;font-size:.65rem!important}
+
+/* ── Price pin markers ── */
+.price-pin{background:var(--green);color:#fff;border-radius:20px;padding:4px 10px;
+  font-weight:800;font-size:.75rem;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25);
+  border:2px solid #fff;transition:.15s;cursor:pointer;position:relative}
+.price-pin::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-top:5px solid var(--green)}
+.price-pin.selected{background:#0f172a;transform:scale(1.15);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.price-pin.selected::after{border-top-color:#0f172a}
+
+/* ── Venue icon markers ── */
+.venue-pin{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:.7rem;color:#fff;border:2.5px solid #fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+/* ── Cluster markers ── */
+.cluster-pin{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border-radius:24px;
+  padding:6px 14px;font-weight:900;font-size:.78rem;box-shadow:0 3px 12px rgba(22,163,74,.45);
+  white-space:nowrap;border:2px solid #fff}
+
+/* ── Map popup card ── */
+.map-popup{min-width:200px;max-width:230px}
+.map-popup-photo{width:100%;height:120px;object-fit:cover;background:var(--gray2);
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:2rem}
+.map-popup-body{padding:12px 14px 10px}
+.map-popup-title{font-weight:700;font-size:.88rem;margin-bottom:2px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.map-popup-loc{font-size:.75rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:3px}
+.map-popup-price{font-weight:900;font-size:1rem;color:var(--green);letter-spacing:-.01em}
+.map-popup-rating{font-size:.72rem;color:var(--muted);margin-left:6px}
+.map-popup-btn{display:block;margin-top:10px;padding:7px 14px;background:var(--green);
+  color:#fff;border-radius:10px;font-size:.78rem;font-weight:700;text-align:center;
+  text-decoration:none;transition:.15s}
+.map-popup-btn:hover{background:#15803d}
+.venue-popup{padding:12px 14px;min-width:160px}
+.venue-popup-name{font-weight:700;font-size:.9rem;margin-bottom:3px}
+.venue-popup-city{font-size:.75rem;color:var(--muted);margin-bottom:8px}
+.venue-popup-link{display:inline-flex;align-items:center;gap:4px;color:var(--green);
+  font-weight:700;font-size:.78rem;text-decoration:none}
+.venue-popup-link:hover{gap:7px}
 
 /* DETAIL */
 .detail-wrap{max-width:900px;margin:0 auto;padding:32px 24px}
@@ -1846,58 +1917,96 @@ function renderListings() {
 // ============================================================
 // MAP
 // ============================================================
+let _tileLayers = {};
+let _activeLayer = 'voyager';
+
 function initMap() {
   if (leafletMap) return;
-  leafletMap = L.map('map', { zoomControl: false }).setView([39.5, -98.35], 5);
+  leafletMap = L.map('map', { zoomControl: false, preferCanvas: true }).setView([39.5, -98.35], 5);
 
-  // Detailed tile layer (CartoDB Voyager — labels + detail)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution:'© OpenStreetMap © CARTO',
-    subdomains:'abcd', maxZoom:19
-  }).addTo(leafletMap);
+  // ── Tile layers ──────────────────────────────────────────────────────────
+  _tileLayers.voyager = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    { attribution:'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com">CARTO</a>', subdomains:'abcd', maxZoom:19 }
+  );
+  _tileLayers.satellite = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { attribution:'Tiles © Esri — Source: Esri, Maxar, GeoEye, i-cubed, USDA FSA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community', maxZoom:18 }
+  );
+  _tileLayers.dark = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    { attribution:'© OSM © CARTO', subdomains:'abcd', maxZoom:19 }
+  );
+  _tileLayers.voyager.addTo(leafletMap);
 
-  // Custom zoom control (top-left)
+  // ── Zoom control (styled) ──────────────────────────────────────────────
   L.control.zoom({ position:'topleft' }).addTo(leafletMap);
 
-  const venueColors = {
-    concert:'#9333ea', stadium:'#16a34a', arena:'#2563eb',
-    poi:'#f97316', park:'#065f46', airport:'#1d4ed8'
-  };
-  const venueIcons = {
-    concert:'🎵', stadium:'🏟', arena:'🏀', poi:'🏙', park:'🌳', airport:'✈️'
+  // ── Venue markers ─────────────────────────────────────────────────────
+  const venueConfig = {
+    concert: { color:'#7c3aed', bg:'#f3e8ff', icon:'<i class="fa-solid fa-music"></i>' },
+    stadium: { color:'#166534', bg:'#dcfce7', icon:'<i class="fa-solid fa-football"></i>' },
+    arena:   { color:'#1e40af', bg:'#dbeafe', icon:'<i class="fa-solid fa-basketball"></i>' },
+    poi:     { color:'#c2410c', bg:'#ffedd5', icon:'<i class="fa-solid fa-city"></i>' },
+    park:    { color:'#065f46', bg:'#d1fae5', icon:'<i class="fa-solid fa-tree"></i>' },
+    airport: { color:'#1d4ed8', bg:'#dbeafe', icon:'<i class="fa-solid fa-plane"></i>' },
   };
 
   VENUE_DATA.forEach(v => {
-    const color = venueColors[v.type] || '#64748b';
-    const icon  = venueIcons[v.type] || '📍';
-    const mk = L.circleMarker([v.lat, v.lng], {
-      radius: v.type==='airport' ? 9 : v.type==='stadium'||v.type==='arena' ? 11 : 9,
-      fillColor: color, color:'#fff', weight:2.5, opacity:1, fillOpacity:.9
+    const cfg = venueConfig[v.type] || { color:'#64748b', bg:'#f1f5f9', icon:'<i class="fa-solid fa-location-dot"></i>' };
+    const sz = v.type==='stadium'||v.type==='arena' ? 32 : 28;
+    const mk = L.marker([v.lat, v.lng], {
+      icon: L.divIcon({
+        html: `<div class="venue-pin" style="background:${cfg.color};width:${sz}px;height:${sz}px;font-size:${sz===32?.75:.68}rem">${cfg.icon}</div>`,
+        className: '', iconAnchor:[sz/2, sz/2]
+      })
     }).addTo(leafletMap).bindPopup(`
-      <div style="min-width:140px">
-        <div style="font-size:1.1rem;margin-bottom:4px">${escapeHtml(icon)} <b>${escapeHtml(v.name)}</b></div>
-        <div style="color:#64748b;font-size:.78rem">${escapeHtml(v.city||'')}</div>
-        <div style="margin-top:8px"><a href="#" data-city="${escapeHtml(v.city?.split(',')[0]||'')}" class="venue-search-link" style="color:#22c55e;font-weight:700;text-decoration:none;font-size:.78rem">🔍 Find parking nearby</a></div>
+      <div class="venue-popup">
+        <div style="width:28px;height:28px;border-radius:8px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:.9rem;color:${cfg.color}">${cfg.icon}</div>
+        <div class="venue-popup-name">${escapeHtml(v.name)}</div>
+        <div class="venue-popup-city">${escapeHtml(v.city||'')}</div>
+        <a href="#" data-city="${escapeHtml(v.city?.split(',')[0]||'')}" class="venue-search-link venue-popup-link">
+          <i class="fa-solid fa-magnifying-glass"></i> Find parking nearby
+        </a>
       </div>
-    `, { maxWidth: 200 }).on('popupopen', function() {
+    `, { maxWidth:220, className:'ds-popup' }).on('popupopen', function() {
       const link = this.getPopup().getElement()?.querySelector('.venue-search-link');
       if (link) link.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('navSearch').value = this.dataset.city; filterListings(); });
     });
     if (venueMarkers[v.type]) venueMarkers[v.type].push(mk);
   });
 
-  // Cluster layer for listing markers
+  // ── Cluster layer ─────────────────────────────────────────────────────
   markerCluster = L.markerClusterGroup({
     showCoverageOnHover: false,
+    spiderfyOnMaxZoom: true,
+    disableClusteringAtZoom: 14,
+    maxClusterRadius: 60,
     iconCreateFunction: function(cluster) {
+      const count = cluster.getChildCount();
       return L.divIcon({
-        html: `<div style="background:#22c55e;color:#fff;border-radius:20px;padding:5px 12px;font-weight:800;font-size:.8rem;box-shadow:0 2px 8px rgba(0,0,0,.25);white-space:nowrap">${cluster.getChildCount()} spots</div>`,
-        className: '', iconAnchor:[30,12]
+        html: `<div class="cluster-pin">${count} spaces</div>`,
+        className: '', iconAnchor:[44,14]
       });
     }
   });
   leafletMap.addLayer(markerCluster);
 }
+
+function switchMapLayer(name, btn) {
+  if (name === _activeLayer) return;
+  leafletMap.removeLayer(_tileLayers[_activeLayer]);
+  _tileLayers[name].addTo(leafletMap);
+  _activeLayer = name;
+  document.querySelectorAll('.map-layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer===name));
+  // Adjust dark-mode: make price pins visible
+  document.querySelectorAll('.price-pin').forEach(p => {
+    p.style.background = name==='dark' ? '#22c55e' : '';
+    p.style.border = name==='satellite'||name==='dark' ? '2.5px solid rgba(255,255,255,.9)' : '';
+  });
+}
+
+let _selectedMarkerId = null;
 
 function renderMapMarkers() {
   if (!leafletMap || !markerCluster) return;
@@ -1905,34 +2014,63 @@ function renderMapMarkers() {
   mapMarkers = [];
   filteredListings.forEach(l => {
     if (!l.lat || !l.lng) return;
+    const price = '$' + (Number(l.price_nightly)|0);
+    const stars = l.rating ? `<span class="map-popup-rating"><i class="fa-solid fa-star" style="color:#f59e0b;font-size:.65rem"></i> ${l.rating}</span>` : '';
+    const photoHtml = l.photos?.length
+      ? `<img class="map-popup-photo" src="${escapeHtml(l.photos[0])}" alt="${escapeHtml(l.title)}" loading="lazy"/>`
+      : `<div class="map-popup-photo"><i class="fa-solid fa-car"></i></div>`;
+    const amenityChips = [
+      l.wifi && '<span style="font-size:.65rem;background:#f0fdf4;color:#166534;border-radius:20px;padding:2px 7px;font-weight:600"><i class="fa-solid fa-wifi"></i> WiFi</span>',
+      l.electric && '<span style="font-size:.65rem;background:#eff6ff;color:#1e40af;border-radius:20px;padding:2px 7px;font-weight:600"><i class="fa-solid fa-charging-station"></i> EV</span>',
+      l.covered && '<span style="font-size:.65rem;background:#fff7ed;color:#c2410c;border-radius:20px;padding:2px 7px;font-weight:600"><i class="fa-solid fa-warehouse"></i> Covered</span>',
+      l.instant_book && '<span style="font-size:.65rem;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:20px;padding:2px 7px;font-weight:700"><i class="fa-solid fa-bolt"></i> Instant</span>',
+    ].filter(Boolean).slice(0,3).join(' ');
+
     const mk = L.marker([l.lat, l.lng], {
       icon: L.divIcon({
-        html:`<div style="background:#22c55e;color:#fff;border-radius:20px;padding:5px 12px;font-weight:800;font-size:.78rem;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);border:2px solid #fff">$${l.price_nightly}</div>`,
-        className:'', iconAnchor:[24,12]
+        html: `<div class="price-pin" data-lid="${escapeHtml(String(l.id))}">${price}</div>`,
+        className: '', iconAnchor:[20,30]
       })
     }).bindPopup(`
-      <div style="min-width:160px">
-        <div style="font-size:1.4rem;margin-bottom:4px">${escapeHtml(l.emoji||'🏠')}</div>
-        <b style="font-size:.9rem">${escapeHtml(l.title)}</b>
-        <div style="color:#64748b;font-size:.78rem;margin:4px 0">${escapeHtml(l.city)}, ${escapeHtml(l.state)}</div>
-        <div style="font-weight:800;color:#16a34a;font-size:1rem">$${Number(l.price_nightly)|0}<span style="font-weight:400;color:#64748b;font-size:.75rem">/night</span></div>
-        <div style="margin-top:10px"><a href="#" data-id="${escapeHtml(String(l.id))}" class="popup-book-btn" style="background:#22c55e;color:#fff;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;text-decoration:none">Book Now →</a></div>
+      <div class="map-popup">
+        ${photoHtml}
+        <div class="map-popup-body">
+          <div class="map-popup-title">${escapeHtml(l.title)}</div>
+          <div class="map-popup-loc"><i class="fa-solid fa-location-dot" style="color:var(--green)"></i> ${escapeHtml(l.city)}, ${escapeHtml(l.state||'')}</div>
+          ${amenityChips ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">${amenityChips}</div>` : ''}
+          <div><span class="map-popup-price">${price}<span style="font-weight:400;font-size:.72rem;color:var(--muted)">/night</span></span>${stars}</div>
+          <a href="#" data-id="${escapeHtml(String(l.id))}" class="popup-book-btn map-popup-btn">View Space &rarr;</a>
+        </div>
       </div>
-    `, { maxWidth: 200 })
+    `, { maxWidth:240, className:'ds-popup' })
     .on('popupopen', function() {
+      // Highlight the selected marker
+      if (_selectedMarkerId) {
+        document.querySelectorAll('.price-pin').forEach(p => p.classList.remove('selected'));
+      }
+      const pin = this.getIcon().options.html.match(/data-lid="([^"]+)"/)?.[1];
+      if (pin) document.querySelector(`.price-pin[data-lid="${pin}"]`)?.classList.add('selected');
+      _selectedMarkerId = l.id;
+      // Highlight sidebar card
+      document.querySelectorAll('.listing-card').forEach(c => c.classList.toggle('map-active', c.dataset.id === String(l.id)));
       const btn = this.getPopup().getElement()?.querySelector('.popup-book-btn');
       if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); openDetail(this.dataset.id); });
+    })
+    .on('popupclose', function() {
+      document.querySelectorAll('.listing-card').forEach(c => c.classList.remove('map-active'));
+      _selectedMarkerId = null;
     });
+
     markerCluster.addLayer(mk);
     mapMarkers.push(mk);
   });
 
-  // Fit map to show all listing markers if any have coords
+  // Fit map to markers
   const withCoords = filteredListings.filter(l => l.lat && l.lng);
   if (withCoords.length > 0 && mapMarkers.length > 0) {
     try {
       const group = L.featureGroup(mapMarkers);
-      leafletMap.fitBounds(group.getBounds().pad(0.3), { maxZoom: 10 });
+      leafletMap.fitBounds(group.getBounds().pad(0.3), { maxZoom: 12 });
     } catch(e) {}
   }
 }
@@ -1940,7 +2078,7 @@ function renderMapMarkers() {
 function toggleVenue(type, el) {
   venueVisible[type] = !venueVisible[type];
   el.classList.toggle('off', !venueVisible[type]);
-  venueMarkers[type]?.forEach(mk => venueVisible[type] ? mk.addTo(leafletMap) : leafletMap.removeLayer(mk));
+  venueMarkers[type]?.forEach(mk => { try { venueVisible[type] ? mk.addTo(leafletMap) : leafletMap.removeLayer(mk); } catch(e){} });
 }
 
 function locateMe() {
