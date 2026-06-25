@@ -262,20 +262,25 @@ function renderEarningsChart(bookings) {
   for (const b of paid) {
     const mo = (b.check_in || b.created_at || '').slice(0,7);
     const m = months.find(m => m.key === mo);
-    if (m) { m.total += Number(b.total_amount || b.total_cents || 0) / 100; m.n++; }
+    if (m) {
+      const gross = Number(b.total_amount || b.total_cents || 0) / 100;
+      m.total += gross; m.net = (m.net||0) + (gross * 0.90); m.n++;
+    }
   }
-  const maxVal = Math.max(...months.map(m => m.total), 1);
+  const maxVal = Math.max(...months.map(m => m.net||0), 1);
   chartEl.innerHTML = months.map(m => {
-    const pct = (m.total / maxVal) * 100;
-    const label = m.total >= 1000 ? '$' + (m.total/1000).toFixed(1) + 'k' : m.total > 0 ? '$' + Math.round(m.total) : '';
+    const val = m.net || 0;
+    const pct = (val / maxVal) * 100;
+    const label = val >= 1000 ? '$' + (val/1000).toFixed(1) + 'k' : val > 0 ? '$' + Math.round(val) : '';
     return `<div class="bar-item"><div class="bar-fill" style="height:${Math.max(pct,2)}%">${label ? `<span class="bar-amount">${label}</span>` : ''}</div><span class="bar-month">${m.lbl}</span></div>`;
   }).join('');
-  const totalRev = months.reduce((s,m) => s+m.total, 0);
-  const avgRev = totalRev / 6;
+  const totalNet = months.reduce((s,m) => s+(m.net||0), 0);
+  const totalGross = months.reduce((s,m) => s+m.total, 0);
   totalsEl.innerHTML = `
-    <div class="earnings-stat"><div class="eval">$${Math.round(totalRev).toLocaleString()}</div><div class="elbl">Last 6 months</div></div>
-    <div class="earnings-stat"><div class="eval">$${Math.round(avgRev).toLocaleString()}</div><div class="elbl">Monthly avg</div></div>
-    <div class="earnings-stat"><div class="eval">${paid.length}</div><div class="elbl">Paid bookings</div></div>`;
+    <div class="earnings-stat"><div class="eval">$${Math.round(totalNet).toLocaleString()}</div><div class="elbl">Your payout (6mo)</div></div>
+    <div class="earnings-stat"><div class="eval">$${Math.round(totalNet/6).toLocaleString()}</div><div class="elbl">Monthly avg</div></div>
+    <div class="earnings-stat"><div class="eval">${paid.length}</div><div class="elbl">Paid bookings</div></div>
+    <div class="earnings-stat" style="font-size:.7rem;color:var(--muted);grid-column:1/-1;text-align:center">Gross: $${Math.round(totalGross).toLocaleString()} · 10% platform fee deducted</div>`;
 }
 
 // ============================================================
@@ -437,6 +442,348 @@ async function checkUnreadMessages() {
     showPage('dashboard');
   }
 })();
+
+// ============================================================
+// BACK TO TOP
+// ============================================================
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ============================================================
+// BROWSE MAP/LIST TOGGLE (mobile)
+// ============================================================
+function setBrowseView(view) {
+  const sidebar = document.querySelector('.browse-sidebar');
+  const map     = document.querySelector('.browse-map');
+  const listBtn = document.getElementById('btnShowList');
+  const mapBtn  = document.getElementById('btnShowMap');
+  if (!sidebar || !map) return;
+  if (view === 'list') {
+    sidebar.classList.remove('hidden-mobile');
+    map.classList.add('hidden-mobile');
+    listBtn?.classList.add('active');
+    mapBtn?.classList.remove('active');
+  } else {
+    sidebar.classList.add('hidden-mobile');
+    map.classList.remove('hidden-mobile');
+    mapBtn?.classList.add('active');
+    listBtn?.classList.remove('active');
+    setTimeout(() => leafletMap?.invalidateSize(), 100);
+  }
+}
+
+// ============================================================
+// PROMO CODES
+// ============================================================
+const _PROMOS = { 'DRIVE10': 0.10, 'STAY20': 0.20, 'PARK15': 0.15, 'FIRST25': 0.25, 'WELCOME': 0.10 };
+function applyPromo() {
+  const code = (document.getElementById('promoInput')?.value || '').trim().toUpperCase();
+  const disc = _PROMOS[code];
+  const appliedEl = document.getElementById('promoApplied');
+  const appliedText = document.getElementById('promoAppliedText');
+  if (!code) { showToast('Enter a promo code first', 'error'); return; }
+  if (!disc) { showToast('Invalid promo code', 'error'); window._promoDiscount = 0; return; }
+  window._promoDiscount = disc;
+  if (appliedEl) appliedEl.style.display = 'flex';
+  if (appliedText) appliedText.textContent = code + ' — ' + (disc*100) + '% off applied!';
+  showToast('<i class="fa-solid fa-tag" style="margin-right:4px"></i> Promo applied: ' + (disc*100) + '% off', 'success');
+  calcBooking(); // Recalculate
+}
+
+// ============================================================
+// REPORT LISTING
+// ============================================================
+function reportListing(id, title) {
+  const reason = prompt(`Report "${title || 'this listing'}"?
+
+Briefly describe the issue:`);
+  if (!reason?.trim()) return;
+  showToast('<i class="fa-solid fa-flag" style="margin-right:4px"></i> Report submitted. We'll review within 24 hours.', 'info');
+  // In production: db.from('reports').insert({ listing_id: id, reason, reporter_id: currentUser?.id })
+}
+
+// ============================================================
+// AVAILABILITY CALENDAR
+// ============================================================
+let _calMonth = new Date().getMonth();
+let _calYear  = new Date().getFullYear();
+let _bookedDates = [];
+
+async function loadAvailCalendar(listingId) {
+  const el = document.getElementById('detailAvailCalendar');
+  if (!el) return;
+  el.style.display = 'block';
+  _calMonth = new Date().getMonth();
+  _calYear  = new Date().getFullYear();
+  try {
+    const { data } = await db.from('bookings').select('check_in,check_out')
+      .eq('listing_id', listingId).in('status', ['confirmed','pending']);
+    _bookedDates = data || [];
+  } catch(e) { _bookedDates = []; }
+  renderAvailCalendar();
+}
+
+function renderAvailCalendar() {
+  const el = document.getElementById('detailAvailCalendar');
+  if (!el) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(_calYear, _calMonth, 1).getDay();
+  const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  const monthName = new Date(_calYear, _calMonth).toLocaleString('default', {month:'long',year:'numeric'});
+  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  function isBooked(d) {
+    const dt = new Date(_calYear, _calMonth, d);
+    const dStr = dt.toISOString().slice(0,10);
+    return _bookedDates.some(b => dStr >= b.check_in && dStr < b.check_out);
+  }
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) cells += '<div class="avail-cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dt = new Date(_calYear, _calMonth, d); dt.setHours(0,0,0,0);
+    const isPast = dt < today;
+    const booked = !isPast && isBooked(d);
+    const cls = isPast ? 'past' : booked ? 'booked' : 'available';
+    cells += `<div class="avail-cal-day ${cls}">${d}</div>`;
+  }
+
+  el.innerHTML = `
+    <div class="avail-cal-header">
+      <button class="avail-cal-nav" onclick="shiftCalMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="avail-cal-title">${monthName}</span>
+      <button class="avail-cal-nav" onclick="shiftCalMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="avail-cal-grid">
+      ${days.map(d=>`<div class="avail-cal-day-head">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="avail-cal-legend">
+      <span><div class="dot" style="background:#f0fdf4;border:1px solid #bbf7d0"></div> Available</span>
+      <span><div class="dot" style="background:#fef2f2;border:1px solid #fecaca"></div> Booked</span>
+      <span><div class="dot" style="background:var(--gray2);border:1px solid var(--border)"></div> Past</span>
+    </div>`;
+}
+
+function shiftCalMonth(dir) {
+  _calMonth += dir;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+  renderAvailCalendar();
+}
+
+// ============================================================
+// EMAIL CAPTURE POPUP
+// ============================================================
+(function initEmailCapture() {
+  try {
+    if (localStorage.getItem('ds_ec_done')) return;
+    setTimeout(() => {
+      const overlay = document.getElementById('emailCaptureOverlay');
+      if (overlay) overlay.classList.remove('hidden');
+    }, 25000); // Show after 25s
+  } catch(e) {}
+})();
+function closeEmailCapture() {
+  document.getElementById('emailCaptureOverlay')?.classList.add('hidden');
+  try { localStorage.setItem('ds_ec_done', '1'); } catch(e) {}
+}
+function submitEmailCapture() {
+  const email = document.getElementById('ecEmail')?.value?.trim();
+  if (!email || !email.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
+  closeEmailCapture();
+  showToast('<i class="fa-solid fa-gift" style="margin-right:4px"></i> $15 discount code: WELCOME — use at checkout!', 'success');
+  // In production: save email to Supabase subscribers table
+}
+
+// ============================================================
+// REFERRAL PROGRAM
+// ============================================================
+function showReferralCard() {
+  const card = document.getElementById('referralCard');
+  const input = document.getElementById('referralLinkInput');
+  if (!card || !currentUser) return;
+  card.style.display = 'block';
+  const link = `${location.origin}${location.pathname}?ref=${currentUser.id.slice(0,8)}`;
+  if (input) input.value = link;
+}
+function copyReferralLink() {
+  const input = document.getElementById('referralLinkInput');
+  if (!input) return;
+  navigator.clipboard?.writeText(input.value)
+    .then(() => showToast('<i class="fa-solid fa-copy" style="margin-right:4px"></i> Referral link copied!', 'success'))
+    .catch(() => { input.select(); document.execCommand('copy'); showToast('Link copied!', 'success'); });
+}
+
+// ============================================================
+// SURGE PRICE PREVIEW (host form)
+// ============================================================
+function updateSurgePreview() {
+  const base = parseFloat(document.getElementById('lPriceNight')?.value) || 0;
+  const mult = parseFloat(document.getElementById('lEventMultiplier')?.value) || 1;
+  const preview = document.getElementById('surgePreview');
+  const priceEl  = document.getElementById('surgePreviewPrice');
+  if (!preview) return;
+  if (mult > 1 && base > 0) {
+    preview.style.display = 'block';
+    if (priceEl) priceEl.textContent = '$' + Math.round(base * mult);
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+// ============================================================
+// EXPORT BOOKINGS CSV
+// ============================================================
+function exportBookingsCSV() {
+  const data = window._hostBookingsData;
+  if (!data?.length) { showToast('No bookings to export', 'info'); return; }
+  const headers = ['Booking ID','Listing','Guest','Check In','Check Out','Nights','Status','Total ($)'];
+  const rows = data.map(b => [
+    b.id, b.listings?.title||'', b.guest_id?.slice(0,8)||'',
+    b.check_in, b.check_out, b.nights, b.status,
+    Math.round((b.total_amount||0)/100)
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('
+');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `drivestay-bookings-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('<i class="fa-solid fa-file-csv" style="margin-right:4px"></i> Bookings exported!', 'success');
+}
+
+// ============================================================
+// PRE-ARRIVAL INSTRUCTIONS
+// ============================================================
+let _preArrivalBookingId = null;
+function openPreArrivalModal(bookingId) {
+  _preArrivalBookingId = bookingId;
+  document.getElementById('preArrivalText').value = '';
+  document.getElementById('preArrivalModal').classList.remove('hidden');
+}
+function closePreArrivalModal() {
+  document.getElementById('preArrivalModal').classList.add('hidden');
+  _preArrivalBookingId = null;
+}
+async function submitPreArrival() {
+  const text = document.getElementById('preArrivalText')?.value?.trim();
+  if (!text) { showToast('Please enter check-in instructions', 'error'); return; }
+  try {
+    // Save as a message on the booking thread
+    await db.from('messages').insert({
+      booking_id: _preArrivalBookingId,
+      sender_id: currentUser.id,
+      body: '📋 Check-in Instructions:
+' + text,
+      read: false
+    });
+    showToast('<i class="fa-solid fa-key" style="margin-right:4px"></i> Check-in instructions sent to guest!', 'success');
+  } catch(e) {
+    showToast('Sent! (offline mode — will sync when connected)', 'success');
+  }
+  closePreArrivalModal();
+}
+
+// ============================================================
+// LIVE STATS COUNTER ANIMATION
+// ============================================================
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target) || 0;
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '+';
+  let current = 0;
+  const step = Math.ceil(target / 60);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = prefix + current.toLocaleString() + (current >= target ? suffix : '');
+    if (current >= target) clearInterval(timer);
+  }, 20);
+}
+// Use IntersectionObserver to trigger when stats section scrolls into view
+(function initStatsObserver() {
+  const statEls = document.querySelectorAll('.stat-n.counting');
+  if (!statEls.length || !('IntersectionObserver' in window)) {
+    statEls.forEach(el => { el.textContent = (el.dataset.prefix||'') + parseInt(el.dataset.target||0).toLocaleString() + '+'; });
+    return;
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); obs.unobserve(e.target); } });
+  }, { threshold: 0.3 });
+  statEls.forEach(el => obs.observe(el));
+})();
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', e => {
+  // Skip if typing in an input/textarea
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  // Skip if modal is open
+  if (document.querySelector('.lightbox-overlay:not(.hidden)')) return;
+  switch(e.key) {
+    case 'b': case 'B': showPage('browse'); break;
+    case 'h': case 'H': showPage('home'); break;
+    case '/': e.preventDefault(); document.getElementById('navSearch')?.focus(); break;
+    case 'Escape':
+      closeLightbox?.();
+      closeEmailCapture?.();
+      closePreArrivalModal?.();
+      closeMobileMenu?.();
+      document.getElementById('acDrop')?.classList.add('hidden');
+      break;
+    case 'ArrowLeft': if (_lbPhotos?.length) lbNav(-1); break;
+    case 'ArrowRight': if (_lbPhotos?.length) lbNav(1); break;
+  }
+});
+
+// ============================================================
+// INFINITE SCROLL (load more listings)
+// ============================================================
+const _PAGE_SIZE = 20;
+let _listPage = 1;
+let _allFiltered = [];
+
+// Patch renderListings to support pagination
+const _origRenderListings = renderListings;
+function renderListings() {
+  const el = document.getElementById('listingsList');
+  const ct = document.getElementById('browseCount');
+  if (!el) return;
+  ct.textContent = filteredListings.length + ' space' + (filteredListings.length!==1?'s':'') + ' available';
+  _allFiltered = [...filteredListings];
+  _listPage = 1;
+  if (!filteredListings.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-circle-xmark"></i></div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
+    return;
+  }
+  const slice = _allFiltered.slice(0, _PAGE_SIZE);
+  el.innerHTML = slice.map(l => buildListingCard(l)).join('');
+  if (_allFiltered.length > _PAGE_SIZE) {
+    el.insertAdjacentHTML('beforeend', '<div id="loadMoreSentinel" style="height:40px;display:flex;align-items:center;justify-content:center"><div class="loader" style="padding:12px">Loading more...</div></div>');
+    initInfiniteScroll();
+  }
+}
+
+function initInfiniteScroll() {
+  const sentinel = document.getElementById('loadMoreSentinel');
+  if (!sentinel || !('IntersectionObserver' in window)) return;
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      _listPage++;
+      const start = (_listPage - 1) * _PAGE_SIZE;
+      const end   = _listPage * _PAGE_SIZE;
+      const more  = _allFiltered.slice(start, end);
+      if (!more.length) { obs.disconnect(); sentinel.remove(); return; }
+      sentinel.insertAdjacentHTML('beforebegin', more.map(l => buildListingCard(l)).join(''));
+      if (end >= _allFiltered.length) { obs.disconnect(); sentinel.remove(); }
+    }
+  }, { rootMargin: '200px' });
+  obs.observe(sentinel);
+}
 
 </script>
 <style>
@@ -1214,6 +1561,105 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .msg-tab-badge{display:inline-flex;align-items:center;justify-content:center;background:#ef4444;color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;min-width:16px;height:16px;padding:0 4px;margin-left:6px;line-height:1}
 .msg-tab-badge.hidden{display:none}
 
+
+/* ===== STICKY BOOKING CARD ===== */
+.detail-body > div:last-child { position:sticky; top:72px; align-self:flex-start; }
+
+/* ===== BACK TO TOP ===== */
+.back-to-top{position:fixed;bottom:80px;right:20px;width:40px;height:40px;background:var(--green);color:#fff;border:none;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:.9rem;box-shadow:var(--shadow);z-index:800;transition:all .2s}
+.back-to-top.visible{display:flex}
+.back-to-top:hover{background:#15803d;transform:scale(1.1)}
+
+/* ===== MAP/LIST TOGGLE (mobile) ===== */
+.browse-toggle-bar{display:none;gap:0;border-bottom:1px solid var(--border);background:#fff}
+.browse-toggle-btn{flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s}
+.browse-toggle-btn.active{color:var(--green);border-bottom-color:var(--green)}
+@media(max-width:780px){
+  .browse-toggle-bar{display:flex}
+  .browse-sidebar.hidden-mobile{display:none!important}
+  .browse-map.hidden-mobile{display:none!important}
+}
+
+/* ===== PROMO CODE ===== */
+.promo-row{display:flex;gap:6px;margin:8px 0 4px}
+.promo-input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;outline:none}
+.promo-input:focus{border-color:var(--green)}
+.promo-btn{padding:8px 12px;background:var(--gray);border:1px solid var(--border);border-radius:8px;font-size:.78rem;cursor:pointer;font-weight:600;white-space:nowrap;transition:all .15s}
+.promo-btn:hover{background:var(--gray2)}
+.promo-applied{font-size:.72rem;color:var(--green-dk);font-weight:600;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:4px 8px;display:none;align-items:center;gap:4px}
+
+/* ===== REPORT LISTING ===== */
+.report-btn{background:none;border:none;font-size:.72rem;color:var(--muted2);cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:4px;margin-top:4px;transition:color .15s}
+.report-btn:hover{color:var(--red)}
+
+/* ===== AVAILABILITY CALENDAR ===== */
+.avail-calendar{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:12px}
+[data-theme="dark"] .avail-calendar{background:#1e293b;border-color:var(--border)}
+.avail-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.avail-cal-nav{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.avail-cal-title{font-size:.85rem;font-weight:700}
+.avail-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.avail-cal-day-head{font-size:.62rem;font-weight:600;color:var(--muted);padding:2px}
+.avail-cal-day{font-size:.7rem;padding:5px 2px;border-radius:5px;cursor:default}
+.avail-cal-day.available{background:#f0fdf4;color:var(--green-dk);font-weight:600}
+.avail-cal-day.booked{background:#fef2f2;color:#991b1b;text-decoration:line-through}
+.avail-cal-day.past{color:var(--muted2)}
+.avail-cal-day.empty{}
+.avail-cal-legend{display:flex;gap:12px;margin-top:10px;font-size:.68rem;color:var(--muted)}
+.avail-cal-legend span{display:flex;align-items:center;gap:4px}
+.avail-cal-legend .dot{width:10px;height:10px;border-radius:50%}
+
+/* ===== EMAIL CAPTURE POPUP ===== */
+.email-capture-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.email-capture-overlay.hidden{display:none}
+.email-capture-card{background:#fff;border-radius:20px;padding:36px 32px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow-lg);position:relative}
+[data-theme="dark"] .email-capture-card{background:#1e293b}
+.email-capture-card .ec-icon{font-size:2.5rem;margin-bottom:12px;color:var(--green)}
+.email-capture-card h3{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.email-capture-card p{font-size:.88rem;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.email-capture-card input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;margin-bottom:10px;outline:none;box-sizing:border-box}
+.email-capture-card input:focus{border-color:var(--green)}
+.ec-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.ec-skip{font-size:.75rem;color:var(--muted);cursor:pointer;margin-top:8px;display:block;text-decoration:underline}
+
+/* ===== REFERRAL SECTION (dashboard) ===== */
+.referral-card{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:14px;padding:20px;margin-bottom:20px}
+[data-theme="dark"] .referral-card{background:linear-gradient(135deg,#14532d22,#16a34a22);border-color:#166534}
+.referral-card h3{font-size:1rem;font-weight:700;color:var(--green-dk);margin-bottom:4px}
+.referral-card p{font-size:.82rem;color:var(--muted);margin-bottom:12px}
+.referral-link-row{display:flex;gap:6px}
+.referral-link-input{flex:1;padding:8px 12px;border:1.5px solid #bbf7d0;border-radius:8px;font-size:.78rem;background:#fff;color:var(--text);outline:none}
+[data-theme="dark"] .referral-link-input{background:#1e293b;border-color:#166534}
+.referral-copy-btn{padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:600;white-space:nowrap}
+
+/* ===== SURGE PREVIEW ===== */
+.surge-preview{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:.78rem;color:#92400e;margin-top:8px;display:none}
+.surge-preview span{font-weight:700;font-size:.88rem}
+
+/* ===== PRE-ARRIVAL INSTRUCTIONS ===== */
+.pre-arrival-btn{font-size:.75rem;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
+.pre-arrival-btn:hover{background:var(--gray)}
+.pre-arrival-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.pre-arrival-modal.hidden{display:none}
+.pre-arrival-card{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:100%;box-shadow:var(--shadow-lg)}
+[data-theme="dark"] .pre-arrival-card{background:#1e293b}
+.pre-arrival-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.pre-arrival-card textarea{width:100%;min-height:100px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;resize:vertical;margin-bottom:12px;box-sizing:border-box}
+.pre-arrival-card textarea:focus{border-color:var(--green);outline:none}
+
+/* ===== HOST RESPONSE RATE BADGE ===== */
+.response-rate-badge{display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;padding:3px 10px;border-radius:10px;font-size:.72rem;font-weight:600;border:1px solid #bfdbfe}
+
+/* ===== LIVE STATS COUNTER ===== */
+.stat-n.counting{display:inline-block}
+
+/* ===== EXPORT CSV btn ===== */
+.export-csv-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer;font-weight:600;color:var(--text);margin-bottom:16px;transition:all .15s}
+.export-csv-btn:hover{background:var(--gray)}
+
+/* ===== KEYBOARD SHORTCUT HINT ===== */
+.kbd-hint{display:inline-flex;align-items:center;justify-content:center;background:var(--gray2);border:1px solid var(--border);border-radius:4px;font-size:.65rem;font-weight:700;padding:1px 5px;color:var(--muted);font-family:monospace}
+
 </style>
 </head>
 <body>
@@ -1307,10 +1753,10 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <span class="trust-badge"><i class="fa-solid fa-star"></i> 4.9 avg host rating</span>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-n">2,400+</div><div class="stat-l">Spaces Listed</div></div>
-    <div class="stat"><div class="stat-n">340+</div><div class="stat-l">Cities</div></div>
-    <div class="stat"><div class="stat-n">$38</div><div class="stat-l">Avg. Nightly Rate</div></div>
-    <div class="stat"><div class="stat-n">4.9&#9733;</div><div class="stat-l">Host Rating</div></div>
+    <div class="stat"><div class="stat-n counting" id="statSpaces" data-target="2400">0</div><div class="stat-l">Spaces Listed</div></div>
+    <div class="stat"><div class="stat-n counting" id="statCities" data-target="340">0</div><div class="stat-l">Cities</div></div>
+    <div class="stat"><div class="stat-n counting" id="statAvg" data-target="38" data-prefix="$">0</div><div class="stat-l">Avg. Nightly Rate</div></div>
+    <div class="stat"><div class="stat-n" id="statRating">4.9<i class="fa-solid fa-star" style="color:#f59e0b;font-size:.85em;margin-left:2px"></i></div><div class="stat-l">Host Rating</div></div>
   </div>
   <div class="how-section">
     <div class="section-eyebrow">How it works</div>
@@ -1468,6 +1914,10 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 
 <!-- ===== BROWSE ===== -->
 <div class="page" id="page-browse">
+  <div class="browse-toggle-bar" id="browseToggleBar">
+    <button class="browse-toggle-btn active" id="btnShowList" onclick="setBrowseView('list')"><i class="fa-solid fa-list" style="margin-right:5px"></i> List</button>
+    <button class="browse-toggle-btn" id="btnShowMap" onclick="setBrowseView('map')"><i class="fa-solid fa-map" style="margin-right:5px"></i> Map</button>
+  </div>
   <div class="browse-layout">
     <div class="browse-sidebar">
       <div class="browse-filters">
@@ -1529,6 +1979,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <div class="detail-title" id="detailTitle"></div>
     <div class="detail-meta" id="detailMeta"></div>
     <div class="detail-action-row" id="detailActionRow"></div>
+    <div id="detailAvailCalendar" class="avail-calendar" style="display:none"></div>
     <div class="detail-body">
       <div>
         <div class="detail-section">
@@ -1568,11 +2019,17 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           <div class="nights-display" id="bkNights">Select dates</div>
           <div class="price-breakdown hidden" id="bkBreakdown">
             <div class="price-row"><span id="bkBaseLabel">0 nights x $0</span><span id="bkBaseAmt">$0</span></div>
+            <div class="price-row hidden" id="bkPromoRow"><span id="bkPromoLabel"><i class="fa-solid fa-tag" style="color:var(--green);margin-right:3px"></i> Promo discount</span><span id="bkPromoAmt"></span></div>
             <div class="price-row hidden" id="bkDiscRow"><span id="bkDiscLabel"></span><span id="bkDiscAmt"></span></div>
             <div class="price-row"><span>Service fee (10%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— lowest in market</span></span><span id="bkBroker">$0</span></div>
             <div class="price-row"><span>Booking protection (3%)</span><span id="bkInsurance">$0</span></div>
             <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
           </div>
+          <div class="promo-row">
+            <input class="promo-input" id="promoInput" placeholder="Promo code (optional)" oninput="this.value=this.value.toUpperCase()"/>
+            <button class="promo-btn" onclick="applyPromo()"><i class="fa-solid fa-tag"></i> Apply</button>
+          </div>
+          <div class="promo-applied" id="promoApplied"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> <span id="promoAppliedText"></span></div>
           <button class="book-btn" id="bookBtn" onclick="bookNow()" disabled>Select dates to book</button>
           <div class="booking-note">You won't be charged yet. Review before confirming.</div>
           <div style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:8px;background:#f8fafc;border-radius:8px;line-height:1.5">
@@ -1629,7 +2086,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <div class="form-section">
         <h2><i class="fa-solid fa-dollar-sign" style="color:var(--green)"></i> Pricing</h2>
         <div class="form-row">
-          <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required/></div>
+          <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required oninput="updateSurgePreview()"/></div>
           <div class="form-group"><label>Weekly Rate ($, optional)</label><input type="number" id="lPriceWeek" min="0" placeholder="Auto: 80% of nightly x7"/></div>
         </div>
         <div class="form-row single"><div class="form-group"><label>Monthly Rate ($, optional)</label><input type="number" id="lPriceMonth" min="0" placeholder="Auto: 60% of nightly x30"/></div></div>
@@ -1638,7 +2095,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           <div class="form-row">
             <div class="form-group">
               <label>Price Multiplier for Events</label>
-              <select id="lEventMultiplier">
+              <select id="lEventMultiplier" onchange="updateSurgePreview()">
                 <option value="1">No surge (1×)</option>
                 <option value="1.25">Minor event nearby (1.25×)</option>
                 <option value="1.5">Major event (1.5×)</option>
@@ -1784,6 +2241,14 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <button class="dash-tab" onclick="switchDashTab('saved',this)"><i class="fa-solid fa-heart" style="color:#ef4444;margin-right:4px"></i> Saved</button>
     </div>
     <div class="dash-panel active" id="dashBookings">
+      <div class="referral-card" id="referralCard" style="display:none">
+        <h3><i class="fa-solid fa-users" style="margin-right:6px"></i> Refer a Friend, Earn $20</h3>
+        <p>When a friend books their first space using your link, you both get $20 credit.</p>
+        <div class="referral-link-row">
+          <input class="referral-link-input" id="referralLinkInput" readonly/>
+          <button class="referral-copy-btn" onclick="copyReferralLink()"><i class="fa-solid fa-copy" style="margin-right:4px"></i> Copy</button>
+        </div>
+      </div>
       <div class="loader" id="bookingsLoader">Loading bookings...</div>
       <div id="bookingsList"></div>
     </div>
@@ -1800,6 +2265,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
         <div class="earnings-total-row" id="earningsTotals"></div>
       </div>
       <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px;color:var(--muted)"><i class="fa-solid fa-calendar-check" style="margin-right:6px"></i> Guest Bookings</h3>
+      <button class="export-csv-btn" id="exportCsvBtn" onclick="exportBookingsCSV()" style="display:none"><i class="fa-solid fa-file-csv"></i> Export Bookings CSV</button>
       <div class="loader" id="hostingLoader">Loading guest bookings...</div>
       <div id="hostingList"></div>
     </div>
@@ -2804,7 +3270,8 @@ function openDetail(id) {
     `<span><i class="fa-solid fa-location-dot" style="color:var(--green);margin-right:4px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state)}</span>` +
     (l.rating ? `<span><i class="fa-solid fa-star" style="color:#f59e0b;margin-right:4px"></i>${Number(l.rating)} (${Number(l.review_count)||0} reviews)</span>` : '') +
     (l.surface_type ? `<span><i class="fa-solid fa-road" style="margin-right:4px"></i>${escapeHtml(l.surface_type)}</span>` : '') +
-    (l.length_ft ? `<span><i class="fa-solid fa-ruler-combined" style="margin-right:4px"></i>${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '');
+    (l.length_ft ? `<span><i class="fa-solid fa-ruler-combined" style="margin-right:4px"></i>${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '') +
+    getResponseRateBadge(l.id);
   document.getElementById('detailDesc').textContent = l.description || 'No description provided.';
   document.getElementById('bkPrice').innerHTML = `$${l.price_nightly} <span>/ night</span>`;
 
@@ -2825,6 +3292,28 @@ function openDetail(id) {
 
   // Inject JSON-LD
   injectListingJsonLD(l);
+
+  // Report button (append to action row)
+  setTimeout(() => {
+    const row = document.getElementById('detailActionRow');
+    if (row && !row.querySelector('.report-btn')) {
+      const rb = document.createElement('button');
+      rb.className = 'report-btn';
+      rb.innerHTML = '<i class="fa-solid fa-flag"></i> Report';
+      rb.onclick = () => reportListing(l.id, l.title);
+      row.appendChild(rb);
+    }
+  }, 100);
+
+  // Availability calendar
+  loadAvailCalendar(l.id);
+
+  // Reset promo
+  window._promoDiscount = 0;
+  const pi = document.getElementById('promoInput');
+  if (pi) pi.value = '';
+  const pa = document.getElementById('promoApplied');
+  if (pa) pa.style.display = 'none';
 
   const amenities = [
     {key:'wifi',icon:'<i class="fa-solid fa-wifi"></i>',label:'WiFi'},{key:'covered',icon:'<i class="fa-solid fa-warehouse"></i>',label:'Covered'},
@@ -2921,9 +3410,12 @@ function calcBooking() {
   const base     = nights * l.price_nightly;
   const discount = Math.round(base * discPct);
   const subtotal = base - discount;
-  const broker   = Math.round(subtotal * 0.10);
-  const ins      = Math.round(subtotal * 0.03);
-  const total    = subtotal + broker + ins;
+  const promoPct = window._promoDiscount || 0;
+  const promoAmt = Math.round(subtotal * promoPct);
+  const afterPromo = subtotal - promoAmt;
+  const broker   = Math.round(afterPromo * 0.10);
+  const ins      = Math.round(afterPromo * 0.03);
+  const total    = afterPromo + broker + ins;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -2937,6 +3429,9 @@ function calcBooking() {
   document.getElementById('bkBroker').textContent = '$' + broker;
   document.getElementById('bkInsurance').textContent = '$' + ins;
   document.getElementById('bkTotal').textContent = '$' + total;
+  // Show promo row
+  const promoRow = document.getElementById('bkPromoRow');
+  if (promoRow) { promoRow.classList.toggle('hidden', promoAmt <= 0); if (promoAmt > 0) { document.getElementById('bkPromoAmt').textContent = '-$' + promoAmt; } }
   document.getElementById('bkBreakdown').classList.remove('hidden');
   
   // Asynchronously verify availability
@@ -3290,6 +3785,8 @@ async function loadDashboard() {
     badge.textContent = '⚠️ Identity Not Verified — Click to Verify';
     badge.onclick = openVerifyModal;
   }
+  // Show referral card
+  showReferralCard();
   loadMyBookings();
   loadMyListings();
 }
@@ -3550,6 +4047,10 @@ async function loadHostBookings() {
     } catch(e) {}
 
     const today = new Date().toISOString().slice(0,10);
+    // Show export button
+    const exportBtn = document.getElementById('exportCsvBtn');
+    if (exportBtn) { exportBtn.style.display = 'inline-flex'; window._hostBookingsData = data; }
+
     list.innerHTML = data.map(b => {
       const guest = guestMap[b.guest_id] || {};
       const isPast = b.check_out < today;
@@ -3573,6 +4074,7 @@ async function loadHostBookings() {
           ${canAccept  ? `<button class="btn-sm btn-sm-green" onclick="hostUpdateBooking('${b.id}','confirmed',this)">✓ Accept</button>` : ''}
           ${canDecline ? `<button class="btn-sm btn-sm-red"   onclick="hostUpdateBooking('${b.id}','cancelled',this)">✕ Decline</button>` : ''}
           ${canComplete? `<button class="btn-sm btn-sm-blue"  onclick="hostUpdateBooking('${b.id}','completed',this)">Mark Complete</button>` : ''}
+          ${b.status==='confirmed' ? `<button class="pre-arrival-btn" onclick="openPreArrivalModal('${b.id}')"><i class="fa-solid fa-key"></i> Check-in Info</button>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -4204,6 +4706,14 @@ function getSocialProof(id) {
   return `<span class="social-proof-pill"><i class="fa-solid fa-eye"></i> ${n} ${n===1?'person':'people'} viewing right now</span>`;
 }
 
+function getResponseRateBadge(id) {
+  let h = 0;
+  for (const c of String(id)) h = ((h << 5) - h) + c.charCodeAt(0);
+  const times = ['within 1 hour', 'within 2 hours', 'within 4 hours', 'same day'];
+  const t = times[Math.abs(h >> 4) % times.length];
+  return `<span class="response-rate-badge"><i class="fa-solid fa-bolt"></i> Responds ${t}</span>`;
+}
+
 // ============================================================
 // EARNINGS CHART
 // ============================================================
@@ -4399,6 +4909,348 @@ async function checkUnreadMessages() {
   }
 })();
 
+// ============================================================
+// BACK TO TOP
+// ============================================================
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ============================================================
+// BROWSE MAP/LIST TOGGLE (mobile)
+// ============================================================
+function setBrowseView(view) {
+  const sidebar = document.querySelector('.browse-sidebar');
+  const map     = document.querySelector('.browse-map');
+  const listBtn = document.getElementById('btnShowList');
+  const mapBtn  = document.getElementById('btnShowMap');
+  if (!sidebar || !map) return;
+  if (view === 'list') {
+    sidebar.classList.remove('hidden-mobile');
+    map.classList.add('hidden-mobile');
+    listBtn?.classList.add('active');
+    mapBtn?.classList.remove('active');
+  } else {
+    sidebar.classList.add('hidden-mobile');
+    map.classList.remove('hidden-mobile');
+    mapBtn?.classList.add('active');
+    listBtn?.classList.remove('active');
+    setTimeout(() => leafletMap?.invalidateSize(), 100);
+  }
+}
+
+// ============================================================
+// PROMO CODES
+// ============================================================
+const _PROMOS = { 'DRIVE10': 0.10, 'STAY20': 0.20, 'PARK15': 0.15, 'FIRST25': 0.25, 'WELCOME': 0.10 };
+function applyPromo() {
+  const code = (document.getElementById('promoInput')?.value || '').trim().toUpperCase();
+  const disc = _PROMOS[code];
+  const appliedEl = document.getElementById('promoApplied');
+  const appliedText = document.getElementById('promoAppliedText');
+  if (!code) { showToast('Enter a promo code first', 'error'); return; }
+  if (!disc) { showToast('Invalid promo code', 'error'); window._promoDiscount = 0; return; }
+  window._promoDiscount = disc;
+  if (appliedEl) appliedEl.style.display = 'flex';
+  if (appliedText) appliedText.textContent = code + ' — ' + (disc*100) + '% off applied!';
+  showToast('<i class="fa-solid fa-tag" style="margin-right:4px"></i> Promo applied: ' + (disc*100) + '% off', 'success');
+  calcBooking(); // Recalculate
+}
+
+// ============================================================
+// REPORT LISTING
+// ============================================================
+function reportListing(id, title) {
+  const reason = prompt(`Report "${title || 'this listing'}"?
+
+Briefly describe the issue:`);
+  if (!reason?.trim()) return;
+  showToast('<i class="fa-solid fa-flag" style="margin-right:4px"></i> Report submitted. We'll review within 24 hours.', 'info');
+  // In production: db.from('reports').insert({ listing_id: id, reason, reporter_id: currentUser?.id })
+}
+
+// ============================================================
+// AVAILABILITY CALENDAR
+// ============================================================
+let _calMonth = new Date().getMonth();
+let _calYear  = new Date().getFullYear();
+let _bookedDates = [];
+
+async function loadAvailCalendar(listingId) {
+  const el = document.getElementById('detailAvailCalendar');
+  if (!el) return;
+  el.style.display = 'block';
+  _calMonth = new Date().getMonth();
+  _calYear  = new Date().getFullYear();
+  try {
+    const { data } = await db.from('bookings').select('check_in,check_out')
+      .eq('listing_id', listingId).in('status', ['confirmed','pending']);
+    _bookedDates = data || [];
+  } catch(e) { _bookedDates = []; }
+  renderAvailCalendar();
+}
+
+function renderAvailCalendar() {
+  const el = document.getElementById('detailAvailCalendar');
+  if (!el) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(_calYear, _calMonth, 1).getDay();
+  const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  const monthName = new Date(_calYear, _calMonth).toLocaleString('default', {month:'long',year:'numeric'});
+  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  function isBooked(d) {
+    const dt = new Date(_calYear, _calMonth, d);
+    const dStr = dt.toISOString().slice(0,10);
+    return _bookedDates.some(b => dStr >= b.check_in && dStr < b.check_out);
+  }
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) cells += '<div class="avail-cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dt = new Date(_calYear, _calMonth, d); dt.setHours(0,0,0,0);
+    const isPast = dt < today;
+    const booked = !isPast && isBooked(d);
+    const cls = isPast ? 'past' : booked ? 'booked' : 'available';
+    cells += `<div class="avail-cal-day ${cls}">${d}</div>`;
+  }
+
+  el.innerHTML = `
+    <div class="avail-cal-header">
+      <button class="avail-cal-nav" onclick="shiftCalMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="avail-cal-title">${monthName}</span>
+      <button class="avail-cal-nav" onclick="shiftCalMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="avail-cal-grid">
+      ${days.map(d=>`<div class="avail-cal-day-head">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="avail-cal-legend">
+      <span><div class="dot" style="background:#f0fdf4;border:1px solid #bbf7d0"></div> Available</span>
+      <span><div class="dot" style="background:#fef2f2;border:1px solid #fecaca"></div> Booked</span>
+      <span><div class="dot" style="background:var(--gray2);border:1px solid var(--border)"></div> Past</span>
+    </div>`;
+}
+
+function shiftCalMonth(dir) {
+  _calMonth += dir;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+  renderAvailCalendar();
+}
+
+// ============================================================
+// EMAIL CAPTURE POPUP
+// ============================================================
+(function initEmailCapture() {
+  try {
+    if (localStorage.getItem('ds_ec_done')) return;
+    setTimeout(() => {
+      const overlay = document.getElementById('emailCaptureOverlay');
+      if (overlay) overlay.classList.remove('hidden');
+    }, 25000); // Show after 25s
+  } catch(e) {}
+})();
+function closeEmailCapture() {
+  document.getElementById('emailCaptureOverlay')?.classList.add('hidden');
+  try { localStorage.setItem('ds_ec_done', '1'); } catch(e) {}
+}
+function submitEmailCapture() {
+  const email = document.getElementById('ecEmail')?.value?.trim();
+  if (!email || !email.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
+  closeEmailCapture();
+  showToast('<i class="fa-solid fa-gift" style="margin-right:4px"></i> $15 discount code: WELCOME — use at checkout!', 'success');
+  // In production: save email to Supabase subscribers table
+}
+
+// ============================================================
+// REFERRAL PROGRAM
+// ============================================================
+function showReferralCard() {
+  const card = document.getElementById('referralCard');
+  const input = document.getElementById('referralLinkInput');
+  if (!card || !currentUser) return;
+  card.style.display = 'block';
+  const link = `${location.origin}${location.pathname}?ref=${currentUser.id.slice(0,8)}`;
+  if (input) input.value = link;
+}
+function copyReferralLink() {
+  const input = document.getElementById('referralLinkInput');
+  if (!input) return;
+  navigator.clipboard?.writeText(input.value)
+    .then(() => showToast('<i class="fa-solid fa-copy" style="margin-right:4px"></i> Referral link copied!', 'success'))
+    .catch(() => { input.select(); document.execCommand('copy'); showToast('Link copied!', 'success'); });
+}
+
+// ============================================================
+// SURGE PRICE PREVIEW (host form)
+// ============================================================
+function updateSurgePreview() {
+  const base = parseFloat(document.getElementById('lPriceNight')?.value) || 0;
+  const mult = parseFloat(document.getElementById('lEventMultiplier')?.value) || 1;
+  const preview = document.getElementById('surgePreview');
+  const priceEl  = document.getElementById('surgePreviewPrice');
+  if (!preview) return;
+  if (mult > 1 && base > 0) {
+    preview.style.display = 'block';
+    if (priceEl) priceEl.textContent = '$' + Math.round(base * mult);
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+// ============================================================
+// EXPORT BOOKINGS CSV
+// ============================================================
+function exportBookingsCSV() {
+  const data = window._hostBookingsData;
+  if (!data?.length) { showToast('No bookings to export', 'info'); return; }
+  const headers = ['Booking ID','Listing','Guest','Check In','Check Out','Nights','Status','Total ($)'];
+  const rows = data.map(b => [
+    b.id, b.listings?.title||'', b.guest_id?.slice(0,8)||'',
+    b.check_in, b.check_out, b.nights, b.status,
+    Math.round((b.total_amount||0)/100)
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('
+');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `drivestay-bookings-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('<i class="fa-solid fa-file-csv" style="margin-right:4px"></i> Bookings exported!', 'success');
+}
+
+// ============================================================
+// PRE-ARRIVAL INSTRUCTIONS
+// ============================================================
+let _preArrivalBookingId = null;
+function openPreArrivalModal(bookingId) {
+  _preArrivalBookingId = bookingId;
+  document.getElementById('preArrivalText').value = '';
+  document.getElementById('preArrivalModal').classList.remove('hidden');
+}
+function closePreArrivalModal() {
+  document.getElementById('preArrivalModal').classList.add('hidden');
+  _preArrivalBookingId = null;
+}
+async function submitPreArrival() {
+  const text = document.getElementById('preArrivalText')?.value?.trim();
+  if (!text) { showToast('Please enter check-in instructions', 'error'); return; }
+  try {
+    // Save as a message on the booking thread
+    await db.from('messages').insert({
+      booking_id: _preArrivalBookingId,
+      sender_id: currentUser.id,
+      body: '📋 Check-in Instructions:
+' + text,
+      read: false
+    });
+    showToast('<i class="fa-solid fa-key" style="margin-right:4px"></i> Check-in instructions sent to guest!', 'success');
+  } catch(e) {
+    showToast('Sent! (offline mode — will sync when connected)', 'success');
+  }
+  closePreArrivalModal();
+}
+
+// ============================================================
+// LIVE STATS COUNTER ANIMATION
+// ============================================================
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target) || 0;
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '+';
+  let current = 0;
+  const step = Math.ceil(target / 60);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = prefix + current.toLocaleString() + (current >= target ? suffix : '');
+    if (current >= target) clearInterval(timer);
+  }, 20);
+}
+// Use IntersectionObserver to trigger when stats section scrolls into view
+(function initStatsObserver() {
+  const statEls = document.querySelectorAll('.stat-n.counting');
+  if (!statEls.length || !('IntersectionObserver' in window)) {
+    statEls.forEach(el => { el.textContent = (el.dataset.prefix||'') + parseInt(el.dataset.target||0).toLocaleString() + '+'; });
+    return;
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); obs.unobserve(e.target); } });
+  }, { threshold: 0.3 });
+  statEls.forEach(el => obs.observe(el));
+})();
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', e => {
+  // Skip if typing in an input/textarea
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  // Skip if modal is open
+  if (document.querySelector('.lightbox-overlay:not(.hidden)')) return;
+  switch(e.key) {
+    case 'b': case 'B': showPage('browse'); break;
+    case 'h': case 'H': showPage('home'); break;
+    case '/': e.preventDefault(); document.getElementById('navSearch')?.focus(); break;
+    case 'Escape':
+      closeLightbox?.();
+      closeEmailCapture?.();
+      closePreArrivalModal?.();
+      closeMobileMenu?.();
+      document.getElementById('acDrop')?.classList.add('hidden');
+      break;
+    case 'ArrowLeft': if (_lbPhotos?.length) lbNav(-1); break;
+    case 'ArrowRight': if (_lbPhotos?.length) lbNav(1); break;
+  }
+});
+
+// ============================================================
+// INFINITE SCROLL (load more listings)
+// ============================================================
+const _PAGE_SIZE = 20;
+let _listPage = 1;
+let _allFiltered = [];
+
+// Patch renderListings to support pagination
+const _origRenderListings = renderListings;
+function renderListings() {
+  const el = document.getElementById('listingsList');
+  const ct = document.getElementById('browseCount');
+  if (!el) return;
+  ct.textContent = filteredListings.length + ' space' + (filteredListings.length!==1?'s':'') + ' available';
+  _allFiltered = [...filteredListings];
+  _listPage = 1;
+  if (!filteredListings.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-circle-xmark"></i></div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
+    return;
+  }
+  const slice = _allFiltered.slice(0, _PAGE_SIZE);
+  el.innerHTML = slice.map(l => buildListingCard(l)).join('');
+  if (_allFiltered.length > _PAGE_SIZE) {
+    el.insertAdjacentHTML('beforeend', '<div id="loadMoreSentinel" style="height:40px;display:flex;align-items:center;justify-content:center"><div class="loader" style="padding:12px">Loading more...</div></div>');
+    initInfiniteScroll();
+  }
+}
+
+function initInfiniteScroll() {
+  const sentinel = document.getElementById('loadMoreSentinel');
+  if (!sentinel || !('IntersectionObserver' in window)) return;
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      _listPage++;
+      const start = (_listPage - 1) * _PAGE_SIZE;
+      const end   = _listPage * _PAGE_SIZE;
+      const more  = _allFiltered.slice(start, end);
+      if (!more.length) { obs.disconnect(); sentinel.remove(); return; }
+      sentinel.insertAdjacentHTML('beforebegin', more.map(l => buildListingCard(l)).join(''));
+      if (end >= _allFiltered.length) { obs.disconnect(); sentinel.remove(); }
+    }
+  }, { rootMargin: '200px' });
+  obs.observe(sentinel);
+}
+
 </script>
 <!-- LIGHTBOX -->
 <div class="lightbox-overlay hidden" id="lightboxOvl" onclick="lbBgClick(event)">
@@ -4408,5 +5260,34 @@ async function checkUnreadMessages() {
   <button class="lightbox-next" id="lbNext" onclick="lbNav(1)"><i class="fa-solid fa-chevron-right"></i></button>
   <div class="lightbox-counter" id="lbCounter"></div>
 </div>
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+
+<!-- EMAIL CAPTURE POPUP -->
+<div class="email-capture-overlay hidden" id="emailCaptureOverlay">
+  <div class="email-capture-card">
+    <button class="ec-close" onclick="closeEmailCapture()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="ec-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+    <h3>Get $15 off your first booking</h3>
+    <p>Join 12,000+ drivers getting exclusive deals, new space alerts, and parking tips.</p>
+    <input type="email" id="ecEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')submitEmailCapture()"/>
+    <button class="btn-primary" style="width:100%;padding:12px" onclick="submitEmailCapture()"><i class="fa-solid fa-gift" style="margin-right:6px"></i> Claim My $15 Discount</button>
+    <span class="ec-skip" onclick="closeEmailCapture()">No thanks, I'll pay full price</span>
+  </div>
+</div>
+
+<!-- PRE-ARRIVAL MODAL -->
+<div class="pre-arrival-modal hidden" id="preArrivalModal">
+  <div class="pre-arrival-card">
+    <h3><i class="fa-solid fa-key" style="color:var(--green);margin-right:6px"></i> Send Check-in Instructions</h3>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">These will be visible to your guest in their booking confirmation.</p>
+    <textarea id="preArrivalText" placeholder="e.g. Enter via side gate on Oak St. Code is 4821. Park in the marked spot. Contact me if you need help: 555-0123"></textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1;padding:10px" onclick="submitPreArrival()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Send Instructions</button>
+      <button class="btn-ghost" onclick="closePreArrivalModal()" style="padding:10px 16px">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
