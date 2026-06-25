@@ -56,735 +56,6 @@
     "query-input": "required name=search_term_string"
   }
 }
-// ============================================================
-// MOBILE MENU
-// ============================================================
-function toggleMobileMenu() {
-  const menu = document.getElementById('navMobileMenu');
-  const icon = document.getElementById('burgerIcon');
-  const open = menu.classList.toggle('open');
-  if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
-}
-function closeMobileMenu() {
-  const menu = document.getElementById('navMobileMenu');
-  const icon = document.getElementById('burgerIcon');
-  menu?.classList.remove('open');
-  if (icon) icon.className = 'fa-solid fa-bars';
-}
-document.addEventListener('click', e => {
-  const menu = document.getElementById('navMobileMenu');
-  const burger = document.getElementById('navBurger');
-  if (menu?.classList.contains('open') && !menu.contains(e.target) && !burger?.contains(e.target)) closeMobileMenu();
-});
-
-// ============================================================
-// LIGHTBOX
-// ============================================================
-let _lbPhotos = [], _lbIdx = 0;
-function openLightbox(photos, idx) {
-  _lbPhotos = photos; _lbIdx = idx;
-  const overlay = document.getElementById('lightboxOvl');
-  overlay.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-  _lbRender();
-  document._lbKey = e => {
-    if (e.key==='ArrowLeft') lbNav(-1);
-    else if (e.key==='ArrowRight') lbNav(1);
-    else if (e.key==='Escape') closeLightbox();
-  };
-  document.addEventListener('keydown', document._lbKey);
-}
-function _lbRender() {
-  document.getElementById('lightboxImg').src = _lbPhotos[_lbIdx];
-  const multi = _lbPhotos.length > 1;
-  const prev = document.getElementById('lbPrev');
-  const next = document.getElementById('lbNext');
-  const ctr  = document.getElementById('lbCounter');
-  prev.style.display = multi ? 'flex' : 'none';
-  next.style.display = multi ? 'flex' : 'none';
-  ctr.style.display  = multi ? 'block' : 'none';
-  if (multi) ctr.textContent = `${_lbIdx+1} / ${_lbPhotos.length}`;
-}
-function closeLightbox() {
-  document.getElementById('lightboxOvl').classList.add('hidden');
-  document.body.style.overflow = '';
-  if (document._lbKey) document.removeEventListener('keydown', document._lbKey);
-}
-function lbNav(dir) {
-  _lbIdx = (_lbIdx + dir + _lbPhotos.length) % _lbPhotos.length;
-  _lbRender();
-}
-function lbBgClick(e) { if (e.target === document.getElementById('lightboxOvl')) closeLightbox(); }
-
-// ============================================================
-// SEARCH AUTOCOMPLETE
-// ============================================================
-let _acTimer = null;
-function onNavInput() {
-  filterListings();
-  const q = (document.getElementById('navSearch')?.value || '').trim();
-  clearTimeout(_acTimer);
-  const dd = document.getElementById('acDrop');
-  if (q.length < 3) { dd?.classList.add('hidden'); return; }
-  _acTimer = setTimeout(() => fetchAC(q), 380);
-}
-function onNavKey(e) {
-  const dd = document.getElementById('acDrop');
-  if (!dd || dd.classList.contains('hidden')) return;
-  const items = dd.querySelectorAll('.autocomplete-item');
-  const active = dd.querySelector('.ac-active');
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    const next = active ? (active.nextElementSibling || items[0]) : items[0];
-    active?.classList.remove('ac-active'); next?.classList.add('ac-active');
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    const prev = active ? (active.previousElementSibling || items[items.length-1]) : items[items.length-1];
-    active?.classList.remove('ac-active'); prev?.classList.add('ac-active');
-  } else if (e.key === 'Enter') {
-    if (active) { e.preventDefault(); active.click(); }
-  } else if (e.key === 'Escape') {
-    dd.classList.add('hidden');
-  }
-}
-async function fetchAC(q) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=us`);
-    const data = await res.json();
-    const dd = document.getElementById('acDrop');
-    if (!dd || !data?.length) { dd?.classList.add('hidden'); return; }
-    dd.innerHTML = data.map(d => {
-      const parts = d.display_name.split(',');
-      const name = parts.slice(0,3).join(',').trim();
-      const city = parts[0].trim();
-      return `<div class="autocomplete-item" onclick="selectAC(this,'${escapeHtml(city)}')"><i class="fa-solid fa-location-dot"></i>${escapeHtml(name)}</div>`;
-    }).join('');
-    dd.classList.remove('hidden');
-  } catch(e) {}
-}
-function selectAC(el, city) {
-  const inp = document.getElementById('navSearch');
-  if (inp) inp.value = city;
-  document.getElementById('acDrop')?.classList.add('hidden');
-  applyFilter();
-  if (!document.getElementById('page-browse')?.classList.contains('active')) showPage('browse');
-}
-document.addEventListener('click', e => {
-  if (e.target?.id !== 'navSearch') document.getElementById('acDrop')?.classList.add('hidden');
-});
-
-// ============================================================
-// FAVORITES / WISHLIST
-// ============================================================
-let _favIds = new Set(JSON.parse(localStorage.getItem('ds_favs') || '[]'));
-function _saveFavs() { try { localStorage.setItem('ds_favs', JSON.stringify([..._favIds])); } catch(e) {} }
-function toggleFav(id, e) {
-  e?.stopPropagation();
-  if (_favIds.has(id)) _favIds.delete(id); else _favIds.add(id);
-  _saveFavs();
-  const saved = _favIds.has(id);
-  // Update all fav buttons in listing cards
-  document.querySelectorAll(`.fav-btn[data-lid="${id}"]`).forEach(btn => {
-    btn.classList.toggle('faved', saved);
-    btn.querySelector('i').className = `fa-${saved?'solid':'regular'} fa-heart`;
-    btn.title = saved ? 'Remove from saved' : 'Save';
-  });
-  // Update detail action row button
-  const detailFav = document.getElementById('detailFavBtn');
-  if (detailFav?.dataset.lid === id) {
-    detailFav.classList.toggle('faved', saved);
-    detailFav.innerHTML = `<i class="fa-${saved?'solid':'regular'} fa-heart"></i> ${saved?'Saved':'Save'}`;
-  }
-  showToast(saved ? '<i class="fa-solid fa-heart" style="color:#ef4444"></i> Saved to wishlist' : 'Removed from saved', saved ? 'success' : 'info');
-  // Refresh saved panel if active
-  const savedPanel = document.getElementById('dashSaved');
-  if (savedPanel?.classList.contains('active')) renderSavedListings();
-}
-function renderSavedListings() {
-  const el = document.getElementById('savedListEl');
-  if (!el) return;
-  const saved = allListings.filter(l => _favIds.has(l.id));
-  if (!saved.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-heart"></i></div><h3>No saved spaces yet</h3><p>Tap <i class="fa-regular fa-heart"></i> on any listing to save it here.</p></div>';
-    return;
-  }
-  el.innerHTML = saved.map(l => buildListingCard(l)).join('');
-}
-
-// ============================================================
-// PRICE FILTER
-// ============================================================
-function onPriceSlider(el) {
-  const val = Number(el.value);
-  const lbl = document.getElementById('priceFilterVal');
-  if (lbl) lbl.textContent = val >= 500 ? 'Any price' : `$${val}/night`;
-  applyFilter();
-}
-
-// ============================================================
-// SHARE
-// ============================================================
-function shareDetail(id, title) {
-  const url = window.location.origin + window.location.pathname + '#listing-' + id;
-  if (navigator.share) {
-    navigator.share({ title: 'DriveStay: ' + title, url }).catch(() => {});
-  } else {
-    navigator.clipboard?.writeText(url).then(() => showToast('<i class="fa-solid fa-link"></i> Link copied!', 'success')).catch(() => showToast('Copy: ' + url, 'info'));
-  }
-}
-
-// ============================================================
-// SOCIAL PROOF
-// ============================================================
-function getSocialProof(id) {
-  let h = 0;
-  for (const c of String(id)) h = ((h << 5) - h) + c.charCodeAt(0);
-  const n = (Math.abs(h) % 17) + 4;
-  return `<span class="social-proof-pill"><i class="fa-solid fa-eye"></i> ${n} ${n===1?'person':'people'} viewing right now</span>`;
-}
-
-// ============================================================
-// EARNINGS CHART
-// ============================================================
-function renderEarningsChart(bookings) {
-  const card = document.getElementById('earningsChartCard');
-  const chartEl = document.getElementById('earningsBarChart');
-  const totalsEl = document.getElementById('earningsTotals');
-  if (!card || !chartEl) return;
-  const paid = (bookings||[]).filter(b => b.status==='completed' || b.status==='confirmed');
-  card.style.display = paid.length ? 'block' : 'none';
-  if (!paid.length) return;
-  const now = new Date();
-  const months = Array.from({length:6}, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth()-5+i, 1);
-    return { key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, lbl: d.toLocaleString('default',{month:'short'}), total: 0, n: 0 };
-  });
-  for (const b of paid) {
-    const mo = (b.check_in || b.created_at || '').slice(0,7);
-    const m = months.find(m => m.key === mo);
-    if (m) {
-      const gross = Number(b.total_amount || b.total_cents || 0) / 100;
-      m.total += gross; m.net = (m.net||0) + (gross * 0.90); m.n++;
-    }
-  }
-  const maxVal = Math.max(...months.map(m => m.net||0), 1);
-  chartEl.innerHTML = months.map(m => {
-    const val = m.net || 0;
-    const pct = (val / maxVal) * 100;
-    const label = val >= 1000 ? '$' + (val/1000).toFixed(1) + 'k' : val > 0 ? '$' + Math.round(val) : '';
-    return `<div class="bar-item"><div class="bar-fill" style="height:${Math.max(pct,2)}%">${label ? `<span class="bar-amount">${label}</span>` : ''}</div><span class="bar-month">${m.lbl}</span></div>`;
-  }).join('');
-  const totalNet = months.reduce((s,m) => s+(m.net||0), 0);
-  const totalGross = months.reduce((s,m) => s+m.total, 0);
-  totalsEl.innerHTML = `
-    <div class="earnings-stat"><div class="eval">$${Math.round(totalNet).toLocaleString()}</div><div class="elbl">Your payout (6mo)</div></div>
-    <div class="earnings-stat"><div class="eval">$${Math.round(totalNet/6).toLocaleString()}</div><div class="elbl">Monthly avg</div></div>
-    <div class="earnings-stat"><div class="eval">${paid.length}</div><div class="elbl">Paid bookings</div></div>
-    <div class="earnings-stat" style="font-size:.7rem;color:var(--muted);grid-column:1/-1;text-align:center">Gross: $${Math.round(totalGross).toLocaleString()} · 10% platform fee deducted</div>`;
-}
-
-// ============================================================
-// PER-LISTING JSON-LD
-// ============================================================
-function injectListingJsonLD(l) {
-  document.getElementById('listing-ld')?.remove();
-  const s = document.createElement('script');
-  s.id = 'listing-ld'; s.type = 'application/ld+json';
-  const schema = {
-    '@context': 'https://schema.org', '@type': 'ParkingFacility',
-    'name': l.title, 'description': l.description || '',
-    'address': { '@type': 'PostalAddress', 'addressLocality': l.city, 'addressRegion': l.state, 'addressCountry': 'US' },
-    'priceRange': '$' + l.price_nightly + '/night'
-  };
-  if (l.rating) schema['aggregateRating'] = { '@type': 'AggregateRating', 'ratingValue': Number(l.rating), 'reviewCount': Number(l.review_count)||1 };
-  s.textContent = JSON.stringify(schema);
-  document.head.appendChild(s);
-}
-
-// ============================================================
-// PWA SERVICE WORKER
-// ============================================================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const sw = `const C='ds-v1';const P=['./'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(P))));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{if(resp.ok){const cl=resp.clone();caches.open(C).then(c=>c.put(e.request,cl));}return resp;})));});`;
-    const blob = new Blob([sw], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-  });
-}
-
-// ============================================================
-// DARK MODE
-// ============================================================
-function toggleDarkMode() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const newTheme = isDark ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  try { localStorage.setItem('ds_theme', newTheme); } catch(e) {}
-  const icon = document.getElementById('darkIcon');
-  const label = document.getElementById('darkModeLabel');
-  if (icon) icon.className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  if (label) label.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
-}
-// Init dark mode from storage
-(function initDarkMode() {
-  try {
-    const saved = localStorage.getItem('ds_theme');
-    if (saved === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      const icon = document.getElementById('darkIcon');
-      if (icon) icon.className = 'fa-solid fa-sun';
-      const label = document.getElementById('darkModeLabel');
-      if (label) label.textContent = 'Light Mode';
-    }
-  } catch(e) {}
-})();
-
-// ============================================================
-// RECENTLY VIEWED
-// ============================================================
-const _RV_KEY = 'ds_rv';
-const _RV_MAX = 6;
-
-function addRecentlyViewed(listing) {
-  try {
-    let rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
-    rv = rv.filter(x => x.id !== listing.id);
-    rv.unshift({ id: listing.id, title: listing.title, city: listing.city, state: listing.state, price_nightly: listing.price_nightly, photos: listing.photos });
-    if (rv.length > _RV_MAX) rv = rv.slice(0, _RV_MAX);
-    localStorage.setItem(_RV_KEY, JSON.stringify(rv));
-  } catch(e) {}
-}
-
-function renderRecentlyViewed() {
-  const section = document.getElementById('recentlyViewedSection');
-  const grid = document.getElementById('rvGrid');
-  if (!section || !grid) return;
-  try {
-    const rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
-    if (!rv.length) { section.style.display = 'none'; return; }
-    section.style.display = 'block';
-    grid.innerHTML = rv.map(l => `
-      <div class="rv-card" onclick="openDetail('${l.id}')">
-        <div class="rv-card-img">
-          ${l.photos?.length
-            ? `<img src="${l.photos[0]}" alt="${escapeHtml(l.title)}" loading="lazy"/>`
-            : `<div class="rv-icon"><i class="fa-solid fa-car"></i></div>`}
-        </div>
-        <div class="rv-card-body">
-          <div class="rv-card-title">${escapeHtml(l.title)}</div>
-          <div class="rv-card-loc"><i class="fa-solid fa-location-dot" style="color:var(--green);font-size:.7rem;margin-right:3px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state||'')}</div>
-          <div class="rv-card-price">$${l.price_nightly}/night</div>
-        </div>
-      </div>`).join('');
-  } catch(e) { section.style.display = 'none'; }
-}
-// Render on page load if on home
-renderRecentlyViewed();
-
-// ============================================================
-// USER LOCATION STATE
-// ============================================================
-let _userLat = null, _userLng = null;
-
-// ============================================================
-// NOTIFICATION DOT (pending bookings)
-// ============================================================
-async function checkNotifications() {
-  if (!currentUser) return;
-  try {
-    const { data } = await db.from('bookings').select('id', {count:'exact'}).eq('status','pending').eq('guest_id', currentUser.id);
-    const dot = document.getElementById('notifDot');
-    if (dot) dot.style.display = (data?.length > 0) ? 'block' : 'none';
-  } catch(e) {}
-}
-
-// ============================================================
-// UNREAD MESSAGE COUNT
-// ============================================================
-async function checkUnreadMessages() {
-  if (!currentUser) return;
-  try {
-    const { count } = await db.from('messages').select('*', {count:'exact', head:true})
-      .eq('read', false).neq('sender_id', currentUser.id);
-    const badge = document.getElementById('msgUnreadBadge');
-    if (badge) {
-      badge.textContent = count > 0 ? (count > 9 ? '9+' : count) : '';
-      badge.classList.toggle('hidden', !count);
-    }
-  } catch(e) {}
-}
-
-// ============================================================
-// HASH ROUTING (on load, open correct page or listing)
-// ============================================================
-(function handleHashOnLoad() {
-  const hash = window.location.hash;
-  if (!hash) return;
-  if (hash.startsWith('#listing-')) {
-    const id = hash.replace('#listing-', '');
-    // Wait for listings to load then open
-    const tryOpen = () => {
-      if (allListings.length) {
-        const l = allListings.find(x => String(x.id) === id);
-        if (l) { showPage('browse'); setTimeout(() => openDetail(id), 100); }
-      } else {
-        setTimeout(tryOpen, 300);
-      }
-    };
-    // Load listings first
-    showPage('browse');
-    setTimeout(tryOpen, 500);
-  } else if (hash === '#page-browse') {
-    showPage('browse');
-  } else if (hash === '#page-dashboard') {
-    showPage('dashboard');
-  }
-})();
-
-// ============================================================
-// BACK TO TOP
-// ============================================================
-window.addEventListener('scroll', () => {
-  const btn = document.getElementById('backToTop');
-  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
-});
-
-// ============================================================
-// BROWSE MAP/LIST TOGGLE (mobile)
-// ============================================================
-function setBrowseView(view) {
-  const sidebar = document.querySelector('.browse-sidebar');
-  const map     = document.querySelector('.browse-map');
-  const listBtn = document.getElementById('btnShowList');
-  const mapBtn  = document.getElementById('btnShowMap');
-  if (!sidebar || !map) return;
-  if (view === 'list') {
-    sidebar.classList.remove('hidden-mobile');
-    map.classList.add('hidden-mobile');
-    listBtn?.classList.add('active');
-    mapBtn?.classList.remove('active');
-  } else {
-    sidebar.classList.add('hidden-mobile');
-    map.classList.remove('hidden-mobile');
-    mapBtn?.classList.add('active');
-    listBtn?.classList.remove('active');
-    setTimeout(() => leafletMap?.invalidateSize(), 100);
-  }
-}
-
-// ============================================================
-// PROMO CODES
-// ============================================================
-const _PROMOS = { 'DRIVE10': 0.10, 'STAY20': 0.20, 'PARK15': 0.15, 'FIRST25': 0.25, 'WELCOME': 0.10 };
-function applyPromo() {
-  const code = (document.getElementById('promoInput')?.value || '').trim().toUpperCase();
-  const disc = _PROMOS[code];
-  const appliedEl = document.getElementById('promoApplied');
-  const appliedText = document.getElementById('promoAppliedText');
-  if (!code) { showToast('Enter a promo code first', 'error'); return; }
-  if (!disc) { showToast('Invalid promo code', 'error'); window._promoDiscount = 0; return; }
-  window._promoDiscount = disc;
-  if (appliedEl) appliedEl.style.display = 'flex';
-  if (appliedText) appliedText.textContent = code + ' — ' + (disc*100) + '% off applied!';
-  showToast('<i class="fa-solid fa-tag" style="margin-right:4px"></i> Promo applied: ' + (disc*100) + '% off', 'success');
-  calcBooking(); // Recalculate
-}
-
-// ============================================================
-// REPORT LISTING
-// ============================================================
-function reportListing(id, title) {
-  const reason = prompt(`Report "${title || 'this listing'}"?
-
-Briefly describe the issue:`);
-  if (!reason?.trim()) return;
-  showToast('<i class="fa-solid fa-flag" style="margin-right:4px"></i> Report submitted. We'll review within 24 hours.', 'info');
-  // In production: db.from('reports').insert({ listing_id: id, reason, reporter_id: currentUser?.id })
-}
-
-// ============================================================
-// AVAILABILITY CALENDAR
-// ============================================================
-let _calMonth = new Date().getMonth();
-let _calYear  = new Date().getFullYear();
-let _bookedDates = [];
-
-async function loadAvailCalendar(listingId) {
-  const el = document.getElementById('detailAvailCalendar');
-  if (!el) return;
-  el.style.display = 'block';
-  _calMonth = new Date().getMonth();
-  _calYear  = new Date().getFullYear();
-  try {
-    const { data } = await db.from('bookings').select('check_in,check_out')
-      .eq('listing_id', listingId).in('status', ['confirmed','pending']);
-    _bookedDates = data || [];
-  } catch(e) { _bookedDates = []; }
-  renderAvailCalendar();
-}
-
-function renderAvailCalendar() {
-  const el = document.getElementById('detailAvailCalendar');
-  if (!el) return;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const firstDay = new Date(_calYear, _calMonth, 1).getDay();
-  const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
-  const monthName = new Date(_calYear, _calMonth).toLocaleString('default', {month:'long',year:'numeric'});
-  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-
-  function isBooked(d) {
-    const dt = new Date(_calYear, _calMonth, d);
-    const dStr = dt.toISOString().slice(0,10);
-    return _bookedDates.some(b => dStr >= b.check_in && dStr < b.check_out);
-  }
-
-  let cells = '';
-  for (let i = 0; i < firstDay; i++) cells += '<div class="avail-cal-day empty"></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dt = new Date(_calYear, _calMonth, d); dt.setHours(0,0,0,0);
-    const isPast = dt < today;
-    const booked = !isPast && isBooked(d);
-    const cls = isPast ? 'past' : booked ? 'booked' : 'available';
-    cells += `<div class="avail-cal-day ${cls}">${d}</div>`;
-  }
-
-  el.innerHTML = `
-    <div class="avail-cal-header">
-      <button class="avail-cal-nav" onclick="shiftCalMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-      <span class="avail-cal-title">${monthName}</span>
-      <button class="avail-cal-nav" onclick="shiftCalMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-    <div class="avail-cal-grid">
-      ${days.map(d=>`<div class="avail-cal-day-head">${d}</div>`).join('')}
-      ${cells}
-    </div>
-    <div class="avail-cal-legend">
-      <span><div class="dot" style="background:#f0fdf4;border:1px solid #bbf7d0"></div> Available</span>
-      <span><div class="dot" style="background:#fef2f2;border:1px solid #fecaca"></div> Booked</span>
-      <span><div class="dot" style="background:var(--gray2);border:1px solid var(--border)"></div> Past</span>
-    </div>`;
-}
-
-function shiftCalMonth(dir) {
-  _calMonth += dir;
-  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
-  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
-  renderAvailCalendar();
-}
-
-// ============================================================
-// EMAIL CAPTURE POPUP
-// ============================================================
-(function initEmailCapture() {
-  try {
-    if (localStorage.getItem('ds_ec_done')) return;
-    setTimeout(() => {
-      const overlay = document.getElementById('emailCaptureOverlay');
-      if (overlay) overlay.classList.remove('hidden');
-    }, 25000); // Show after 25s
-  } catch(e) {}
-})();
-function closeEmailCapture() {
-  document.getElementById('emailCaptureOverlay')?.classList.add('hidden');
-  try { localStorage.setItem('ds_ec_done', '1'); } catch(e) {}
-}
-function submitEmailCapture() {
-  const email = document.getElementById('ecEmail')?.value?.trim();
-  if (!email || !email.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
-  closeEmailCapture();
-  showToast('<i class="fa-solid fa-gift" style="margin-right:4px"></i> $15 discount code: WELCOME — use at checkout!', 'success');
-  // In production: save email to Supabase subscribers table
-}
-
-// ============================================================
-// REFERRAL PROGRAM
-// ============================================================
-function showReferralCard() {
-  const card = document.getElementById('referralCard');
-  const input = document.getElementById('referralLinkInput');
-  if (!card || !currentUser) return;
-  card.style.display = 'block';
-  const link = `${location.origin}${location.pathname}?ref=${currentUser.id.slice(0,8)}`;
-  if (input) input.value = link;
-}
-function copyReferralLink() {
-  const input = document.getElementById('referralLinkInput');
-  if (!input) return;
-  navigator.clipboard?.writeText(input.value)
-    .then(() => showToast('<i class="fa-solid fa-copy" style="margin-right:4px"></i> Referral link copied!', 'success'))
-    .catch(() => { input.select(); document.execCommand('copy'); showToast('Link copied!', 'success'); });
-}
-
-// ============================================================
-// SURGE PRICE PREVIEW (host form)
-// ============================================================
-function updateSurgePreview() {
-  const base = parseFloat(document.getElementById('lPriceNight')?.value) || 0;
-  const mult = parseFloat(document.getElementById('lEventMultiplier')?.value) || 1;
-  const preview = document.getElementById('surgePreview');
-  const priceEl  = document.getElementById('surgePreviewPrice');
-  if (!preview) return;
-  if (mult > 1 && base > 0) {
-    preview.style.display = 'block';
-    if (priceEl) priceEl.textContent = '$' + Math.round(base * mult);
-  } else {
-    preview.style.display = 'none';
-  }
-}
-
-// ============================================================
-// EXPORT BOOKINGS CSV
-// ============================================================
-function exportBookingsCSV() {
-  const data = window._hostBookingsData;
-  if (!data?.length) { showToast('No bookings to export', 'info'); return; }
-  const headers = ['Booking ID','Listing','Guest','Check In','Check Out','Nights','Status','Total ($)'];
-  const rows = data.map(b => [
-    b.id, b.listings?.title||'', b.guest_id?.slice(0,8)||'',
-    b.check_in, b.check_out, b.nights, b.status,
-    Math.round((b.total_amount||0)/100)
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('
-');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `drivestay-bookings-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  showToast('<i class="fa-solid fa-file-csv" style="margin-right:4px"></i> Bookings exported!', 'success');
-}
-
-// ============================================================
-// PRE-ARRIVAL INSTRUCTIONS
-// ============================================================
-let _preArrivalBookingId = null;
-function openPreArrivalModal(bookingId) {
-  _preArrivalBookingId = bookingId;
-  document.getElementById('preArrivalText').value = '';
-  document.getElementById('preArrivalModal').classList.remove('hidden');
-}
-function closePreArrivalModal() {
-  document.getElementById('preArrivalModal').classList.add('hidden');
-  _preArrivalBookingId = null;
-}
-async function submitPreArrival() {
-  const text = document.getElementById('preArrivalText')?.value?.trim();
-  if (!text) { showToast('Please enter check-in instructions', 'error'); return; }
-  try {
-    // Save as a message on the booking thread
-    await db.from('messages').insert({
-      booking_id: _preArrivalBookingId,
-      sender_id: currentUser.id,
-      body: '📋 Check-in Instructions:
-' + text,
-      read: false
-    });
-    showToast('<i class="fa-solid fa-key" style="margin-right:4px"></i> Check-in instructions sent to guest!', 'success');
-  } catch(e) {
-    showToast('Sent! (offline mode — will sync when connected)', 'success');
-  }
-  closePreArrivalModal();
-}
-
-// ============================================================
-// LIVE STATS COUNTER ANIMATION
-// ============================================================
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target) || 0;
-  const prefix = el.dataset.prefix || '';
-  const suffix = el.dataset.suffix || '+';
-  let current = 0;
-  const step = Math.ceil(target / 60);
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = prefix + current.toLocaleString() + (current >= target ? suffix : '');
-    if (current >= target) clearInterval(timer);
-  }, 20);
-}
-// Use IntersectionObserver to trigger when stats section scrolls into view
-(function initStatsObserver() {
-  const statEls = document.querySelectorAll('.stat-n.counting');
-  if (!statEls.length || !('IntersectionObserver' in window)) {
-    statEls.forEach(el => { el.textContent = (el.dataset.prefix||'') + parseInt(el.dataset.target||0).toLocaleString() + '+'; });
-    return;
-  }
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); obs.unobserve(e.target); } });
-  }, { threshold: 0.3 });
-  statEls.forEach(el => obs.observe(el));
-})();
-
-// ============================================================
-// KEYBOARD SHORTCUTS
-// ============================================================
-document.addEventListener('keydown', e => {
-  // Skip if typing in an input/textarea
-  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
-  // Skip if modal is open
-  if (document.querySelector('.lightbox-overlay:not(.hidden)')) return;
-  switch(e.key) {
-    case 'b': case 'B': showPage('browse'); break;
-    case 'h': case 'H': showPage('home'); break;
-    case '/': e.preventDefault(); document.getElementById('navSearch')?.focus(); break;
-    case 'Escape':
-      closeLightbox?.();
-      closeEmailCapture?.();
-      closePreArrivalModal?.();
-      closeMobileMenu?.();
-      document.getElementById('acDrop')?.classList.add('hidden');
-      break;
-    case 'ArrowLeft': if (_lbPhotos?.length) lbNav(-1); break;
-    case 'ArrowRight': if (_lbPhotos?.length) lbNav(1); break;
-  }
-});
-
-// ============================================================
-// INFINITE SCROLL (load more listings)
-// ============================================================
-const _PAGE_SIZE = 20;
-let _listPage = 1;
-let _allFiltered = [];
-
-// Patch renderListings to support pagination
-const _origRenderListings = renderListings;
-function renderListings() {
-  const el = document.getElementById('listingsList');
-  const ct = document.getElementById('browseCount');
-  if (!el) return;
-  ct.textContent = filteredListings.length + ' space' + (filteredListings.length!==1?'s':'') + ' available';
-  _allFiltered = [...filteredListings];
-  _listPage = 1;
-  if (!filteredListings.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-circle-xmark"></i></div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
-    return;
-  }
-  const slice = _allFiltered.slice(0, _PAGE_SIZE);
-  el.innerHTML = slice.map(l => buildListingCard(l)).join('');
-  if (_allFiltered.length > _PAGE_SIZE) {
-    el.insertAdjacentHTML('beforeend', '<div id="loadMoreSentinel" style="height:40px;display:flex;align-items:center;justify-content:center"><div class="loader" style="padding:12px">Loading more...</div></div>');
-    initInfiniteScroll();
-  }
-}
-
-function initInfiniteScroll() {
-  const sentinel = document.getElementById('loadMoreSentinel');
-  if (!sentinel || !('IntersectionObserver' in window)) return;
-  const obs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      _listPage++;
-      const start = (_listPage - 1) * _PAGE_SIZE;
-      const end   = _listPage * _PAGE_SIZE;
-      const more  = _allFiltered.slice(start, end);
-      if (!more.length) { obs.disconnect(); sentinel.remove(); return; }
-      sentinel.insertAdjacentHTML('beforebegin', more.map(l => buildListingCard(l)).join(''));
-      if (end >= _allFiltered.length) { obs.disconnect(); sentinel.remove(); }
-    }
-  }, { rootMargin: '200px' });
-  obs.observe(sentinel);
-}
-
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -817,7 +88,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .nav-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
 .nav-links{display:flex;align-items:center;gap:6px;margin-left:auto}
 .nav-links button{padding:8px 16px;border-radius:24px;font-size:.85rem;font-weight:600;transition:.2s;letter-spacing:-.01em}
-.btn-ghost{color:var(--text)}
+.btn-ghost{color:var(--text);padding:10px 20px;border:none;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600;background:none;transition:background .15s}
 .btn-ghost:hover{background:var(--gray)}
 .nav-links button.nav-active{color:var(--green);font-weight:700}
 .btn-primary{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(22,163,74,.25)}
@@ -3039,17 +2310,7 @@ function buildListingCard(l) {
   </div>`;
 }
 
-function renderListings() {
-  const el = document.getElementById('listingsList');
-  const ct = document.getElementById('browseCount');
-  if (!el) return;
-  ct.textContent = filteredListings.length + ' space' + (filteredListings.length!==1?'s':'') + ' available';
-  if (!filteredListings.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-circle-xmark"></i></div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
-    return;
-  }
-  el.innerHTML = filteredListings.map(l => buildListingCard(l)).join('');
-}
+// renderListings defined below with infinite scroll
 
 // ============================================================
 // MAP
@@ -4677,11 +3938,13 @@ function renderSavedListings() {
 // ============================================================
 // PRICE FILTER
 // ============================================================
+let _priceSliderTimer = null;
 function onPriceSlider(el) {
   const val = Number(el.value);
   const lbl = document.getElementById('priceFilterVal');
   if (lbl) lbl.textContent = val >= 500 ? 'Any price' : `$${val}/night`;
-  applyFilter();
+  clearTimeout(_priceSliderTimer);
+  _priceSliderTimer = setTimeout(() => applyFilter(), 80);
 }
 
 // ============================================================
@@ -4962,12 +4225,29 @@ function applyPromo() {
 // REPORT LISTING
 // ============================================================
 function reportListing(id, title) {
-  const reason = prompt(`Report "${title || 'this listing'}"?
-
-Briefly describe the issue:`);
-  if (!reason?.trim()) return;
-  showToast('<i class="fa-solid fa-flag" style="margin-right:4px"></i> Report submitted. We'll review within 24 hours.', 'info');
-  // In production: db.from('reports').insert({ listing_id: id, reason, reporter_id: currentUser?.id })
+  const existing = document.getElementById('reportOverlay');
+  if (existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'pre-arrival-modal';
+  overlay.id = 'reportOverlay';
+  overlay.innerHTML = `
+    <div class="pre-arrival-card">
+      <h3><i class="fa-solid fa-flag" style="color:#ef4444;margin-right:6px"></i> Report Listing</h3>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Help us keep DriveStay safe. Describe the issue below.</p>
+      <textarea id="reportReasonText" placeholder="e.g. Photos don't match reality, suspected scam, inappropriate content..." style="min-height:80px;width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;resize:vertical;box-sizing:border-box;margin-bottom:12px"></textarea>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" style="flex:1;padding:10px;background:#ef4444" onclick="submitReport('${id}')"><i class="fa-solid fa-flag" style="margin-right:6px"></i> Submit Report</button>
+        <button class="btn-ghost" onclick="document.getElementById('reportOverlay')?.remove()" style="padding:10px 16px">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('reportReasonText')?.focus(), 50);
+}
+function submitReport(id) {
+  const reason = document.getElementById('reportReasonText')?.value?.trim();
+  if (!reason) { showToast('Please describe the issue', 'error'); return; }
+  document.getElementById('reportOverlay')?.remove();
+  showToast('<i class="fa-solid fa-flag" style="margin-right:4px"></i> Report submitted. We\'ll review within 24 hours.', 'info');
 }
 
 // ============================================================
@@ -5183,6 +4463,19 @@ function animateCounter(el) {
 })();
 
 // ============================================================
+// REFERRAL PARAM TRACKING
+// ============================================================
+(function trackReferral() {
+  try {
+    const ref = new URLSearchParams(location.search).get('ref');
+    if (ref && !localStorage.getItem('ds_ref')) {
+      localStorage.setItem('ds_ref', ref);
+      console.log('Referral tracked:', ref);
+    }
+  } catch(e) {}
+})();
+
+// ============================================================
 // KEYBOARD SHORTCUTS
 // ============================================================
 document.addEventListener('keydown', e => {
@@ -5207,14 +4500,12 @@ document.addEventListener('keydown', e => {
 });
 
 // ============================================================
-// INFINITE SCROLL (load more listings)
+// RENDER LISTINGS + INFINITE SCROLL
 // ============================================================
 const _PAGE_SIZE = 20;
 let _listPage = 1;
 let _allFiltered = [];
 
-// Patch renderListings to support pagination
-const _origRenderListings = renderListings;
 function renderListings() {
   const el = document.getElementById('listingsList');
   const ct = document.getElementById('browseCount');
