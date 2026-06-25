@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://api.stripe.com; img-src 'self' data: blob: https://*.supabase.co https://basemaps.cartocdn.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self';"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DriveStay is the easiest way to find and book private driveway rental and parking spaces near venues, cities, airports, and events. Skip expensive lots — park safely from $18/night."/>
+<meta name="keywords" content="driveway rental, parking space rental, rent a driveway, private parking near me, RV parking, event parking, airport parking, peer-to-peer parking"/>
+<meta name="robots" content="index, follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="DriveStay"/>
+<meta property="og:title" content="DriveStay — Driveway Rental &amp; Parking Space Booking"/>
+<meta property="og:description" content="Find affordable private driveway rentals near stadiums, airports, and downtown. Book in minutes and skip the lot."/>
+<meta property="og:image" content="https://winehousevineyards.github.io/drivestay/og-image.jpg"/>
+<meta property="og:url" content="https://winehousevineyards.github.io/drivestay/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@DriveStay"/>
+<meta name="twitter:title" content="DriveStay — Rent Driveways &amp; Parking Near You"/>
+<meta name="twitter:description" content="Peer-to-peer driveway rental marketplace. Book a private parking space near stadiums, airports, and events from $18/night."/>
+<meta name="twitter:image" content="https://winehousevineyards.github.io/drivestay/og-image.jpg"/>
+<title>DriveStay — Driveway &amp; Parking Space Rentals</title>
+<link rel="canonical" href="https://winehousevineyards.github.io/drivestay/"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin/>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+<link rel="preconnect" href="https://js.stripe.com" crossorigin/>
+<link rel="preconnect" href="https://uvhhhwfhrdywczlhxvaa.supabase.co" crossorigin/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "DriveStay",
+  "url": "https://www.drivestay.com",
+  "description": "Peer-to-peer driveway rental and parking space marketplace.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.drivestay.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#22c55e;--green-dk:#16a34a;--gray:#f8fafc;--border:#e2e8f0;
+  --text:#1e293b;--muted:#64748b;--red:#ef4444;--blue:#3b82f6;
+  --purple:#9333ea;--orange:#f97316;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:#fff}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select,textarea{font:inherit}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;height:60px;gap:16px}
+.nav-logo{font-size:1.4rem;font-weight:800;color:var(--green);cursor:pointer;flex:0 0 auto}
+.nav-search{flex:1;max-width:420px;position:relative}
+.nav-search input{width:100%;padding:8px 16px 8px 40px;border:1px solid var(--border);
+  border-radius:24px;outline:none;font-size:.9rem}
+.nav-search input:focus{border-color:var(--green)}
+.nav-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.nav-links{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-links button{padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:500;transition:.15s}
+.btn-ghost{color:var(--text)}
+.btn-ghost:hover{background:var(--gray)}
+.nav-links button.nav-active{color:var(--green);font-weight:700}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-dk)}
+.btn-outline{border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--gray)}
+
+/* PAGES */
+.page{display:none;min-height:calc(100vh - 60px)}
+.page.active{display:block}
+
+/* HOME */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a2f 100%);color:#fff;
+  padding:80px 24px;text-align:center}
+.hero h1{font-size:3rem;font-weight:800;margin-bottom:16px;line-height:1.2}
+.hero h1 span{color:var(--green)}
+.hero p{font-size:1.2rem;color:#94a3b8;margin-bottom:40px}
+.hero-search{background:#fff;border-radius:16px;padding:24px;max-width:700px;margin:0 auto;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.hero-field{flex:1;min-width:140px}
+.hero-field label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.hero-field input,.hero-field select{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:8px;outline:none;font-size:.9rem;color:var(--text)}
+.hero-field input:focus,.hero-field select:focus{border-color:var(--green)}
+.hero-search-btn{padding:11px 28px;background:var(--green);color:#fff;border-radius:8px;
+  font-weight:700;font-size:.95rem;white-space:nowrap}
+.hero-search-btn:hover{background:var(--green-dk)}
+.stats{display:flex;justify-content:center;gap:40px;padding:40px 24px;background:var(--gray)}
+.stat{text-align:center}
+.stat-n{font-size:2rem;font-weight:800;color:var(--green)}
+.stat-l{font-size:.85rem;color:var(--muted);margin-top:4px}
+.how-section{padding:60px 24px;max-width:1000px;margin:0 auto}
+.how-section h2{font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:40px}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+.how-card{text-align:center;padding:24px}
+.how-icon{font-size:2.5rem;margin-bottom:16px}
+.how-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.how-card p{font-size:.875rem;color:var(--muted);line-height:1.6}
+.cta-section{background:var(--green);color:#fff;text-align:center;padding:60px 24px}
+.cta-section h2{font-size:2rem;font-weight:800;margin-bottom:12px}
+.cta-section p{opacity:.85;margin-bottom:28px}
+.cta-section button{background:#fff;color:var(--green);padding:12px 32px;
+  border-radius:8px;font-weight:700;font-size:1rem}
+
+/* BROWSE */
+.browse-layout{display:flex;height:calc(100vh - 60px)}
+.browse-sidebar{width:380px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--border)}
+.browse-filters{padding:16px;border-bottom:1px solid var(--border);
+  display:flex;gap:8px;flex-wrap:wrap}
+.filter-chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;
+  font-size:.8rem;font-weight:500;cursor:pointer;transition:.15s}
+.filter-chip:hover,.filter-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.browse-count{padding:12px 16px;font-size:.85rem;color:var(--muted);border-bottom:1px solid var(--border)}
+.listing-card{padding:16px;border-bottom:1px solid var(--border);cursor:pointer;
+  display:flex;gap:12px;transition:.15s}
+.listing-card:hover{background:var(--gray)}
+.listing-emoji{width:64px;height:64px;border-radius:12px;background:var(--gray);
+  display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+.listing-info{flex:1;min-width:0}
+.listing-title{font-weight:600;font-size:.9rem;margin-bottom:4px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.listing-loc{font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.listing-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.tag{padding:2px 8px;background:var(--gray);border-radius:12px;font-size:.7rem;
+  color:var(--muted);border:1px solid var(--border)}
+.listing-price{font-weight:700;font-size:.95rem;color:var(--green)}
+.listing-stars{font-size:.75rem;color:var(--muted);margin-left:6px}
+.browse-map{flex:1}
+#map{width:100%;height:100%}
+.venue-toggles{position:absolute;top:12px;right:12px;z-index:500;
+  background:#fff;border-radius:12px;padding:10px;box-shadow:0 2px 12px rgba(0,0,0,.2);
+  display:flex;flex-direction:column;gap:6px;min-width:150px}
+.venue-toggles h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.venue-toggle{padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;
+  border:2px solid transparent;transition:.15s;text-align:left}
+.venue-toggle[data-type=concert]{background:#f3e8ff;color:var(--purple);border-color:var(--purple)}
+.venue-toggle[data-type=stadium]{background:#dcfce7;color:var(--green-dk);border-color:var(--green-dk)}
+.venue-toggle[data-type=poi]{background:#fff7ed;color:var(--orange);border-color:var(--orange)}
+.venue-toggle[data-type=park]{background:#ecfdf5;color:#065f46;border-color:#065f46}
+.venue-toggle[data-type=airport]{background:#eff6ff;color:#1d4ed8;border-color:#1d4ed8}
+.venue-toggle.off{opacity:.35}
+.map-locate-btn{position:absolute;bottom:32px;right:12px;z-index:500;
+  background:#fff;border:none;border-radius:10px;padding:8px 14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.2);font-size:.8rem;font-weight:700;cursor:pointer;color:var(--text)}
+.map-locate-btn:hover{background:var(--gray)}
+.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 16px rgba(0,0,0,.15)!important}
+.leaflet-popup-content{font-family:-apple-system,sans-serif!important;font-size:.85rem!important;line-height:1.5!important}
+
+/* DETAIL */
+.detail-wrap{max-width:900px;margin:0 auto;padding:32px 24px}
+.detail-back{display:flex;align-items:center;gap:8px;color:var(--muted);
+  font-size:.9rem;margin-bottom:24px;cursor:pointer}
+.detail-back:hover{color:var(--green)}
+.detail-hero{font-size:6rem;text-align:center;background:var(--gray);
+  border-radius:20px;padding:40px;margin-bottom:24px}
+.detail-title{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+.detail-meta{display:flex;align-items:center;gap:16px;color:var(--muted);
+  font-size:.9rem;margin-bottom:24px;flex-wrap:wrap}
+.detail-body{display:grid;grid-template-columns:1fr 320px;gap:32px}
+@media(max-width:680px){.detail-body{grid-template-columns:1fr}}
+.detail-section{margin-bottom:24px}
+.detail-section h3{font-size:1rem;font-weight:700;margin-bottom:12px;
+  padding-bottom:8px;border-bottom:1px solid var(--border)}
+.amenity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.amenity{display:flex;align-items:center;gap:8px;font-size:.85rem;
+  padding:8px;background:var(--gray);border-radius:8px}
+.amenity.yes{color:var(--green-dk)}
+.amenity.no{color:var(--muted);opacity:.5}
+
+/* BOOKING CARD */
+.booking-card{background:#fff;border:2px solid var(--border);border-radius:20px;
+  padding:24px;position:sticky;top:80px}
+.booking-price{font-size:1.8rem;font-weight:800;color:var(--green);margin-bottom:16px}
+.booking-price span{font-size:1rem;font-weight:400;color:var(--muted)}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.date-field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:4px;color:var(--muted)}
+.date-field input{width:100%;padding:8px 10px;border:1px solid var(--border);
+  border-radius:8px;font-size:.85rem;outline:none}
+.date-field input:focus{border-color:var(--green)}
+.nights-display{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:16px}
+.price-breakdown{background:var(--gray);border-radius:12px;padding:14px;
+  margin-bottom:16px;font-size:.85rem}
+.price-row{display:flex;justify-content:space-between;padding:3px 0}
+.price-row.total{font-weight:700;font-size:.95rem;border-top:1px solid var(--border);
+  margin-top:8px;padding-top:8px}
+.discount-badge{background:#dcfce7;color:var(--green-dk);padding:2px 8px;
+  border-radius:12px;font-size:.7rem;font-weight:700;margin-left:6px}
+.book-btn{width:100%;padding:14px;background:var(--green);color:#fff;
+  border-radius:12px;font-size:1rem;font-weight:700;margin-bottom:12px}
+.book-btn:hover{background:var(--green-dk)}
+.book-btn:disabled{opacity:.5;cursor:not-allowed}
+.booking-note{font-size:.75rem;color:var(--muted);text-align:center}
+
+/* HOST PAGE */
+.host-wrap{max-width:700px;margin:0 auto;padding:40px 24px}
+.host-wrap h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+.host-wrap .subtitle{color:var(--muted);margin-bottom:32px}
+.form-section{margin-bottom:32px}
+.form-section h2{font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--green)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-row.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.form-group input,.form-group select,.form-group textarea{
+  padding:10px 14px;border:1px solid var(--border);border-radius:8px;
+  outline:none;font-size:.9rem;transition:.15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+.form-group textarea{min-height:80px;resize:vertical}
+.check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer}
+.check-item input[type=checkbox]{accent-color:var(--green);width:16px;height:16px}
+.submit-host-btn{width:100%;padding:14px;background:var(--green);color:#fff;
+  border-radius:12px;font-size:1rem;font-weight:700;margin-top:8px}
+.submit-host-btn:hover{background:var(--green-dk)}
+
+/* DASHBOARD */
+.dash-wrap{max-width:900px;margin:0 auto;padding:32px 24px}
+.dash-wrap h1{font-size:1.8rem;font-weight:800;margin-bottom:8px}
+.dash-tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:2px solid var(--border);padding-bottom:0}
+.dash-tab{padding:10px 20px;font-size:.9rem;font-weight:600;border-radius:8px 8px 0 0;
+  color:var(--muted);cursor:pointer;position:relative;bottom:-2px;border:2px solid transparent}
+.dash-tab.active{color:var(--green);border-color:var(--border) var(--border) #fff var(--border);
+  background:#fff}
+.dash-panel{display:none}
+.dash-panel.active{display:block}
+.booking-row{display:flex;align-items:center;gap:16px;padding:16px;
+  border:1px solid var(--border);border-radius:12px;margin-bottom:12px}
+.booking-row-emoji{font-size:2rem}
+.booking-row-info{flex:1}
+.booking-row-title{font-weight:600;font-size:.9rem}
+.booking-row-dates{font-size:.8rem;color:var(--muted);margin-top:2px}
+.booking-row-amt{font-weight:700;color:var(--green)}
+.status-badge{padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;text-transform:uppercase}
+.status-pending{background:#fef9c3;color:#854d0e}
+.status-confirmed{background:#dbeafe;color:#1e40af}
+.status-cancelled{background:#fee2e2;color:var(--red)}
+.profile-card{background:var(--gray);border-radius:16px;padding:24px;display:flex;gap:20px;
+  align-items:center;margin-bottom:24px}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:var(--green);
+  color:#fff;font-size:1.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;overflow:hidden;flex-shrink:0}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;
+  font-size:.65rem;font-weight:700;color:#fff;text-align:center;line-height:1.3}
+.profile-avatar:hover .avatar-overlay{opacity:1}
+.avatar-uploading{opacity:.6;pointer-events:none}
+.profile-info h2{font-size:1.2rem;font-weight:700}
+.profile-info p{font-size:.85rem;color:var(--muted);margin-top:4px}
+.verify-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
+  border-radius:12px;font-size:.75rem;font-weight:700;margin-top:8px}
+.verified{background:#dcfce7;color:var(--green-dk)}
+.unverified{background:#fee2e2;color:var(--red);cursor:pointer}
+.empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:16px}
+.empty-state h3{font-size:1.1rem;font-weight:600;margin-bottom:8px;color:var(--text)}
+
+/* CONFIRM PAGE */
+.confirm-wrap{max-width:600px;margin:0 auto;padding:60px 24px;text-align:center}
+.confirm-icon{font-size:5rem;margin-bottom:24px}
+.confirm-wrap h1{font-size:2rem;font-weight:800;margin-bottom:12px}
+.confirm-wrap p{color:var(--muted);margin-bottom:32px;line-height:1.7}
+.confirm-detail{background:var(--gray);border-radius:16px;padding:24px;margin-bottom:32px;text-align:left}
+.confirm-row{display:flex;justify-content:space-between;padding:8px 0;
+  border-bottom:1px solid var(--border);font-size:.9rem}
+.confirm-row:last-child{border-bottom:none;font-weight:700}
+.confirm-actions{display:flex;gap:12px;justify-content:center}
+.confirm-actions button{padding:12px 28px;border-radius:8px;font-weight:600;font-size:.9rem}
+
+/* LEGAL */
+.legal-wrap{max-width:780px;margin:0 auto;padding:48px 24px}
+.legal-wrap h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+.legal-wrap .updated{color:var(--muted);font-size:.85rem;margin-bottom:32px}
+.legal-section{margin-bottom:28px}
+.legal-section h2{font-size:1.1rem;font-weight:700;margin-bottom:10px;color:var(--green)}
+.legal-section p,.legal-section li{font-size:.9rem;line-height:1.8;color:#334155;margin-bottom:8px}
+.legal-section ul{padding-left:20px}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:20px;padding:32px;width:100%;max-width:440px;
+  position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;
+  border-radius:50%;background:var(--gray);color:var(--muted);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--border)}
+.modal h2{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.modal .modal-sub{color:var(--muted);font-size:.85rem;margin-bottom:24px}
+.auth-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--gray);border-radius:10px;padding:4px}
+.auth-tab{flex:1;padding:8px;border-radius:8px;font-size:.85rem;font-weight:600;
+  text-align:center;cursor:pointer;color:var(--muted)}
+.auth-tab.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.auth-panel{display:none}
+.auth-panel.active{display:block}
+.role-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.role-card{padding:12px;border:2px solid var(--border);border-radius:12px;text-align:center;
+  cursor:pointer;transition:.15s}
+.role-card:hover,.role-card.active{border-color:var(--green);background:#f0fdf4}
+.role-card .role-icon{font-size:1.8rem;margin-bottom:6px}
+.role-card .role-name{font-size:.85rem;font-weight:700}
+.role-card .role-desc{font-size:.7rem;color:var(--muted)}
+.field-group{margin-bottom:14px}
+.field-group label{display:block;font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:5px}
+.field-group input{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:8px;outline:none;font-size:.9rem}
+.field-group input:focus{border-color:var(--green)}
+.auth-submit{width:100%;padding:12px;background:var(--green);color:#fff;
+  border-radius:10px;font-size:.95rem;font-weight:700;margin-top:4px}
+.auth-submit:hover{background:var(--green-dk)}
+
+/* VERIFY MODAL */
+.step-indicators{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.step-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.step-dot.active{background:var(--green)}
+.step-dot.done{background:var(--green-dk)}
+.verify-step{display:none}
+.verify-step.active{display:block}
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:32px;
+  text-align:center;cursor:pointer;margin-bottom:16px;transition:.15s}
+.upload-area:hover{border-color:var(--green);background:#f0fdf4}
+.upload-icon{font-size:2.5rem;margin-bottom:8px}
+
+/* PAYMENT MODAL */
+#paymentModal .modal{max-width:480px}
+#stripe-payment-element{margin-bottom:20px}
+.pay-btn{width:100%;padding:13px;background:var(--green);color:#fff;
+  border-radius:10px;font-size:1rem;font-weight:700}
+.pay-btn:hover{background:var(--green-dk)}
+.pay-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:10px;color:#fff;font-size:.875rem;
+  font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);animation:fadeIn .25s ease;
+  display:flex;align-items:center;gap:8px;max-width:320px}
+.toast-success{background:var(--green-dk)}
+.toast-error{background:var(--red)}
+.toast-info{background:#1e40af}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:640px){
+  .msg-layout{flex-direction:column;height:auto}
+  .msg-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);max-height:180px}
+  .detail-body{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .hero h1{font-size:2rem}
+  .hero-search{flex-direction:column}
+  .hero-field{min-width:100%}
+  .amenity-grid{grid-template-columns:repeat(2,1fr)}
+  .check-grid{grid-template-columns:repeat(2,1fr)}
+  .nav-search{flex:1;min-width:0}
+  .browse-layout{flex-direction:column;height:auto}
+  .browse-sidebar{width:100%;max-height:50vh;overflow-y:auto}
+  .browse-map{height:50vh;overflow:hidden}
+  .venue-toggles{right:8px;top:8px;max-height:calc(50vh - 24px);overflow-y:auto}
+  .dash-tabs{overflow-x:auto;white-space:nowrap;padding-bottom:2px}
+  .dash-tab{flex-shrink:0;-webkit-overflow-scrolling:touch}
+}
+
+/* BOOKING ACTION BUTTONS */
+.btn-sm{display:inline-flex;align-items:center;padding:5px 12px;border-radius:8px;
+  font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);
+  transition:.15s;white-space:nowrap;background:#fff}
+.btn-sm:hover{background:var(--gray)}
+.btn-sm-green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-sm-green:hover{background:var(--green-dk)}
+.btn-sm-red{background:#fee2e2;color:var(--red);border-color:#fecaca}
+.btn-sm-red:hover{background:#fecaca}
+.btn-sm-blue{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.btn-sm-blue:hover{background:#dbeafe}
+.booking-row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+
+/* ADDITIONAL STATUS BADGES */
+.status-completed{background:#dcfce7;color:var(--green-dk)}
+
+/* PROFILE EDITING */
+.profile-edit-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.profile-edit-row input{flex:1;padding:7px 12px;border:1px solid var(--border);
+  border-radius:8px;outline:none;font:inherit;font-size:.9rem}
+.profile-edit-row input:focus{border-color:var(--green)}
+
+/* HOSTING SECTION */
+.hosting-booking-card{background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:16px;margin-bottom:12px}
+.hosting-booking-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.hosting-guest-name{font-weight:600;font-size:.9rem}
+.hosting-listing-name{font-size:.8rem;color:var(--muted)}
+
+/* GEOCODE STATUS */
+.geocode-status{font-size:.78rem;color:var(--muted);margin-top:4px;min-height:16px}
+
+/* PHOTO UPLOAD */
+.photo-upload-area{border:2px dashed var(--border);border-radius:12px;padding:24px;
+  text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
+.photo-upload-area:hover{border-color:var(--green);background:#f0fdf4}
+.photo-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-thumb{position:relative;width:80px;height:80px;flex-shrink:0}
+.photo-thumb img{width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid var(--border)}
+.photo-thumb-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:.7rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.photo-strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px;
+  scrollbar-width:thin;border-radius:12px}
+.photo-strip img{height:240px;width:auto;border-radius:12px;flex-shrink:0;object-fit:cover;max-width:360px}
+
+/* REVIEWS */
+.review-item{padding:14px 0;border-bottom:1px solid var(--border)}
+.review-item:last-child{border-bottom:none}
+.review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.review-author{font-weight:600;font-size:.9rem}
+.review-date{font-size:.75rem;color:var(--muted)}
+.review-stars{color:#f59e0b;font-size:.9rem;margin-bottom:4px}
+.review-comment{font-size:.875rem;color:#475569;line-height:1.6}
+.star-picker{display:flex;gap:6px;margin:12px 0}
+.star-picker span{font-size:2rem;cursor:pointer;transition:.1s;color:var(--border)}
+.star-picker span.active{color:#f59e0b}
+
+/* MESSAGES */
+.msg-layout{display:flex;height:calc(100vh - 240px);min-height:400px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.msg-sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--gray)}
+.convo-item{padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:.15s;background:#fff}
+.convo-item:hover,.convo-item.active{background:#f0fdf4}
+.convo-name{font-weight:600;font-size:.85rem}
+.convo-preview{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.msg-main{flex:1;display:flex;flex-direction:column;min-width:0;background:#fff}
+.msg-thread{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.bubble-wrap{display:flex}
+.bubble-wrap.sent{justify-content:flex-end}
+.bubble{max-width:70%;padding:10px 14px;border-radius:18px;font-size:.875rem;line-height:1.5;word-break:break-word}
+.bubble.sent{background:var(--green);color:#fff;border-bottom-right-radius:4px}
+.bubble.recv{background:var(--gray);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.bubble-time{font-size:.65rem;opacity:.7;margin-top:3px}
+.msg-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border)}
+.msg-input-row input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:24px;outline:none;font-size:.875rem}
+.msg-input-row input:focus{border-color:var(--green)}
+.msg-send-btn{padding:10px 18px;background:var(--green);color:#fff;border-radius:24px;font-weight:700;font-size:.875rem}
+.msg-send-btn:hover{background:var(--green-dk)}
+.msg-empty-state{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem;text-align:center;padding:24px}
+
+/* MISC */
+.hidden{display:none!important}
+.loader{text-align:center;padding:40px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">🚗 DriveStay</div>
+  <div class="nav-search">
+    <span class="nav-search-icon">🔍</span>
+    <input type="text" id="navSearch" placeholder="Search city or address..." oninput="filterListings()"/>
+  </div>
+  <div class="nav-links">
+    <button class="btn-ghost" id="btnBrowse" onclick="showPage('browse')">Browse</button>
+    <button class="btn-ghost" id="btnHowItWorks" onclick="showPage('legal')">How It Works</button>
+    <button class="btn-outline" onclick="requireAuth('host')">List Your Space</button>
+    <button class="btn-ghost" id="btnLogin" onclick="openAuth('login')">Log In</button>
+    <button class="btn-primary" id="btnSignup" onclick="openAuth('register')">Sign Up</button>
+    <button class="btn-primary hidden" id="btnUser" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px">
+      <span id="navAvatarWrap" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.85rem;overflow:hidden;flex-shrink:0"><span id="navAvatarInitial">👤</span></span>
+      <span>My Account</span>
+    </button>
+    <button class="btn-ghost hidden" id="btnLogout" onclick="logout()">Log Out</button>
+  </div>
+</nav>
+
+<!-- ===== HOME ===== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>Driveway Rental &amp; Parking Spaces —<br><span>Park Anywhere.</span></h1>
+    <p>DriveStay connects you with real homeowners renting their driveways — cheaper, safer, and more flexible than parking lots.<br><span style="opacity:.7;font-size:1rem">Or earn $320+/month listing your own space.</span></p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap">
+      <button class="hero-search-btn" onclick="showPage('browse')">Find Parking &rarr;</button>
+      <button class="hero-search-btn" onclick="requireAuth('host')" style="background:#fff;color:var(--green)">List My Driveway</button>
+    </div>
+    <div class="hero-search">
+      <div class="hero-field">
+        <label>Location</label>
+        <input type="text" id="heroCity" placeholder="City or address"/>
+      </div>
+      <div class="hero-field">
+        <label>Check In</label>
+        <input type="date" id="heroIn"/>
+      </div>
+      <div class="hero-field">
+        <label>Check Out</label>
+        <input type="date" id="heroOut"/>
+      </div>
+      <div class="hero-field" style="flex:0 0 auto">
+        <label>Vehicle</label>
+        <select id="heroVehicle">
+          <option value="">Any</option>
+          <option>Sedan</option><option>SUV</option><option>Truck</option>
+          <option>Van/RV</option><option>Motorcycle</option>
+        </select>
+      </div>
+      <button class="hero-search-btn" onclick="doHeroSearch()">Search &rarr;</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">2,400+</div><div class="stat-l">Spaces Listed</div></div>
+    <div class="stat"><div class="stat-n">340+</div><div class="stat-l">Cities</div></div>
+    <div class="stat"><div class="stat-n">$38</div><div class="stat-l">Avg. Nightly Rate</div></div>
+    <div class="stat"><div class="stat-n">4.9&#9733;</div><div class="stat-l">Host Rating</div></div>
+  </div>
+  <div class="how-section">
+    <h2>How DriveStay Works</h2>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-icon">🔍</div><h3>Search</h3><p>Find driveways near your destination or event using our interactive map.</p></div>
+      <div class="how-card"><div class="how-icon">📅</div><h3>Book</h3><p>Choose your dates, review pricing &amp; fees, then pay securely via Stripe.</p></div>
+      <div class="how-card"><div class="how-icon">🚗</div><h3>Park</h3><p>Arrive and park with confidence. Host receives payout after check-in.</p></div>
+      <div class="how-card"><div class="how-icon">⭐</div><h3>Review</h3><p>Leave a review to help the community and build your reputation.</p></div>
+    </div>
+  </div>
+  <div class="cta-section">
+    <h2>Got a driveway? Earn with it.</h2>
+    <p>Hosts earn an average of $320/month renting idle space. It's free to list.</p>
+    <button onclick="requireAuth('host')">Start Hosting &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== BROWSE ===== -->
+<div class="page" id="page-browse">
+  <div class="browse-layout">
+    <div class="browse-sidebar">
+      <div class="browse-filters">
+        <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('wifi',this)">📶 WiFi</button>
+        <button class="filter-chip" onclick="setFilter('covered',this)">🏠 Covered</button>
+        <button class="filter-chip" onclick="setFilter('electric',this)">⚡ EV Charging</button>
+        <button class="filter-chip" onclick="setFilter('pets',this)">🐾 Pet OK</button>
+        <button class="filter-chip" onclick="setFilter('dump',this)">🚿 Dump Station</button>
+        <button class="filter-chip" onclick="setFilter('water',this)">💧 Water Hook-up</button>
+      </div>
+      <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
+        <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
+        <select id="browseSort" onchange="sortListings()" style="font-size:.8rem;padding:4px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;cursor:pointer">
+          <option value="default">Sort: Default</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="rating">Rating: Highest</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+      <div id="listingsList"></div>
+    </div>
+    <div class="browse-map" style="position:relative">
+      <div id="map"></div>
+      <div class="venue-toggles">
+        <h4>📍 Show on Map</h4>
+        <button class="venue-toggle" data-type="concert" onclick="toggleVenue('concert',this)">🎵 Music Venues</button>
+        <button class="venue-toggle" data-type="stadium" onclick="toggleVenue('stadium',this)">🏟 Stadiums</button>
+        <button class="venue-toggle" data-type="arena" onclick="toggleVenue('arena',this)">🏀 Arenas</button>
+        <button class="venue-toggle" data-type="poi" onclick="toggleVenue('poi',this)">🏙 Downtown</button>
+        <button class="venue-toggle" data-type="park" onclick="toggleVenue('park',this)">🌳 Parks & Museums</button>
+        <button class="venue-toggle" data-type="airport" onclick="toggleVenue('airport',this)">✈️ Airports</button>
+      </div>
+      <button class="map-locate-btn" onclick="locateMe()">📍 Near Me</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DETAIL ===== -->
+<div class="page" id="page-detail">
+  <div class="detail-wrap">
+    <div class="detail-back" onclick="showPage('browse')">&larr; Back to listings</div>
+    <div id="detailPhotoStrip" class="photo-strip hidden"></div>
+    <div class="detail-hero" id="detailEmoji">🏠</div>
+    <div class="detail-title" id="detailTitle"></div>
+    <div class="detail-meta" id="detailMeta"></div>
+    <div class="detail-body">
+      <div>
+        <div class="detail-section">
+          <h3>About this space</h3>
+          <p id="detailDesc" style="font-size:.9rem;line-height:1.7;color:#475569"></p>
+        </div>
+        <div class="detail-section">
+          <h3>Amenities</h3>
+          <div class="amenity-grid" id="detailAmenities"></div>
+        </div>
+        <div class="detail-section" id="detailDimsSection">
+          <h3>Space Details</h3>
+          <div id="detailDims" style="font-size:.9rem;line-height:2;color:#475569"></div>
+        </div>
+        <div class="detail-section" id="detailRulesSection">
+          <h3>House Rules</h3>
+          <ul id="detailRules" style="padding-left:20px;font-size:.9rem;line-height:2;color:#475569"></ul>
+        </div>
+        <div class="detail-section">
+          <h3>Reviews</h3>
+          <div id="detailReviewsList"><p style="color:var(--muted);font-size:.875rem">Loading reviews...</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="booking-card">
+          <div class="booking-price" id="bkPrice">$0 <span>/ night</span></div>
+          <div class="date-row">
+            <div class="date-field">
+              <label>Check In</label>
+              <input type="date" id="bkIn" onchange="calcBooking()"/>
+            </div>
+            <div class="date-field">
+              <label>Check Out</label>
+              <input type="date" id="bkOut" onchange="calcBooking()"/>
+            </div>
+          </div>
+          <div class="nights-display" id="bkNights">Select dates</div>
+          <div class="price-breakdown hidden" id="bkBreakdown">
+            <div class="price-row"><span id="bkBaseLabel">0 nights x $0</span><span id="bkBaseAmt">$0</span></div>
+            <div class="price-row hidden" id="bkDiscRow"><span id="bkDiscLabel"></span><span id="bkDiscAmt"></span></div>
+            <div class="price-row"><span>Broker fee (12%)</span><span id="bkBroker">$0</span></div>
+            <div class="price-row"><span>Insurance fee (3%)</span><span id="bkInsurance">$0</span></div>
+            <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
+          </div>
+          <button class="book-btn" id="bookBtn" onclick="bookNow()" disabled>Select dates to book</button>
+          <div class="booking-note">You won't be charged yet. Review before confirming.</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:8px;background:#f8fafc;border-radius:8px;line-height:1.5">
+            📋 <strong>Cancellation:</strong> Full refund if cancelled 48+ hrs before check-in. 50% refund 24–48 hrs. No refund under 24 hrs.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOST ===== -->
+<div class="page" id="page-host">
+  <div class="host-wrap">
+    <h1>List Your Space 🏠</h1>
+    <p class="subtitle">Turn your idle driveway into extra income. Setup takes about 5 minutes.</p>
+    <p style="font-size:.75rem;color:var(--muted);margin-bottom:24px"><span style="color:var(--red)">*</span> Required fields</p>
+    <form id="hostForm" onsubmit="submitListing(event)">
+      <div class="form-section">
+        <h2>📍 Location &amp; Basic Info</h2>
+        <div class="form-row single"><div class="form-group"><label>Space Title <span style="color:var(--red)">*</span></label><input type="text" id="lTitle" placeholder="e.g. Quiet driveway near downtown" required/></div></div>
+        <div class="form-row single"><div class="form-group"><label>Description</label><textarea id="lDesc" placeholder="Describe access, nearby landmarks, any restrictions..."></textarea></div></div>
+        <div class="form-row single"><div class="form-group"><label>Street Address <span style="color:var(--red)">*</span></label><input type="text" id="lAddress" placeholder="123 Main St" required/></div></div>
+        <div class="form-row">
+          <div class="form-group"><label>City <span style="color:var(--red)">*</span></label><input type="text" id="lCity" required/></div>
+          <div class="form-group"><label>State</label>
+            <select id="lState"><option value="">Select state</option>
+              <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+              <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+              <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+              <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+              <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+              <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+              <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+              <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+              <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+              <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Latitude (auto-detected)</label><input type="number" id="lLat" step="any" placeholder="Auto-filled from address"/></div>
+          <div class="form-group"><label>Longitude (auto-detected)</label><input type="number" id="lLng" step="any" placeholder="Auto-filled from address"/></div>
+        </div>
+        <div class="geocode-status" id="geocodeStatus"></div>
+        <div class="form-row single"><div class="form-group"><label>Emoji Icon</label>
+          <select id="lEmoji">
+            <option value="🏠">🏠 House</option><option value="🏡">🏡 House + Garden</option>
+            <option value="🏢">🏢 Building</option><option value="🅿️">🅿️ Parking</option>
+            <option value="🚗">🚗 Car</option><option value="🌳">🌳 Outdoor</option>
+          </select>
+        </div></div>
+      </div>
+      <div class="form-section">
+        <h2>💰 Pricing</h2>
+        <div class="form-row">
+          <div class="form-group"><label>Nightly Rate ($) <span style="color:var(--red)">*</span></label><input type="number" id="lPriceNight" min="5" placeholder="30" required/></div>
+          <div class="form-group"><label>Weekly Rate ($, optional)</label><input type="number" id="lPriceWeek" min="0" placeholder="Auto: 80% of nightly x7"/></div>
+        </div>
+        <div class="form-row single"><div class="form-group"><label>Monthly Rate ($, optional)</label><input type="number" id="lPriceMonth" min="0" placeholder="Auto: 60% of nightly x30"/></div></div>
+      </div>
+      <div class="form-section">
+        <h2>✅ Amenities</h2>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" id="lWifi"/> WiFi Access</label>
+          <label class="check-item"><input type="checkbox" id="lDump"/> Dump Station</label>
+          <label class="check-item"><input type="checkbox" id="lWater"/> Water Hook-up</label>
+          <label class="check-item"><input type="checkbox" id="lElec"/> Electric / EV</label>
+          <label class="check-item"><input type="checkbox" id="lCovered"/> Covered / Garage</label>
+          <label class="check-item"><input type="checkbox" id="lPets"/> Pets Allowed</label>
+        </div>
+      </div>
+      <div class="form-section">
+        <h2>📐 Space Dimensions</h2>
+        <div class="form-row">
+          <div class="form-group"><label>Length (ft)</label><input type="number" id="lLen" placeholder="e.g. 25"/></div>
+          <div class="form-group"><label>Width (ft)</label><input type="number" id="lWid" placeholder="e.g. 12"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Height Clearance (ft)</label><input type="number" id="lHgt" placeholder="Leave blank if open air"/></div>
+          <div class="form-group"><label>Surface Type</label>
+            <select id="lSurface"><option value="">Unknown</option><option>Concrete</option><option>Asphalt</option><option>Gravel</option><option>Dirt</option><option>Grass</option><option>Pavers</option></select>
+          </div>
+        </div>
+        <div class="form-row single"><div class="form-group"><label>Vehicles Accepted</label>
+          <select id="lVehicles" multiple style="height:100px">
+            <option value="Sedan">Sedan</option><option value="SUV">SUV</option>
+            <option value="Truck">Truck</option><option value="Van">Van</option>
+            <option value="RV">RV / Motorhome</option><option value="Trailer">Trailer</option>
+            <option value="Motorcycle">Motorcycle</option><option value="Boat">Boat / Jet Ski</option>
+          </select>
+          <small style="color:var(--muted);font-size:.75rem">Ctrl/Cmd+click to select multiple</small>
+        </div></div>
+      </div>
+      <div class="form-section">
+        <h2>🛡️ Host Insurance (Required)</h2>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Hosts must carry short-term rental insurance via <a href="https://www.thimble.com" target="_blank" style="color:var(--green)">Thimble.com</a> or equivalent.</p>
+        <div class="form-row">
+          <div class="form-group"><label>Insurance Provider</label><input type="text" id="lInsProvider" placeholder="e.g. Thimble"/></div>
+          <div class="form-group"><label>Policy Number</label><input type="text" id="lInsPolicy" placeholder="Policy #"/></div>
+        </div>
+        <div class="form-row single"><div class="form-group"><label>Policy Expiry Date</label><input type="date" id="lInsExpiry"/></div></div>
+      </div>
+      <div class="form-section">
+        <h2>📋 House Rules</h2>
+        <div class="form-group"><label>Rules (one per line)</label>
+          <textarea id="lRules" placeholder="No overnight parties&#10;Gate closes at 11pm&#10;No smoking on premises"></textarea>
+        </div>
+      </div>
+      <div class="form-section">
+        <h2>📸 Listing Photos (up to 5)</h2>
+        <div class="photo-upload-area" onclick="document.getElementById('listingPhotosInput').click()">
+          <div style="font-size:2rem;margin-bottom:8px">📷</div>
+          <p style="font-weight:600">Click to add photos</p>
+          <p style="font-size:.8rem;color:var(--muted)">JPG or PNG — up to 5 photos, 5MB each</p>
+        </div>
+        <input type="file" id="listingPhotosInput" accept="image/*" multiple class="hidden" onchange="addListingPhotos(this)"/>
+        <div class="photo-thumbs" id="listingPhotoThumbs"></div>
+      </div>
+      <button type="submit" class="submit-host-btn">Submit Listing for Review &rarr;</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== CONFIRM ===== -->
+<div class="page" id="page-confirm">
+  <div class="confirm-wrap">
+    <div class="confirm-icon">🎉</div>
+    <h1>You're All Set!</h1>
+    <p id="confirmMsg">Your booking has been confirmed. The host has been notified and you'll receive a confirmation email shortly.</p>
+    <div class="confirm-detail" id="confirmDetail"></div>
+    <div class="confirm-actions">
+      <button class="btn-outline" onclick="showPage('browse')">Browse More</button>
+      <button class="btn-primary" onclick="showPage('dashboard')">View My Bookings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page" id="page-dashboard">
+  <div class="dash-wrap">
+    <h1>My Account</h1>
+    <div class="profile-card">
+      <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarInput').click()" title="Click to change photo">
+        <span id="profileAvatarInitial">?</span>
+        <div class="avatar-overlay">📷<br>Change<br>Photo</div>
+      </div>
+      <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar(this)"/>
+      <div class="profile-info">
+        <h2 id="profileName" onclick="editProfileName()" title="Click to edit name" style="cursor:pointer">Loading...</h2>
+        <div class="profile-edit-row hidden" id="profileNameEdit">
+          <input type="text" id="profileNameInput" placeholder="Your name"/>
+          <button class="btn-sm btn-sm-green" onclick="saveProfileName()">Save</button>
+          <button class="btn-sm" onclick="cancelProfileNameEdit()">Cancel</button>
+        </div>
+        <p id="profileEmail" style="font-size:.85rem;color:var(--muted)"></p>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:2px">Click name or photo to edit</p>
+        <div class="verify-badge unverified" id="verifyBadge" onclick="openVerifyModal()">⚠️ Identity Not Verified — Click to Verify</div>
+      </div>
+    </div>
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchDashTab('bookings',this)">My Bookings</button>
+      <button class="dash-tab" onclick="switchDashTab('listings',this)">My Listings</button>
+      <button class="dash-tab" onclick="switchDashTab('hosting',this)">Hosting</button>
+      <button class="dash-tab" onclick="switchDashTab('messages',this)">Messages</button>
+    </div>
+    <div class="dash-panel active" id="dashBookings">
+      <div class="loader" id="bookingsLoader">Loading bookings...</div>
+      <div id="bookingsList"></div>
+    </div>
+    <div class="dash-panel" id="dashListings">
+      <div style="margin-bottom:16px"><button class="btn-primary" onclick="requireAuth('host')" style="padding:10px 20px;border-radius:8px;font-size:.9rem">+ Add New Listing</button></div>
+      <div class="loader" id="listingsLoader">Loading listings...</div>
+      <div id="myListingsList"></div>
+    </div>
+    <div class="dash-panel" id="dashHosting">
+      <div class="loader" id="hostingLoader">Loading guest bookings...</div>
+      <div id="hostingList"></div>
+    </div>
+    <div class="dash-panel" id="dashMessages">
+      <div class="msg-layout">
+        <div class="msg-sidebar" id="msgSidebar">
+          <div class="loader">Loading conversations...</div>
+        </div>
+        <div class="msg-main" id="msgMain">
+          <div class="msg-empty-state" id="msgEmpty">
+            <div><div style="font-size:3rem;margin-bottom:12px">💬</div><p>Select a conversation to start messaging</p></div>
+          </div>
+          <div class="msg-thread hidden" id="msgThread"></div>
+          <div class="msg-input-row hidden" id="msgInputRow">
+            <input type="text" id="msgInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()" oninput="document.getElementById('msgSendBtn').disabled=!this.value.trim()"/>
+            <button class="msg-send-btn" id="msgSendBtn" onclick="sendMessage()" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEGAL ===== -->
+<div class="page" id="page-legal">
+  <div class="legal-wrap">
+    <h1>Terms of Service &amp; How It Works</h1>
+    <p class="updated">Last updated: June 2026</p>
+    <div class="legal-section">
+      <h2>How DriveStay Works</h2>
+      <p>DriveStay is a peer-to-peer marketplace connecting property owners ("Hosts") who have spare driveway or parking space with travelers and commuters ("Guests") seeking convenient, affordable parking.</p>
+      <p>We charge a <strong>12% broker fee</strong> and a <strong>3% guest insurance fee</strong> on each booking subtotal. Hosts receive their payout via Stripe Connect within 24 hours of guest check-in.</p>
+    </div>
+    <div class="legal-section">
+      <h2>Discount Structure</h2>
+      <ul>
+        <li><strong>Weekly discount (20%):</strong> Automatically applied when stay is 7 or more nights.</li>
+        <li><strong>Monthly discount (40%):</strong> Automatically applied when stay is 28 or more nights.</li>
+        <li>Discounts apply to the base nightly rate before fees.</li>
+      </ul>
+    </div>
+    <div class="legal-section">
+      <h2>Guest Identity Verification</h2>
+      <p>All Guests must complete a three-step identity verification before their first booking:</p>
+      <ul>
+        <li><strong>Step 1 — Driver's License:</strong> Upload a photo of your valid government-issued ID.</li>
+        <li><strong>Step 2 — Vehicle Info:</strong> Provide your VIN (17 characters, no I/O/Q) and license plate.</li>
+        <li><strong>Step 3 — Insurance:</strong> Confirm your vehicle insurance provider, policy number, and expiry.</li>
+      </ul>
+    </div>
+    <div class="legal-section">
+      <h2>Host Requirements</h2>
+      <ul>
+        <li>Hosts must carry valid short-term rental property insurance (e.g., via Thimble).</li>
+        <li>Listings must accurately represent the space, access, and limitations.</li>
+        <li>New listings are reviewed within 48 hours before going live.</li>
+      </ul>
+    </div>
+    <div class="legal-section">
+      <h2>Cancellation Policy</h2>
+      <ul>
+        <li><strong>48+ hours before check-in:</strong> Full refund minus broker fee.</li>
+        <li><strong>24–48 hours before:</strong> 50% refund.</li>
+        <li><strong>Less than 24 hours:</strong> No refund.</li>
+      </ul>
+    </div>
+    <div class="legal-section">
+      <h2>Liability</h2>
+      <p>DriveStay is a marketplace platform and is not liable for property damage, theft, or injury occurring on a listed space. Use of the platform constitutes acceptance of these terms.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TERMS OF SERVICE ===== -->
+<div class="page" id="page-tos" style="max-width:760px;margin:0 auto;padding:40px 20px">
+  <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:8px">Terms of Service</h1>
+  <p style="color:var(--muted);margin-bottom:32px;font-size:.85rem">Last updated: June 2026</p>
+  <div style="line-height:1.8;color:var(--text)">
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">1. Acceptance of Terms</h2>
+    <p>By accessing or using DriveStay, you agree to be bound by these Terms of Service. DriveStay is a peer-to-peer marketplace that connects hosts offering parking spaces and driveways with guests seeking temporary parking. DriveStay acts as a neutral platform and is not a party to any rental agreement between hosts and guests.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">2. Eligibility</h2>
+    <p>You must be at least 18 years old to use DriveStay. By using the platform, you represent that you have the legal authority to enter into binding agreements.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">3. Host Responsibilities</h2>
+    <p>Hosts are responsible for accurately describing their space, ensuring the space is safe and accessible during the booked period, complying with local laws and HOA rules regarding parking rentals, and having appropriate insurance coverage. DriveStay is not liable for property damage or incidents during a booking.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">4. Guest Responsibilities</h2>
+    <p>Guests must only use the space for the purposes described in the listing, respect the host's property and rules, not leave vehicles beyond the checkout time, and be reachable during the booking period.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">5. Payments and Fees</h2>
+    <p>DriveStay charges a 12% service fee to guests and a 3% processing fee to hosts. All payments are processed securely through Stripe. Hosts receive payouts within 24 hours of guest check-in via Stripe Connect.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">6. Cancellation Policy</h2>
+    <p>Full refund for cancellations made 48+ hours before check-in. 50% refund for cancellations 24–48 hours before check-in. No refund for cancellations under 24 hours before check-in. DriveStay service fees are non-refundable.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">7. Prohibited Uses</h2>
+    <p>You may not use DriveStay for storing vehicles long-term without host consent, commercial vehicle operations, illegal activities, or circumventing the platform to pay hosts directly.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">8. Limitation of Liability</h2>
+    <p>DriveStay is provided "as is." We are not liable for property damage, theft, personal injury, or disputes between hosts and guests. Our maximum liability is limited to the transaction amount. Disputes should be filed within 24 hours of checkout via our in-app messaging system.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">9. Contact</h2>
+    <p>Questions about these terms? Email us at legal@drivestay.com</p>
+  </div>
+  <button class="btn-outline" onclick="showPage('home')" style="margin-top:32px;padding:10px 24px;border-radius:8px">← Back to Home</button>
+</div>
+
+<!-- ===== PRIVACY POLICY ===== -->
+<div class="page" id="page-privacy" style="max-width:760px;margin:0 auto;padding:40px 20px">
+  <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:8px">Privacy Policy</h1>
+  <p style="color:var(--muted);margin-bottom:32px;font-size:.85rem">Last updated: June 2026</p>
+  <div style="line-height:1.8;color:var(--text)">
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">1. Information We Collect</h2>
+    <p>We collect information you provide directly: name, email, phone number, government ID (for identity verification), vehicle information, and payment details. We also collect usage data including listings viewed, bookings made, and messages sent.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">2. How We Use Your Information</h2>
+    <p>We use your information to facilitate bookings between hosts and guests, process payments via Stripe, send transactional emails (booking confirmations, receipts, messages), verify identity, improve the platform, and comply with legal obligations.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">3. Information Sharing</h2>
+    <p>We share limited information with: Stripe (payment processing), hosts/guests as needed to complete a booking (first name and vehicle info only), and law enforcement when required by law. We do not sell your personal information.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">4. Data Security</h2>
+    <p>All data is encrypted in transit (TLS) and at rest. Payment data is handled exclusively by Stripe and never stored on DriveStay servers. We use Supabase with row-level security policies to protect your data.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">5. Your Rights (CCPA/GDPR)</h2>
+    <p>You have the right to access, correct, or delete your personal data. To exercise these rights, email privacy@drivestay.com. We will respond within 30 days. California residents have additional rights under CCPA including the right to know what data we collect and the right to opt out of data sale (we do not sell data).</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">6. Cookies</h2>
+    <p>We use only essential cookies required for authentication (Supabase session cookies). We do not use tracking or advertising cookies.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">7. Data Retention</h2>
+    <p>Account data is retained until you delete your account. Booking records are retained for 7 years for tax/legal compliance. You may request account deletion at any time.</p>
+    <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">8. Contact</h2>
+    <p>Privacy questions: privacy@drivestay.com</p>
+  </div>
+  <button class="btn-outline" onclick="showPage('home')" style="margin-top:32px;padding:10px 24px;border-radius:8px">← Back to Home</button>
+</div>
+
+<!-- ===== MODAL: AUTH ===== -->
+<div class="modal-overlay hidden" id="authModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Authentication">
+    <button class="modal-close" onclick="closeAuth()">&#10005;</button>
+    <h2>Welcome to DriveStay</h2>
+    <p class="modal-sub">Sign in or create your account</p>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login',this)">Log In</div>
+      <div class="auth-tab" onclick="switchAuthTab('register',this)">Sign Up</div>
+    </div>
+    <div class="auth-panel active" id="authLogin">
+      <div class="field-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="field-group"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="auth-submit" onclick="doLogin()">Log In</button>
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="doPasswordReset()" style="font-size:.8rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Forgot password?</button>
+      </div>
+    </div>
+    <div class="auth-panel" id="authRegister">
+      <div class="role-row">
+        <div class="role-card active" onclick="selectRole('guest',this)">
+          <div class="role-icon">🚗</div><div class="role-name">Guest</div><div class="role-desc">Find &amp; book parking</div>
+        </div>
+        <div class="role-card" onclick="selectRole('host',this)">
+          <div class="role-icon">🏠</div><div class="role-name">Host</div><div class="role-desc">List your driveway</div>
+        </div>
+      </div>
+      <div class="field-group"><label>Full Name</label><input type="text" id="regName" placeholder="Jane Smith" autocomplete="name"/></div>
+      <div class="field-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="field-group"><label>Password</label><input type="password" id="regPass" placeholder="Min 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+      <button class="auth-submit" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: VERIFY ===== -->
+<div class="modal-overlay hidden" id="verifyModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Identity Verification">
+    <button class="modal-close" onclick="closeVerifyModal()">&#10005;</button>
+    <h2>Identity Verification</h2>
+    <p class="modal-sub">Required before your first booking</p>
+    <div class="step-indicators">
+      <div class="step-dot active" id="sd0"></div>
+      <div class="step-dot" id="sd1"></div>
+      <div class="step-dot" id="sd2"></div>
+    </div>
+    <!-- Step 1 -->
+    <div class="verify-step active" id="vs0">
+      <h3 style="margin-bottom:12px;font-size:1rem">Step 1: Driver's License</h3>
+      <div class="upload-area" onclick="document.getElementById('dlFile').click()">
+        <div class="upload-icon">📄</div>
+        <p style="font-weight:600">Click to upload DL photo</p>
+        <p style="font-size:.8rem;color:var(--muted)">JPG, PNG or PDF — front side</p>
+      </div>
+      <input type="file" id="dlFile" accept="image/*,.pdf" class="hidden" onchange="previewDL(this)"/>
+      <div id="dlPreview" style="font-size:.85rem;color:var(--green);margin-bottom:12px"></div>
+      <div class="form-row">
+        <div class="form-group"><label>DL Number</label><input type="text" id="dlNum" placeholder="License number"/></div>
+        <div class="form-group"><label>State</label><input type="text" id="dlState" placeholder="CA" maxlength="2"/></div>
+      </div>
+      <button class="auth-submit" onclick="verifyStep(1)">Next: Vehicle Info &rarr;</button>
+    </div>
+    <!-- Step 2 -->
+    <div class="verify-step" id="vs1">
+      <h3 style="margin-bottom:12px;font-size:1rem">Step 2: Vehicle Information</h3>
+      <div class="field-group">
+        <label>VIN (17 characters)</label>
+        <input type="text" id="vinNum" placeholder="1HGBH41JXMN109186" maxlength="17" oninput="this.value=this.value.toUpperCase()" style="font-family:monospace;letter-spacing:.08em"/>
+        <div id="vinError" style="font-size:.75rem;color:var(--red);margin-top:4px"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>License Plate</label><input type="text" id="platNum" placeholder="ABC1234"/></div>
+        <div class="form-group"><label>Plate State</label><input type="text" id="platState" placeholder="CA" maxlength="2"/></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-outline" onclick="verifyStep(0)" style="flex:1;padding:11px;border-radius:10px;font-weight:600">&larr; Back</button>
+        <button class="auth-submit" onclick="verifyStep(2)" style="flex:2">Next: Insurance &rarr;</button>
+      </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="verify-step" id="vs2">
+      <h3 style="margin-bottom:12px;font-size:1rem">Step 3: Vehicle Insurance</h3>
+      <div class="field-group"><label>Insurance Provider</label><input type="text" id="insProvider" placeholder="e.g. State Farm, Geico"/></div>
+      <div class="field-group"><label>Policy Number</label><input type="text" id="insPolicy" placeholder="Policy #"/></div>
+      <div class="field-group"><label>Policy Expiry Date</label><input type="date" id="insExpiry"/></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-outline" onclick="verifyStep(1)" style="flex:1;padding:11px;border-radius:10px;font-weight:600">&larr; Back</button>
+        <button class="auth-submit" onclick="submitVerification()" style="flex:2">Submit Verification ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: PAYMENT ===== -->
+<div class="modal-overlay hidden" id="paymentModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Complete Payment" style="max-width:480px">
+    <button class="modal-close" onclick="closePaymentModal()">&#10005;</button>
+    <h2>Complete Payment</h2>
+    <p class="modal-sub" id="payModalSub">Secure checkout via Stripe</p>
+    <div id="stripe-payment-element" style="margin:20px 0"></div>
+    <button class="pay-btn" id="payBtn" onclick="confirmStripePayment()">Pay Now</button>
+    <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:12px">🔒 Secured by Stripe. DriveStay never stores your card details.</p>
+  </div>
+</div>
+
+<!-- ===== MODAL: REVIEW ===== -->
+<div class="modal-overlay hidden" id="reviewModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Leave a Review" style="max-width:440px">
+    <button class="modal-close" onclick="closeReviewModal()">&#10005;</button>
+    <h2>Leave a Review ★</h2>
+    <p class="modal-sub">How was your stay?</p>
+    <div class="star-picker" id="starPicker" role="radiogroup" aria-label="Rating">
+      <span onclick="setReviewStar(1)" tabindex="0" role="radio" aria-label="1 star" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(1)">★</span>
+      <span onclick="setReviewStar(2)" tabindex="0" role="radio" aria-label="2 stars" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(2)">★</span>
+      <span onclick="setReviewStar(3)" tabindex="0" role="radio" aria-label="3 stars" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(3)">★</span>
+      <span onclick="setReviewStar(4)" tabindex="0" role="radio" aria-label="4 stars" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(4)">★</span>
+      <span onclick="setReviewStar(5)" tabindex="0" role="radio" aria-label="5 stars" onkeydown="if(event.key===' '||event.key==='Enter')setReviewStar(5)">★</span>
+    </div>
+    <div class="field-group" style="margin-top:8px">
+      <label>Your Comment</label>
+      <textarea id="reviewComment" placeholder="Tell others about your experience..."
+        style="width:100%;min-height:100px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;outline:none;resize:vertical;font:inherit"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    </div>
+    <button class="auth-submit" onclick="submitReview()">Submit Review</button>
+  </div>
+</div>
+
+<footer style="background:#0f172a;color:#94a3b8;text-align:center;padding:40px 24px;font-size:.85rem">
+  <p style="font-weight:700;color:#fff;margin-bottom:8px">🚗 DriveStay</p>
+  <p>Peer-to-peer driveway rental &amp; parking space marketplace</p>
+  <nav aria-label="Footer" style="margin:16px 0;display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
+    <a href="#" onclick="showPage('home');return false;" style="color:#94a3b8">Home</a>
+    <a href="#" onclick="showPage('browse');return false;" style="color:#94a3b8">Browse Spaces</a>
+    <a href="#" onclick="requireAuth('host');return false;" style="color:#94a3b8">List Your Driveway</a>
+    <a href="#" onclick="showPage('legal');return false;" style="color:#94a3b8">How It Works</a>
+    <a href="#" onclick="showPage('tos');return false;" style="color:#94a3b8">Terms of Service</a>
+    <a href="#" onclick="showPage('privacy');return false;" style="color:#94a3b8">Privacy Policy</a>
+    <a href="mailto:support@drivestay.com" style="color:#94a3b8">Support</a>
+  </nav>
+  <p style="color:#64748b">&copy; 2026 DriveStay Inc. All rights reserved.</p>
+  <p style="color:#475569;font-size:.75rem;margin-top:8px">Stripe test mode — payments are simulated in this demo.</p>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SUPABASE_URL      = 'https://uvhhhwfhrdywczlhxvaa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2aGhod2ZocmR5d2N6bGh4dmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3NTcxNzUsImV4cCI6MjA2NTMzMzE3NX0.TKMiKh4ytFyqFz0K7b3lbnlEZ-bWBJ-WOWXNP60rDGM';
+const STRIPE_PUB_KEY    = 'pk_test_51Tbpe982iHAjwGvfKhusxoMAiRl8LzaTMZGjZDjBKDKHWGOywnHyK68DZIwB2EDQyNHjdRLywq1jk43NzWRlPYkc007qXb8ssP';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let _stripe = null;
+const getStripe = () => { if (!_stripe && typeof Stripe!=='undefined') _stripe = Stripe(STRIPE_PUB_KEY); return _stripe; };
+
+// ============================================================
+// SAMPLE DATA (fallback when DB empty)
+// ============================================================
+const SAMPLE_LISTINGS = [
+  { id:'s1', emoji:'🏡', title:'Quiet Driveway Near Hollywood Bowl',
+    description:'Wide concrete driveway, fits 2 cars. Walking distance to Hollywood Bowl. Well-lit, camera monitored.',
+    address:'1234 Laurel Canyon Blvd', city:'Los Angeles', state:'CA',
+    lat:34.1122, lng:-118.3392, price_nightly:45, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
+    vehicles:['Sedan','SUV'], rating:4.9, review_count:23, status:'active',
+    rules:['No overnight parties','No commercial vehicles'] },
+  { id:'s2', emoji:'🅿️', title:'Covered Garage Spot – Downtown Austin',
+    description:'Single covered garage spot. EV charger available. Minutes from 6th Street.',
+    address:'800 Congress Ave', city:'Austin', state:'TX',
+    lat:30.2672, lng:-97.7431, price_nightly:28, wifi:true, covered:true, electric:true, dump:false, water:false, pets:false,
+    vehicles:['Sedan','SUV','Motorcycle'], rating:4.7, review_count:11, status:'active',
+    rules:['EV charger: $5/night extra'] },
+  { id:'s3', emoji:'🌳', title:'Shaded Lot – Near Wrigley Field',
+    description:'Large shaded lot, fits up to 3 vehicles. Close to Wrigley Field — perfect for Cubs games.',
+    address:'1060 W Addison St', city:'Chicago', state:'IL',
+    lat:41.9484, lng:-87.6553, price_nightly:55, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
+    vehicles:['Sedan','SUV','Truck'], rating:4.8, review_count:34, status:'active',
+    rules:['No overnight stays without permission','Quiet after 10pm'] },
+  { id:'s4', emoji:'🏠', title:'RV-Friendly Lot with Dump Station – Nashville',
+    description:'Full hookup RV spot: 30A electric, dump station, water. Near Grand Ole Opry.',
+    address:'2804 Opryland Dr', city:'Nashville', state:'TN',
+    lat:36.2010, lng:-86.6944, price_nightly:75, wifi:true, covered:false, electric:true, dump:true, water:true, pets:true,
+    vehicles:['RV','Van','Trailer'], rating:4.6, review_count:8, status:'active',
+    rules:['Max 35ft','Check-in after 2pm','Check-out by noon'] },
+  { id:'s5', emoji:'🚗', title:'Budget Driveway – Brooklyn Heights',
+    description:'Tight but fits a standard sedan or small SUV. Safe neighborhood, minutes from subway.',
+    address:'100 Hicks St', city:'Brooklyn', state:'NY',
+    lat:40.6981, lng:-73.9966, price_nightly:35, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
+    vehicles:['Sedan','Motorcycle'], rating:4.5, review_count:19, status:'active',
+    rules:['Compact cars only','No tall vehicles'] },
+  { id:'s6', emoji:'🏢', title:'Downtown Parking Spot – Denver',
+    description:'Paved surface spot in private residential courtyard. Walking distance to Coors Field.',
+    address:'2001 Blake St', city:'Denver', state:'CO',
+    lat:39.7563, lng:-104.9942, price_nightly:32, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
+    vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
+    rules:['No commercial vehicles'] },
+];
+
+const VENUE_DATA = [
+  // Music Venues
+  { type:'concert', lat:34.0980, lng:-118.3267, name:'Hollywood Bowl', city:'Los Angeles, CA' },
+  { type:'concert', lat:30.2849, lng:-97.7341, name:"Stubb's Amphitheater", city:'Austin, TX' },
+  { type:'concert', lat:36.1627, lng:-86.7816, name:'Ryman Auditorium', city:'Nashville, TN' },
+  { type:'concert', lat:40.7794, lng:-73.9632, name:'Beacon Theatre', city:'New York, NY' },
+  { type:'concert', lat:37.8716, lng:-122.2590, name:'Greek Theatre Berkeley', city:'Berkeley, CA' },
+  { type:'concert', lat:39.9526, lng:-75.1652, name:'Wells Fargo Center', city:'Philadelphia, PA' },
+  { type:'concert', lat:47.6205, lng:-122.3493, name:'Climate Pledge Arena', city:'Seattle, WA' },
+  { type:'concert', lat:25.7617, lng:-80.1918, name:'Kaseya Center', city:'Miami, FL' },
+  { type:'concert', lat:29.7499, lng:-95.3677, name:'Toyota Center', city:'Houston, TX' },
+  { type:'concert', lat:33.4454, lng:-112.0712, name:'Footprint Center', city:'Phoenix, AZ' },
+  { type:'concert', lat:32.7907, lng:-96.8103, name:'American Airlines Center', city:'Dallas, TX' },
+  { type:'concert', lat:38.8982, lng:-77.0207, name:'Capital One Arena', city:'Washington, DC' },
+  { type:'concert', lat:42.3601, lng:-71.0589, name:'TD Garden', city:'Boston, MA' },
+  { type:'concert', lat:43.6435, lng:-79.3791, name:'Scotiabank Arena', city:'Toronto, ON' },
+  // NFL / MLB Stadiums
+  { type:'stadium', lat:41.9484, lng:-87.6553, name:'Wrigley Field ⚾', city:'Chicago, IL' },
+  { type:'stadium', lat:41.8300, lng:-87.6339, name:'Guaranteed Rate Field ⚾', city:'Chicago, IL' },
+  { type:'stadium', lat:40.8296, lng:-73.9262, name:'Yankee Stadium ⚾', city:'New York, NY' },
+  { type:'stadium', lat:40.7571, lng:-73.8458, name:'Citi Field ⚾', city:'Queens, NY' },
+  { type:'stadium', lat:34.0739, lng:-118.2400, name:'Dodger Stadium ⚾', city:'Los Angeles, CA' },
+  { type:'stadium', lat:37.7786, lng:-122.3893, name:"Oracle Park ⚾", city:'San Francisco, CA' },
+  { type:'stadium', lat:47.5913, lng:-122.3324, name:'T-Mobile Park ⚾', city:'Seattle, WA' },
+  { type:'stadium', lat:39.7561, lng:-104.9944, name:'Coors Field ⚾', city:'Denver, CO' },
+  { type:'stadium', lat:36.1665, lng:-86.7713, name:'Nissan Stadium 🏈', city:'Nashville, TN' },
+  { type:'stadium', lat:29.9511, lng:-90.0812, name:'Caesars Superdome 🏈', city:'New Orleans, LA' },
+  { type:'stadium', lat:33.5277, lng:-112.2626, name:'State Farm Stadium 🏈', city:'Glendale, AZ' },
+  { type:'stadium', lat:33.8647, lng:-84.4681, name:'Mercedes-Benz Stadium 🏈', city:'Atlanta, GA' },
+  { type:'stadium', lat:42.0909, lng:-76.0739, name:'MetLife Stadium 🏈', city:'East Rutherford, NJ' },
+  { type:'stadium', lat:32.7478, lng:-97.0929, name:'AT&T Stadium 🏈', city:'Arlington, TX' },
+  { type:'stadium', lat:37.4032, lng:-121.9698, name:"Levi's Stadium 🏈", city:'Santa Clara, CA' },
+  { type:'stadium', lat:34.0141, lng:-118.2879, name:'SoFi Stadium 🏈', city:'Inglewood, CA' },
+  { type:'stadium', lat:25.9580, lng:-80.2389, name:'Hard Rock Stadium 🏈', city:'Miami Gardens, FL' },
+  // NBA / NHL Arenas
+  { type:'arena', lat:34.0430, lng:-118.2673, name:'Crypto.com Arena 🏀', city:'Los Angeles, CA' },
+  { type:'arena', lat:37.7680, lng:-122.3877, name:'Chase Center 🏀', city:'San Francisco, CA' },
+  { type:'arena', lat:41.8807, lng:-87.6742, name:'United Center 🏀', city:'Chicago, IL' },
+  { type:'arena', lat:40.6826, lng:-73.9754, name:'Barclays Center 🏀', city:'Brooklyn, NY' },
+  { type:'arena', lat:29.7490, lng:-95.3621, name:'Toyota Center 🏀', city:'Houston, TX' },
+  { type:'arena', lat:36.1910, lng:-115.1470, name:'T-Mobile Arena 🏀', city:'Las Vegas, NV' },
+  { type:'arena', lat:30.3246, lng:-81.6558, name:'Kia Center 🏀', city:'Orlando, FL' },
+  { type:'arena', lat:44.9795, lng:-93.2762, name:'Target Center 🏀', city:'Minneapolis, MN' },
+  // Downtown / POI
+  { type:'poi', lat:34.0522, lng:-118.2437, name:'Downtown Los Angeles', city:'LA, CA' },
+  { type:'poi', lat:40.7580, lng:-73.9855, name:'Times Square', city:'New York, NY' },
+  { type:'poi', lat:41.8827, lng:-87.6233, name:'Millennium Park', city:'Chicago, IL' },
+  { type:'poi', lat:29.9511, lng:-90.0715, name:'French Quarter', city:'New Orleans, LA' },
+  { type:'poi', lat:36.1699, lng:-115.1398, name:'Las Vegas Strip', city:'Las Vegas, NV' },
+  { type:'poi', lat:30.2672, lng:-97.7431, name:'6th Street', city:'Austin, TX' },
+  { type:'poi', lat:47.6062, lng:-122.3321, name:'Pike Place Market', city:'Seattle, WA' },
+  { type:'poi', lat:25.7617, lng:-80.1918, name:'Downtown Miami', city:'Miami, FL' },
+  { type:'poi', lat:32.7767, lng:-96.7970, name:'Deep Ellum', city:'Dallas, TX' },
+  { type:'poi', lat:37.7749, lng:-122.4194, name:'Union Square', city:'San Francisco, CA' },
+  { type:'poi', lat:42.3601, lng:-71.0589, name:'Faneuil Hall', city:'Boston, MA' },
+  { type:'poi', lat:38.9072, lng:-77.0369, name:'National Mall', city:'Washington, DC' },
+  { type:'poi', lat:35.1495, lng:-90.0490, name:'Beale Street', city:'Memphis, TN' },
+  { type:'poi', lat:39.9526, lng:-75.1652, name:'Center City', city:'Philadelphia, PA' },
+  { type:'poi', lat:33.7490, lng:-84.3880, name:'Downtown Atlanta', city:'Atlanta, GA' },
+  // Parks & Museums
+  { type:'park', lat:40.7829, lng:-73.9654, name:'Central Park', city:'New York, NY' },
+  { type:'park', lat:41.8789, lng:-87.6359, name:'Grant Park', city:'Chicago, IL' },
+  { type:'park', lat:38.8921, lng:-77.0241, name:'Smithsonian Mall', city:'Washington, DC' },
+  { type:'park', lat:34.1341, lng:-118.3215, name:'Griffith Observatory', city:'Los Angeles, CA' },
+  { type:'park', lat:37.7699, lng:-122.4669, name:'Golden Gate Park', city:'San Francisco, CA' },
+  { type:'park', lat:40.7614, lng:-111.8910, name:'Natural History Museum of Utah', city:'Salt Lake City, UT' },
+  { type:'park', lat:44.4605, lng:-110.8282, name:'Yellowstone National Park', city:'WY' },
+  { type:'park', lat:36.1069, lng:-112.1129, name:'Grand Canyon South Rim', city:'AZ' },
+  { type:'park', lat:25.7617, lng:-80.3037, name:'Everglades National Park', city:'FL' },
+  { type:'park', lat:47.8525, lng:-123.9117, name:'Olympic National Park', city:'WA' },
+  // Airports
+  { type:'airport', lat:33.9425, lng:-118.4081, name:'LAX Airport ✈️', city:'Los Angeles, CA' },
+  { type:'airport', lat:40.6413, lng:-73.7781, name:'JFK Airport ✈️', city:'New York, NY' },
+  { type:'airport', lat:41.9742, lng:-87.9073, name:"O'Hare Airport ✈️", city:'Chicago, IL' },
+  { type:'airport', lat:33.6407, lng:-84.4277, name:'Atlanta Hartsfield ✈️', city:'Atlanta, GA' },
+  { type:'airport', lat:32.8998, lng:-97.0403, name:'DFW Airport ✈️', city:'Dallas, TX' },
+  { type:'airport', lat:36.0840, lng:-115.1537, name:'Las Vegas Harry Reid ✈️', city:'Las Vegas, NV' },
+  { type:'airport', lat:47.4502, lng:-122.3088, name:'SEA-TAC Airport ✈️', city:'Seattle, WA' },
+  { type:'airport', lat:25.7959, lng:-80.2870, name:'Miami International ✈️', city:'Miami, FL' },
+  { type:'airport', lat:42.3656, lng:-71.0096, name:'Boston Logan ✈️', city:'Boston, MA' },
+  { type:'airport', lat:38.9531, lng:-77.4565, name:'Dulles Airport ✈️', city:'Washington, DC' },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null, currentProfile = null;
+let allListings = [], filteredListings = [];
+let _listingsLastFetch = 0;
+let currentFilter = 'all';
+let selectedListing = null;
+let leafletMap = null, mapMarkers = [];
+let venueMarkers = { concert:[], stadium:[], arena:[], poi:[], park:[], airport:[] };
+let venueVisible  = { concert:true, stadium:true, arena:true, poi:true, park:true, airport:true };
+let markerCluster = null;
+let stripeElements = null;
+let afterAuthAction = null, selectedRole = 'guest';
+let listingPhotoFiles = [];
+let _reviewCtx = { bookingId: null, listingId: null, rating: 0 };
+let _activeConvoId = null, _msgRealtimeSub = null, _msgConvos = [];
+let _messagesLoaded = false;
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'browse') { setTimeout(() => { if (!leafletMap) initMap(); }, 50); loadListings(); }
+  if (name === 'dashboard' && currentUser) loadDashboard();
+  // Update nav active state
+  const navMap = { browse: 'btnBrowse', legal: 'btnHowItWorks' };
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('nav-active'));
+  if (navMap[name]) { const nb = document.getElementById(navMap[name]); if (nb) nb.classList.add('nav-active'); }
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function openAuth(tab) { document.getElementById('authModal').classList.remove('hidden'); switchAuthTab(tab); }
+function closeAuth()   { document.getElementById('authModal').classList.add('hidden'); }
+
+function switchAuthTab(tab) {
+  const tabs = document.querySelectorAll('.auth-tab');
+  tabs[0].classList.toggle('active', tab==='login');
+  tabs[1].classList.toggle('active', tab==='register');
+  document.getElementById('authLogin').classList.toggle('active', tab==='login');
+  document.getElementById('authRegister').classList.toggle('active', tab==='register');
+}
+
+function selectRole(role, el) {
+  selectedRole = role;
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function requireAuth(action) {
+  if (currentUser) {
+    if (action === 'host') showPage('host');
+    else if (action === 'book') bookNow();
+  } else {
+    afterAuthAction = action;
+    openAuth('register');
+  }
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  if (!email || !pass) { showToast('Please fill in all fields', 'error'); return; }
+  const btn = document.querySelector('#authLogin .auth-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+  try {
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+    if (error) { showToast(error.message, 'error'); return; }
+    currentUser = data.user;
+    await loadProfile(data.user.id, data.user);
+    updateNavAuth(); closeAuth();
+    showToast('Welcome back!', 'success');
+    if (afterAuthAction) { const a = afterAuthAction; afterAuthAction = null; handlePostAuth(a); }
+  } catch(e) { showToast('Login failed. Try again.', 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Log In'; } }
+}
+
+async function doRegister() {
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  if (!name || !email || !pass) { showToast('Please fill in all fields', 'error'); return; }
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRx.test(email)) { showToast('Invalid email address', 'error'); return; }
+  if (pass.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+  const btn = document.querySelector('#authRegister .auth-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating account…'; }
+  try {
+    const { data, error } = await db.auth.signUp({ email, password: pass, options: { data: { name, role: selectedRole } } });
+    if (error) { showToast(error.message, 'error'); return; }
+    if (data.user) {
+      currentUser = data.user;
+      try { await db.from('profiles').upsert({ id: data.user.id, name, email, role: selectedRole, verified: false }); } catch(e) {}
+      await loadProfile(data.user.id, data.user);
+      updateNavAuth();
+    }
+    closeAuth();
+    showToast('Account created! Check email to confirm.', 'success');
+    if (data.user) setTimeout(() => openVerifyModal(), 1200);
+    if (afterAuthAction) { const a = afterAuthAction; afterAuthAction = null; handlePostAuth(a); }
+  } catch(e) { showToast('Registration failed. Try again.', 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Create Account'; } }
+}
+
+function handlePostAuth(action) {
+  if (action === 'host') showPage('host');
+  else if (action === 'book') bookNow();
+}
+
+async function logout() {
+  await db.auth.signOut();
+  currentUser = null; currentProfile = null;
+  updateNavAuth(); showPage('home');
+  showToast('Logged out.', 'info');
+}
+
+async function loadProfile(uid, user) {
+  try {
+    const { data, error } = await db.from('profiles').select('*').eq('id', uid).single();
+    if (error || !data) {
+      currentProfile = { id: uid, email: user.email,
+        name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+        verified: false, role: user.user_metadata?.role || 'guest' };
+      // Try to create the missing profile row in the database
+      await db.from('profiles').upsert(currentProfile).catch(() => {});
+    } else {
+      currentProfile = data;
+    }
+  } catch(e) {
+    currentProfile = { id: uid, email: user.email,
+      name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+      verified: false, role: user.user_metadata?.role || 'guest' };
+  }
+}
+
+function updateNavAuth() {
+  const in_ = !!currentUser;
+  document.getElementById('btnLogin').classList.toggle('hidden', in_);
+  document.getElementById('btnSignup').classList.toggle('hidden', in_);
+  document.getElementById('btnUser').classList.toggle('hidden', !in_);
+  document.getElementById('btnLogout').classList.toggle('hidden', !in_);
+}
+
+// ============================================================
+// VERIFY MODAL
+// ============================================================
+function openVerifyModal() { updateVerifySteps(0); document.getElementById('verifyModal').classList.remove('hidden'); }
+function closeVerifyModal() { document.getElementById('verifyModal').classList.add('hidden'); }
+
+function updateVerifySteps(step) {
+  [0,1,2].forEach(i => {
+    document.getElementById('vs'+i).classList.toggle('active', i===step);
+    const d = document.getElementById('sd'+i);
+    d.className = 'step-dot' + (i<step?' done':(i===step?' active':''));
+  });
+}
+
+function previewDL(input) {
+  const f = input.files[0];
+  if (f) document.getElementById('dlPreview').textContent = '✅ ' + f.name + ' selected';
+}
+
+function verifyStep(toStep) {
+  if (toStep === 1) {
+    if (!document.getElementById('dlFile').files.length) {
+      showToast('Please upload a photo of your driver\'s license', 'error'); return;
+    }
+    if (!document.getElementById('dlNum').value.trim() || !document.getElementById('dlState').value.trim()) {
+      showToast('Please enter your DL number and state', 'error'); return;
+    }
+  }
+  if (toStep === 2) {
+    const vin = document.getElementById('vinNum').value.trim();
+    const err = document.getElementById('vinError');
+    if (vin.length !== 17) { err.textContent = 'VIN must be exactly 17 characters'; return; }
+    if (/[IOQ]/i.test(vin)) { err.textContent = 'VIN cannot contain I, O, or Q'; return; }
+    err.textContent = '';
+    if (!document.getElementById('platNum').value.trim() || !document.getElementById('platState').value.trim()) {
+      showToast('Please enter plate number and state', 'error'); return;
+    }
+  }
+  updateVerifySteps(toStep);
+}
+
+async function submitVerification() {
+  const provider = document.getElementById('insProvider').value.trim();
+  const policy   = document.getElementById('insPolicy').value.trim();
+  const expiry   = document.getElementById('insExpiry').value;
+  if (!provider || !policy || !expiry) { showToast('Please complete all insurance fields', 'error'); return; }
+  
+  const btn = document.querySelector('#verifyModal .auth-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+  try {
+    let dlPath = null;
+    const dlFileInput = document.getElementById('dlFile');
+    if (dlFileInput && dlFileInput.files.length && currentUser) {
+      const file = dlFileInput.files[0];
+      const ext = file.name.split('.').pop().replace(/[^a-z0-9]/gi,'').slice(0,5).toLowerCase();
+      const uniqueId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const path = `${currentUser.id}/dl_${Date.now()}_${uniqueId}.${ext}`;
+      const { error: uploadErr } = await db.storage.from('documents').upload(path, file, { upsert: true, contentType: file.type });
+      if (uploadErr) throw uploadErr;
+      dlPath = path;
+    }
+
+    const updates = {
+      dl_number: document.getElementById('dlNum').value.trim(),
+      dl_state: document.getElementById('dlState').value.trim().toUpperCase(),
+      vin: document.getElementById('vinNum').value.trim(),
+      plate_number: document.getElementById('platNum').value.trim(),
+      plate_state: document.getElementById('platState').value.trim().toUpperCase(),
+      ins_provider: provider, ins_policy: policy, ins_expiry: expiry, verified: true
+    };
+    if (dlPath) {
+      updates.dl_photo_path = dlPath;
+    }
+
+    if (currentUser) {
+      const { error: updateErr } = await db.from('profiles').update(updates).eq('id', currentUser.id);
+      if (updateErr) throw updateErr;
+    }
+    if (currentProfile) currentProfile = { ...currentProfile, ...updates };
+    closeVerifyModal();
+    showToast('✅ Identity verified! You can now book spaces.', 'success');
+    const badge = document.getElementById('verifyBadge');
+    if (badge) { badge.className = 'verify-badge verified'; badge.textContent = '✅ Identity Verified'; badge.onclick = null; }
+  } catch(e) {
+    showToast('Failed to submit verification: ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit Verification ✓'; }
+  }
+}
+
+// ============================================================
+// LISTINGS
+// ============================================================
+async function loadListings() {
+  const now = Date.now();
+  if (allListings.length && (now - _listingsLastFetch) < 60_000) {
+    applyFilter(); return;
+  }
+  const listEl = document.getElementById('listingsList');
+  if (listEl) listEl.innerHTML = '<div class="loader">Finding spaces near you...</div>';
+  try {
+    const { data, error } = await db.from('listings').select('*').eq('status','active').order('created_at',{ascending:false});
+    allListings = (!error && data?.length) ? data : SAMPLE_LISTINGS;
+    _listingsLastFetch = now;
+  } catch(e) { allListings = SAMPLE_LISTINGS; _listingsLastFetch = now; }
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = (document.getElementById('navSearch')?.value || '').toLowerCase();
+  filteredListings = allListings.filter(l => {
+    const mf = currentFilter === 'all' || !!l[currentFilter];
+    const ms = !q || (l.title||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q) || (l.state||'').toLowerCase().includes(q);
+    return mf && ms;
+  });
+
+  // Sort listings based on select menu
+  const sortVal = document.getElementById('browseSort')?.value || 'default';
+  if (sortVal === 'price_asc') {
+    filteredListings.sort((a, b) => Number(a.price_nightly || 0) - Number(b.price_nightly || 0));
+  } else if (sortVal === 'price_desc') {
+    filteredListings.sort((a, b) => Number(b.price_nightly || 0) - Number(a.price_nightly || 0));
+  } else if (sortVal === 'rating') {
+    filteredListings.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
+  } else if (sortVal === 'newest') {
+    filteredListings.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+
+  renderListings();
+  renderMapMarkers();
+}
+
+function sortListings() {
+  applyFilter();
+}
+
+function filterListings() { applyFilter(); }
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilter();
+}
+
+function renderListings() {
+  const el = document.getElementById('listingsList');
+  const ct = document.getElementById('browseCount');
+  if (!el) return;
+  ct.textContent = filteredListings.length + ' spaces available';
+  if (!filteredListings.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">😕</div><h3>No spaces found</h3><p>Try adjusting your filters or searching a different city.</p></div>';
+    return;
+  }
+  el.innerHTML = filteredListings.map(l => `
+    <div class="listing-card" onclick="openDetail('${l.id}')">
+      <div class="listing-emoji">${l.photos?.length ? `<img src="${l.photos[0]}" style="width:64px;height:64px;border-radius:12px;object-fit:cover" alt="${escapeHtml(l.title)} parking space in ${escapeHtml(l.city)}, ${escapeHtml(l.state)}"/>` : (escapeHtml(l.emoji||'🏠'))}</div>
+      <div class="listing-info">
+        <div class="listing-title">${escapeHtml(l.title)}</div>
+        <div class="listing-loc">📍 ${escapeHtml(l.city)}, ${escapeHtml(l.state)}</div>
+        <div class="listing-tags">
+          ${l.covered?'<span class="tag">🏠 Covered</span>':''}
+          ${l.electric?'<span class="tag">⚡ EV</span>':''}
+          ${l.wifi?'<span class="tag">📶 WiFi</span>':''}
+          ${l.dump?'<span class="tag">🚿 Dump</span>':''}
+          ${l.pets?'<span class="tag">🐾 Pets OK</span>':''}
+        </div>
+        <div>
+          <span class="listing-price">$${l.price_nightly}/night</span>
+          ${l.rating?`<span class="listing-stars">⭐ ${l.rating} (${l.review_count||0})</span>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// MAP
+// ============================================================
+function initMap() {
+  if (leafletMap) return;
+  leafletMap = L.map('map', { zoomControl: false }).setView([39.5, -98.35], 5);
+
+  // Detailed tile layer (CartoDB Voyager — labels + detail)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution:'© OpenStreetMap © CARTO',
+    subdomains:'abcd', maxZoom:19
+  }).addTo(leafletMap);
+
+  // Custom zoom control (top-left)
+  L.control.zoom({ position:'topleft' }).addTo(leafletMap);
+
+  const venueColors = {
+    concert:'#9333ea', stadium:'#16a34a', arena:'#2563eb',
+    poi:'#f97316', park:'#065f46', airport:'#1d4ed8'
+  };
+  const venueIcons = {
+    concert:'🎵', stadium:'🏟', arena:'🏀', poi:'🏙', park:'🌳', airport:'✈️'
+  };
+
+  VENUE_DATA.forEach(v => {
+    const color = venueColors[v.type] || '#64748b';
+    const icon  = venueIcons[v.type] || '📍';
+    const mk = L.circleMarker([v.lat, v.lng], {
+      radius: v.type==='airport' ? 9 : v.type==='stadium'||v.type==='arena' ? 11 : 9,
+      fillColor: color, color:'#fff', weight:2.5, opacity:1, fillOpacity:.9
+    }).addTo(leafletMap).bindPopup(`
+      <div style="min-width:140px">
+        <div style="font-size:1.1rem;margin-bottom:4px">${escapeHtml(icon)} <b>${escapeHtml(v.name)}</b></div>
+        <div style="color:#64748b;font-size:.78rem">${escapeHtml(v.city||'')}</div>
+        <div style="margin-top:8px"><a href="#" data-city="${escapeHtml(v.city?.split(',')[0]||'')}" class="venue-search-link" style="color:#22c55e;font-weight:700;text-decoration:none;font-size:.78rem">🔍 Find parking nearby</a></div>
+      </div>
+    `, { maxWidth: 200 }).on('popupopen', function() {
+      const link = this.getPopup().getElement()?.querySelector('.venue-search-link');
+      if (link) link.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('navSearch').value = this.dataset.city; filterListings(); });
+    });
+    if (venueMarkers[v.type]) venueMarkers[v.type].push(mk);
+  });
+
+  // Cluster layer for listing markers
+  markerCluster = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    iconCreateFunction: function(cluster) {
+      return L.divIcon({
+        html: `<div style="background:#22c55e;color:#fff;border-radius:20px;padding:5px 12px;font-weight:800;font-size:.8rem;box-shadow:0 2px 8px rgba(0,0,0,.25);white-space:nowrap">${cluster.getChildCount()} spots</div>`,
+        className: '', iconAnchor:[30,12]
+      });
+    }
+  });
+  leafletMap.addLayer(markerCluster);
+}
+
+function renderMapMarkers() {
+  if (!leafletMap || !markerCluster) return;
+  markerCluster.clearLayers();
+  mapMarkers = [];
+  filteredListings.forEach(l => {
+    if (!l.lat || !l.lng) return;
+    const mk = L.marker([l.lat, l.lng], {
+      icon: L.divIcon({
+        html:`<div style="background:#22c55e;color:#fff;border-radius:20px;padding:5px 12px;font-weight:800;font-size:.78rem;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);border:2px solid #fff">$${l.price_nightly}</div>`,
+        className:'', iconAnchor:[24,12]
+      })
+    }).bindPopup(`
+      <div style="min-width:160px">
+        <div style="font-size:1.4rem;margin-bottom:4px">${escapeHtml(l.emoji||'🏠')}</div>
+        <b style="font-size:.9rem">${escapeHtml(l.title)}</b>
+        <div style="color:#64748b;font-size:.78rem;margin:4px 0">${escapeHtml(l.city)}, ${escapeHtml(l.state)}</div>
+        <div style="font-weight:800;color:#16a34a;font-size:1rem">$${Number(l.price_nightly)|0}<span style="font-weight:400;color:#64748b;font-size:.75rem">/night</span></div>
+        <div style="margin-top:10px"><a href="#" data-id="${escapeHtml(String(l.id))}" class="popup-book-btn" style="background:#22c55e;color:#fff;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;text-decoration:none">Book Now →</a></div>
+      </div>
+    `, { maxWidth: 200 })
+    .on('popupopen', function() {
+      const btn = this.getPopup().getElement()?.querySelector('.popup-book-btn');
+      if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); openDetail(this.dataset.id); });
+    });
+    markerCluster.addLayer(mk);
+    mapMarkers.push(mk);
+  });
+
+  // Fit map to show all listing markers if any have coords
+  const withCoords = filteredListings.filter(l => l.lat && l.lng);
+  if (withCoords.length > 0 && mapMarkers.length > 0) {
+    try {
+      const group = L.featureGroup(mapMarkers);
+      leafletMap.fitBounds(group.getBounds().pad(0.3), { maxZoom: 10 });
+    } catch(e) {}
+  }
+}
+
+function toggleVenue(type, el) {
+  venueVisible[type] = !venueVisible[type];
+  el.classList.toggle('off', !venueVisible[type]);
+  venueMarkers[type]?.forEach(mk => venueVisible[type] ? mk.addTo(leafletMap) : leafletMap.removeLayer(mk));
+}
+
+function locateMe() {
+  if (!leafletMap) return;
+  if (!navigator.geolocation) { showToast('Geolocation not supported by your browser', 'error'); return; }
+  showToast('Finding your location...', 'info');
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    leafletMap.setView([lat, lng], 13);
+    L.circleMarker([lat, lng], {
+      radius:10, fillColor:'#3b82f6', color:'#fff', weight:3, fillOpacity:1
+    }).addTo(leafletMap).bindPopup('<b>📍 You are here</b>').openPopup();
+    showToast('Showing spaces near you', 'success');
+  }, () => { showToast('Could not get your location', 'error'); });
+}
+
+// ============================================================
+// DETAIL
+// ============================================================
+function openDetail(id) {
+  const l = allListings.find(x => x.id === id);
+  if (!l) return;
+  selectedListing = l;
+  const photoStrip = document.getElementById('detailPhotoStrip');
+  const emojiHero  = document.getElementById('detailEmoji');
+  if (l.photos?.length) {
+    photoStrip.innerHTML = l.photos.map(url => `<img src="${url}" alt="Space photo" loading="lazy"/>`).join('');
+    photoStrip.classList.remove('hidden');
+    emojiHero.classList.add('hidden');
+  } else {
+    photoStrip.innerHTML = '';
+    photoStrip.classList.add('hidden');
+    emojiHero.classList.remove('hidden');
+    emojiHero.textContent = l.emoji || '🏠';
+  }
+  document.getElementById('detailTitle').textContent = l.title;
+  document.getElementById('detailMeta').innerHTML =
+    `<span>📍 ${escapeHtml(l.city)}, ${escapeHtml(l.state)}</span>` +
+    (l.rating ? `<span>⭐ ${Number(l.rating)} (${Number(l.review_count)||0} reviews)</span>` : '') +
+    (l.surface_type ? `<span>🛣 ${escapeHtml(l.surface_type)}</span>` : '') +
+    (l.length_ft ? `<span>📐 ${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '');
+  document.getElementById('detailDesc').textContent = l.description || 'No description provided.';
+  document.getElementById('bkPrice').innerHTML = `$${l.price_nightly} <span>/ night</span>`;
+
+  const amenities = [
+    {key:'wifi',icon:'📶',label:'WiFi'},{key:'covered',icon:'🏠',label:'Covered'},
+    {key:'electric',icon:'⚡',label:'EV Charging'},{key:'dump',icon:'🚿',label:'Dump Station'},
+    {key:'water',icon:'💧',label:'Water Hook-up'},{key:'pets',icon:'🐾',label:'Pets OK'},
+  ];
+  document.getElementById('detailAmenities').innerHTML = amenities.map(a =>
+    `<div class="amenity ${l[a.key]?'yes':'no'}">${a.icon} ${a.label}</div>`).join('');
+
+  const dimEl = document.getElementById('detailDims');
+  const dimSec = document.getElementById('detailDimsSection');
+  if (l.length_ft || l.surface_type || l.vehicles?.length) {
+    dimEl.innerHTML =
+      (l.length_ft ? `Length: ${Number(l.length_ft)} ft<br>` : '') +
+      (l.width_ft  ? `Width: ${Number(l.width_ft)} ft<br>` : '') +
+      (l.height_ft ? `Height Clearance: ${Number(l.height_ft)} ft<br>` : '') +
+      (l.surface_type ? `Surface: ${escapeHtml(l.surface_type)}<br>` : '') +
+      (l.vehicles?.length ? `Vehicles Accepted: ${l.vehicles.map(escapeHtml).join(', ')}` : '');
+    dimSec.classList.remove('hidden');
+  } else { dimSec.classList.add('hidden'); }
+
+  const rulesEl = document.getElementById('detailRules');
+  const rulesSec = document.getElementById('detailRulesSection');
+  if (l.rules?.length) {
+    rulesEl.innerHTML = l.rules.map(r => `<li>${escapeHtml(r)}</li>`).join('');
+    rulesSec.classList.remove('hidden');
+  } else { rulesSec.classList.add('hidden'); }
+
+  const today = new Date();
+  const d1 = new Date(today); d1.setDate(d1.getDate()+1);
+  const d2 = new Date(today); d2.setDate(d2.getDate()+2);
+  const bkIn  = document.getElementById('bkIn');
+  const bkOut = document.getElementById('bkOut');
+  bkIn.min  = fmtDate(today);
+  bkOut.min = fmtDate(d1);
+  bkIn.value  = fmtDate(d1);
+  bkOut.value = fmtDate(d2);
+  calcBooking();
+  loadReviews(l.id);
+  showPage('detail');
+}
+
+function fmtDate(d) { return d.toISOString().slice(0,10); }
+
+async function checkAvailability(listingId, inVal, outVal) {
+  if (!listingId || String(listingId).startsWith('s')) return true;
+  try {
+    const { data, error } = await db.from('bookings')
+      .select('check_in, check_out')
+      .eq('listing_id', listingId)
+      .in('status', ['pending', 'confirmed', 'completed']);
+    if (error || !data) return true;
+    for (const b of data) {
+      if (inVal < b.check_out && outVal > b.check_in) {
+        return false;
+      }
+    }
+  } catch(e) {}
+  return true;
+}
+
+// ============================================================
+// BOOKING CALC
+// ============================================================
+function calcBooking() {
+  const l = selectedListing;
+  if (!l) return;
+  const inV  = document.getElementById('bkIn').value;
+  const outV = document.getElementById('bkOut').value;
+  if (!inV || !outV) return;
+  const checkIn = new Date(inV), checkOut = new Date(outV);
+  const btn = document.getElementById('bookBtn');
+  // Update min on checkout when checkin changes
+  document.getElementById('bkOut').min = inV;
+  // Validate check-in is not in the past
+  const todayStr = fmtDate(new Date());
+  if (inV < todayStr) {
+    document.getElementById('bkNights').textContent = 'Check-in cannot be in the past';
+    document.getElementById('bkBreakdown').classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Select dates to book'; return;
+  }
+  const nights = Math.round((checkOut - checkIn) / 86400000);
+  if (nights <= 0) {
+    document.getElementById('bkNights').textContent = 'Check-out must be after check-in';
+    document.getElementById('bkBreakdown').classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Select dates to book'; return;
+  }
+  let discPct = 0, discLabel = '';
+  if (nights >= 28) { discPct = 0.4; discLabel = '40% monthly discount'; }
+  else if (nights >= 7) { discPct = 0.2; discLabel = '20% weekly discount'; }
+  const base     = nights * l.price_nightly;
+  const discount = Math.round(base * discPct);
+  const subtotal = base - discount;
+  const broker   = Math.round(subtotal * 0.12);
+  const ins      = Math.round(subtotal * 0.03);
+  const total    = subtotal + broker + ins;
+
+  document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
+  document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
+  document.getElementById('bkBaseAmt').textContent = '$' + base;
+  const dRow = document.getElementById('bkDiscRow');
+  if (discPct > 0) {
+    dRow.classList.remove('hidden');
+    document.getElementById('bkDiscLabel').innerHTML = discLabel + ' <span class="discount-badge">SAVE</span>';
+    document.getElementById('bkDiscAmt').textContent = '-$' + discount;
+  } else { dRow.classList.add('hidden'); }
+  document.getElementById('bkBroker').textContent = '$' + broker;
+  document.getElementById('bkInsurance').textContent = '$' + ins;
+  document.getElementById('bkTotal').textContent = '$' + total;
+  document.getElementById('bkBreakdown').classList.remove('hidden');
+  
+  // Asynchronously verify availability
+  btn.disabled = true;
+  btn.textContent = 'Checking availability...';
+  window._bkCtx = { nights, base, discount, subtotal, broker, ins, total, checkIn, checkOut, totalCents: total * 100 };
+
+  checkAvailability(l.id, inV, outV).then(available => {
+    if (available) {
+      btn.disabled = false;
+      btn.textContent = `Book for $${total}`;
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Dates Unavailable';
+      document.getElementById('bkNights').textContent = 'Selected dates are already booked!';
+    }
+  });
+}
+
+// ============================================================
+// BOOK NOW
+// ============================================================
+async function bookNow() {
+  if (!currentUser) { requireAuth('book'); return; }
+  if (!currentProfile?.verified) {
+    showToast('Please complete identity verification first', 'error');
+    setTimeout(() => openVerifyModal(), 500); return;
+  }
+  const l = selectedListing, ctx = window._bkCtx;
+  if (!l || !ctx) { showToast('Please select valid dates', 'error'); return; }
+  const btn = document.getElementById('bookBtn');
+  btn.disabled = true; btn.textContent = 'Processing...';
+  try {
+    const isAvail = await checkAvailability(l.id, ctx.checkIn.toISOString().slice(0,10), ctx.checkOut.toISOString().slice(0,10));
+    if (!isAvail) {
+      showToast('These dates were just booked by another user!', 'error');
+      btn.disabled = true; btn.textContent = 'Dates Unavailable';
+      return;
+    }
+
+    let bookingId = 'local-' + Date.now();
+    try {
+      const { data: bk } = await db.from('bookings').insert({
+        listing_id:    l.id.startsWith('s') ? null : l.id,
+        guest_id:      currentUser.id,
+        check_in:      ctx.checkIn.toISOString().slice(0,10),
+        check_out:     ctx.checkOut.toISOString().slice(0,10),
+        nights:        ctx.nights, base_amount: ctx.base*100,
+        broker_fee:    ctx.broker*100, insurance_fee: ctx.ins*100,
+        total_amount:  ctx.totalCents, status: 'pending'
+      }).select('id').single();
+      if (bk?.id) bookingId = bk.id;
+    } catch(e) {}
+
+    let clientSecret = null;
+    try {
+      const { data: pd } = await db.functions.invoke('create-payment-intent', {
+        body: { amount: ctx.totalCents, currency: 'usd', booking_id: bookingId }
+      });
+      if (pd?.clientSecret) clientSecret = pd.clientSecret;
+    } catch(e) {}
+
+    if (clientSecret) {
+      document.getElementById('payModalSub').textContent = `$${ctx.total} — ${l.title} · ${ctx.nights} night${ctx.nights!==1?'s':''}`;
+      openPaymentModal(clientSecret, { l, ctx, bookingId });
+    } else {
+      showConfirmPage(l, ctx, bookingId);
+    }
+  } catch(e) { showToast('Booking failed: ' + e.message, 'error'); }
+  finally { btn.disabled = false; calcBooking(); }
+}
+
+function showConfirmPage(l, ctx, bookingId) {
+  document.getElementById('confirmMsg').textContent = 'Your booking request has been sent to the host! You\'ll receive a confirmation shortly.';
+  document.getElementById('confirmDetail').innerHTML = `
+    <div class="confirm-row"><span>${escapeHtml(l.emoji||'')} ${escapeHtml(l.title)}</span><span>${escapeHtml(l.city)}, ${escapeHtml(l.state)}</span></div>
+    <div class="confirm-row"><span>Check In</span><span>${escapeHtml(ctx.checkIn.toLocaleDateString())}</span></div>
+    <div class="confirm-row"><span>Check Out</span><span>${escapeHtml(ctx.checkOut.toLocaleDateString())}</span></div>
+    <div class="confirm-row"><span>${Number(ctx.nights)|0} night${(Number(ctx.nights)|0)!==1?'s':''}</span><span>$${Number(ctx.base)|0}</span></div>
+    <div class="confirm-row"><span>Broker fee (12%)</span><span>$${Number(ctx.broker)|0}</span></div>
+    <div class="confirm-row"><span>Insurance fee (3%)</span><span>$${Number(ctx.ins)|0}</span></div>
+    <div class="confirm-row"><span><b>Total</b></span><span><b>$${Number(ctx.total)|0}</b></span></div>`;
+  showPage('confirm');
+}
+
+// ============================================================
+// STRIPE
+// ============================================================
+function openPaymentModal(clientSecret, ctx) {
+  document.getElementById('paymentModal').classList.remove('hidden');
+  const stripe = getStripe();
+  if (!stripe) { showToast('Stripe not configured. Set STRIPE_PUB_KEY.', 'error'); closePaymentModal(); return; }
+  stripeElements = stripe.elements({ clientSecret, appearance: { theme:'stripe' } });
+  stripeElements.create('payment').mount('#stripe-payment-element');
+  window._pendingPayCtx = ctx;
+  if (ctx) {
+    try {
+      localStorage.setItem('pendingPayCtx', JSON.stringify(ctx));
+    } catch(e) {}
+  }
+}
+
+async function confirmStripePayment() {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true; btn.textContent = 'Processing...';
+  const stripe = getStripe();
+  if (!stripe) {
+    showToast('Payment unavailable. Please refresh and try again.', 'error');
+    btn.disabled = false; btn.textContent = 'Pay Now';
+    document.getElementById('stripe-payment-element').innerHTML = '<p style="color:var(--red);font-size:.85rem;padding:12px 0">Payment system failed to load. Please disable any ad-blockers and refresh.</p>';
+    return;
+  }
+  
+  const pendingCtx = window._pendingPayCtx;
+  const bookingId = pendingCtx?.bookingId || '';
+  
+  // Stripe return_url must use http/https. If file:// is detected, Stripe will fail, so simulate success locally.
+  if (window.location.protocol === 'file:') {
+    showToast('Stripe requires HTTP/HTTPS for redirects. Simulating payment locally...', 'info');
+    setTimeout(async () => {
+      try {
+        await db.from('bookings').update({ status: 'confirmed' }).eq('id', bookingId);
+        showPage('dashboard');
+        showToast('Payment simulated! Booking is live.', 'success');
+        loadMyBookings();
+      } catch(e) {
+        showToast('Simulation update failed: ' + e.message, 'error');
+      }
+    }, 1000);
+    closePaymentModal();
+    return;
+  }
+
+  try {
+    const returnUrl = window.location.origin + window.location.pathname + '?confirmed=1&booking_id=' + encodeURIComponent(bookingId);
+    const { error } = await stripe.confirmPayment({
+      elements: stripeElements,
+      confirmParams: { return_url: returnUrl }
+    });
+    if (error) { showToast(error.message, 'error'); btn.disabled = false; btn.textContent = 'Pay Now'; }
+  } catch(e) { showToast('Payment failed: ' + e.message, 'error'); btn.disabled = false; btn.textContent = 'Pay Now'; }
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentModal').classList.add('hidden');
+  document.getElementById('stripe-payment-element').innerHTML = '';
+  stripeElements = null;
+}
+
+// ============================================================
+// HOST FORM
+// ============================================================
+async function submitListing(e) {
+  e.preventDefault();
+  if (!currentUser) { requireAuth('host'); return; }
+  const vehicles = Array.from(document.getElementById('lVehicles').selectedOptions).map(o => o.value);
+  const rules = document.getElementById('lRules').value.split('\n').filter(r => r.trim());
+  const listing = {
+    host_id: currentUser.id,
+    emoji: document.getElementById('lEmoji').value,
+    title: document.getElementById('lTitle').value.trim(),
+    description: document.getElementById('lDesc').value.trim(),
+    address: document.getElementById('lAddress').value.trim(),
+    city: document.getElementById('lCity').value.trim(),
+    state: document.getElementById('lState').value,
+    lat: parseFloat(document.getElementById('lLat').value) || null,
+    lng: parseFloat(document.getElementById('lLng').value) || null,
+    status: 'pending',
+    price_nightly: parseInt(document.getElementById('lPriceNight').value) || 30,
+    price_weekly: parseInt(document.getElementById('lPriceWeek').value) || null,
+    price_monthly: parseInt(document.getElementById('lPriceMonth').value) || null,
+    wifi: document.getElementById('lWifi').checked,
+    dump: document.getElementById('lDump').checked,
+    water: document.getElementById('lWater').checked,
+    electric: document.getElementById('lElec').checked,
+    covered: document.getElementById('lCovered').checked,
+    pets: document.getElementById('lPets').checked,
+    length_ft: parseInt(document.getElementById('lLen').value) || null,
+    width_ft: parseInt(document.getElementById('lWid').value) || null,
+    height_ft: parseInt(document.getElementById('lHgt').value) || null,
+    surface_type: document.getElementById('lSurface').value || null,
+    vehicles, rules,
+    ins_provider: document.getElementById('lInsProvider').value.trim() || null,
+    ins_policy: document.getElementById('lInsPolicy').value.trim() || null,
+    ins_expiry: document.getElementById('lInsExpiry').value || null,
+  };
+  const btn = document.querySelector('.submit-host-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  // Handle edit (update) mode
+  if (window._editListingId) {
+    try {
+      // Don't change status on edit — preserve whatever status the listing had
+      const { status: _drop, host_id: _drop2, ...updateFields } = listing;
+      // Auto-geocode if needed
+      if (!updateFields.lat || !updateFields.lng) {
+        const coords = await geocodeAddress(updateFields.address, updateFields.city, updateFields.state);
+        if (coords) { updateFields.lat = coords.lat; updateFields.lng = coords.lng; }
+      }
+      if (listingPhotoFiles.length > 0) {
+        showToast('Uploading photos...', 'info');
+        updateFields.photos = await uploadListingPhotos();
+      }
+      const { error } = await db.from('listings').update(updateFields).eq('id', window._editListingId);
+      if (error) throw error;
+      showToast('Listing updated!', 'success');
+      window._editListingId = null;
+      document.querySelector('.submit-host-btn').textContent = 'Submit Listing for Review →';
+      document.getElementById('hostForm').reset();
+      listingPhotoFiles = [];
+      document.getElementById('listingPhotoThumbs').innerHTML = '';
+      allListings = []; _listingsLastFetch = 0;
+      setTimeout(() => { showPage('dashboard'); switchDashTab('listings', document.querySelector('.dash-tab:nth-child(2)')); loadMyListings(); }, 500);
+    } catch(e) { showToast('Failed to update: ' + e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Save Changes →'; }
+    return;
+  }
+
+  try {
+    // Auto-geocode if lat/lng not manually set
+    if (!listing.lat || !listing.lng) {
+      const geoEl = document.getElementById('geocodeStatus');
+      if (geoEl) geoEl.textContent = '📍 Locating address on map...';
+      const coords = await geocodeAddress(listing.address, listing.city, listing.state);
+      if (coords) {
+        listing.lat = coords.lat; listing.lng = coords.lng;
+        document.getElementById('lLat').value = coords.lat;
+        document.getElementById('lLng').value = coords.lng;
+        if (geoEl) geoEl.textContent = `✅ Located: ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+      } else {
+        if (geoEl) geoEl.textContent = '⚠️ Could not auto-locate — listing saved without map pin.';
+      }
+    }
+    if (listingPhotoFiles.length > 0) {
+      showToast('Uploading photos...', 'info');
+      listing.photos = await uploadListingPhotos();
+    }
+    const { error } = await db.from('listings').insert(listing);
+    if (error) throw error;
+    showToast("Listing submitted for review! It will go live within 48 hours.", 'success');
+    document.getElementById('hostForm').reset();
+    listingPhotoFiles = [];
+    document.getElementById('listingPhotoThumbs').innerHTML = '';
+    setTimeout(() => showPage('dashboard'), 1500);
+  } catch(e) { showToast('Failed to submit: ' + e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Submit Listing for Review →'; }
+}
+
+// ============================================================
+// AVATAR UPLOAD
+// ============================================================
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file || !currentUser) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('Image must be under 5MB', 'error'); return; }
+
+  const avatarEl = document.getElementById('profileAvatar');
+  avatarEl.classList.add('avatar-uploading');
+  showToast('Uploading photo...', 'info');
+
+  try {
+    const ext  = file.name.split('.').pop().toLowerCase();
+    const path = `avatars/${currentUser.id}/avatar.${ext}`;
+
+    const { error: upErr } = await db.storage
+      .from('listing-photos')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+
+    const { data: urlData } = db.storage.from('listing-photos').getPublicUrl(path);
+    const avatarUrl = urlData.publicUrl + '?t=' + Date.now(); // cache bust
+
+    await db.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+    if (currentProfile) currentProfile.avatar_url = avatarUrl;
+
+    renderAvatar(avatarUrl, currentProfile?.name || 'U');
+    showToast('✅ Profile photo updated!', 'success');
+  } catch(e) {
+    showToast('Upload failed: ' + e.message, 'error');
+  } finally {
+    avatarEl.classList.remove('avatar-uploading');
+    input.value = '';
+  }
+}
+
+function renderAvatar(url, name) {
+  const initial = (name || 'U').charAt(0).toUpperCase();
+  const avatarEl = document.getElementById('profileAvatar');
+  const initialEl = document.getElementById('profileAvatarInitial');
+
+  if (url) {
+    // Remove old img if any
+    avatarEl.querySelectorAll('img').forEach(i => i.remove());
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Profile photo';
+    img.onerror = () => { img.remove(); if (initialEl) initialEl.textContent = initial; };
+    avatarEl.insertBefore(img, avatarEl.firstChild);
+    if (initialEl) initialEl.style.display = 'none';
+  } else {
+    avatarEl.querySelectorAll('img').forEach(i => i.remove());
+    if (initialEl) { initialEl.style.display = ''; initialEl.textContent = initial; }
+  }
+
+  // Update nav avatar
+  const navWrap = document.getElementById('navAvatarWrap');
+  const navInit = document.getElementById('navAvatarInitial');
+  if (navWrap && url) {
+    navWrap.querySelectorAll('img').forEach(i => i.remove());
+    const navImg = document.createElement('img');
+    navImg.src = url;
+    navImg.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+    navImg.onerror = () => { navImg.remove(); if (navInit) navInit.textContent = initial; };
+    navWrap.appendChild(navImg);
+    if (navInit) navInit.style.display = 'none';
+  } else if (navInit) {
+    navWrap?.querySelectorAll('img').forEach(i => i.remove());
+    navInit.style.display = '';
+    navInit.textContent = initial;
+  }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  if (!currentUser) return;
+  const name = currentProfile?.name || currentUser.email?.split('@')[0] || 'User';
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = currentProfile?.email || currentUser.email || '';
+  renderAvatar(currentProfile?.avatar_url || null, name);
+  const badge = document.getElementById('verifyBadge');
+  if (currentProfile?.verified) {
+    badge.className = 'verify-badge verified';
+    badge.textContent = '✅ Identity Verified';
+    badge.onclick = null;
+  } else {
+    badge.className = 'verify-badge unverified';
+    badge.textContent = '⚠️ Identity Not Verified — Click to Verify';
+    badge.onclick = openVerifyModal;
+  }
+  loadMyBookings();
+  loadMyListings();
+}
+
+async function loadMyBookings() {
+  const loader = document.getElementById('bookingsLoader');
+  const list   = document.getElementById('bookingsList');
+  loader.style.display = 'block'; list.innerHTML = '';
+  try {
+    const { data, error } = await db.from('bookings')
+      .select('*, listings(title,emoji,city,state)')
+      .eq('guest_id', currentUser.id).order('created_at',{ascending:false});
+    loader.style.display = 'none';
+    if (error || !data?.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><h3>No bookings yet</h3><p>Browse available spaces and make your first booking!</p><button class="btn-primary" onclick="showPage('browse')" style="margin-top:16px;padding:10px 24px;border-radius:8px">Browse Spaces</button></div>`;
+      return;
+    }
+    const today = new Date().toISOString().slice(0,10);
+    list.innerHTML = data.map(b => {
+      const isPast = b.check_out < today;
+      const isFuture = b.check_in > today;
+      const canCancel = (b.status==='pending'||b.status==='confirmed') && isFuture;
+      const canComplete = b.status==='confirmed' && isPast;
+      const canReview  = b.status==='completed';
+      return `<div class="booking-row" style="flex-wrap:wrap">
+        <div class="booking-row-emoji">${b.listings?.emoji||'🏠'}</div>
+        <div class="booking-row-info" style="flex:1">
+          <div class="booking-row-title">${escapeHtml(b.listings?.title||'Space')}</div>
+          <div class="booking-row-dates">${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''} · ${b.check_in} → ${b.check_out} (${b.nights} night${b.nights!==1?'s':''})</div>
+          <div class="booking-row-actions">
+            <span class="status-badge status-${b.status||'pending'}">${b.status||'pending'}</span>
+            <span class="booking-row-amt" style="font-weight:700;color:var(--green)">$${Math.round((b.total_amount||0)/100)}</span>
+            ${canCancel?`<button class="btn-sm btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`:''}
+            ${canComplete?`<button class="btn-sm btn-sm-blue" onclick="markBookingComplete('${b.id}')">Mark Complete</button>`:''}
+            ${canReview?`<button class="btn-sm btn-sm-green" onclick="openReviewModal('${b.id}','${b.listing_id}')">Leave Review ★</button>`:''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { loader.style.display = 'none'; list.innerHTML = '<div class="empty-state"><p>Could not load bookings.</p></div>'; }
+}
+
+async function loadMyListings() {
+  const loader = document.getElementById('listingsLoader');
+  const list   = document.getElementById('myListingsList');
+  loader.style.display = 'block'; list.innerHTML = '';
+  try {
+    const { data, error } = await db.from('listings').select('*').eq('host_id', currentUser.id).order('created_at',{ascending:false});
+    loader.style.display = 'none';
+    if (error || !data?.length) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">🏠</div><h3>No listings yet</h3><p>List your driveway and start earning!</p></div>';
+      return;
+    }
+    list.innerHTML = data.map(l => `
+      <div class="booking-row" style="flex-wrap:wrap">
+        <div class="booking-row-emoji">${l.photos?.length?`<img src="${l.photos[0]}" style="width:48px;height:48px;border-radius:10px;object-fit:cover" alt="${escapeHtml(l.title)}"/>`:escapeHtml(l.emoji||'🏠')}</div>
+        <div class="booking-row-info" style="flex:1">
+          <div class="booking-row-title">${escapeHtml(l.title)}</div>
+          <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · ⭐ ${l.rating||'New'} (${l.review_count||0} reviews)</div>
+          <div class="booking-row-actions">
+            <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
+            ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
+            <button class="btn-sm btn-sm-blue" onclick="editListing('${l.id}')">✏️ Edit</button>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch(e) { loader.style.display = 'none'; list.innerHTML = '<div class="empty-state"><p>Could not load listings.</p></div>'; }
+}
+
+function switchDashTab(tab, el) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('dash' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  if (tab === 'messages' && currentUser && !_messagesLoaded) { _messagesLoaded = true; loadMessagesTab(); }
+  if (tab === 'hosting' && currentUser) loadHostBookings();
+}
+
+// ============================================================
+// GEOCODING
+// ============================================================
+async function geocodeAddress(address, city, state) {
+  try {
+    const q = encodeURIComponent([address, city, state, 'USA'].filter(Boolean).join(', '));
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+      headers: { 'Accept-Language': 'en-US,en', 'User-Agent': 'DriveStay/1.0' }
+    });
+    const d = await r.json();
+    if (d?.length) return { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) };
+  } catch(e) {}
+  return null;
+}
+
+// ============================================================
+// PASSWORD RESET
+// ============================================================
+async function doPasswordReset() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { showToast('Enter your email address above first', 'error'); return; }
+  try {
+    const { error } = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname + '?reset=1'
+    });
+    if (error) throw error;
+    showToast('Password reset email sent! Check your inbox.', 'success');
+    closeAuth();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+}
+
+// ============================================================
+// PROFILE NAME EDITING
+// ============================================================
+function editProfileName() {
+  const nameEl = document.getElementById('profileName');
+  const editEl = document.getElementById('profileNameEdit');
+  const input  = document.getElementById('profileNameInput');
+  input.value  = currentProfile?.name || nameEl.textContent;
+  nameEl.style.display = 'none';
+  editEl.classList.remove('hidden');
+  input.focus(); input.select();
+}
+
+function cancelProfileNameEdit() {
+  document.getElementById('profileName').style.display = '';
+  document.getElementById('profileNameEdit').classList.add('hidden');
+}
+
+async function saveProfileName() {
+  const name = document.getElementById('profileNameInput').value.trim();
+  if (!name) { showToast('Name cannot be empty', 'error'); return; }
+  try {
+    await db.from('profiles').update({ name }).eq('id', currentUser.id);
+    if (currentProfile) currentProfile.name = name;
+    document.getElementById('profileName').textContent = name;
+    cancelProfileNameEdit();
+    renderAvatar(currentProfile?.avatar_url || null, name);
+    showToast('Name updated!', 'success');
+  } catch(e) { showToast('Failed to update name: ' + e.message, 'error'); }
+}
+
+// ============================================================
+// BOOKING ACTIONS (GUEST)
+// ============================================================
+async function cancelBooking(bookingId) {
+  if (!confirm('Cancel this booking? This cannot be undone.')) return;
+  try {
+    const { error } = await db.from('bookings').update({ status: 'cancelled' }).eq('id', bookingId).eq('guest_id', currentUser.id);
+    if (error) throw error;
+    showToast('Booking cancelled.', 'info');
+    loadMyBookings();
+  } catch(e) { showToast('Failed to cancel: ' + e.message, 'error'); }
+}
+
+async function markBookingComplete(bookingId) {
+  try {
+    const { error } = await db.from('bookings').update({ status: 'completed' }).eq('id', bookingId).eq('guest_id', currentUser.id);
+    if (error) throw error;
+    showToast('Booking marked complete. Leave a review!', 'success');
+    loadMyBookings();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+}
+
+// ============================================================
+// LISTING STATUS TOGGLE (HOST)
+// ============================================================
+async function toggleListingStatus(listingId, newStatus) {
+  try {
+    const { error } = await db.from('listings').update({ status: newStatus }).eq('id', listingId).eq('host_id', currentUser.id);
+    if (error) throw error;
+    showToast(`Listing ${newStatus === 'active' ? 'activated' : 'deactivated'}.`, 'success');
+    loadMyListings();
+    allListings = []; _listingsLastFetch = 0; // force reload on browse
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+}
+
+// ============================================================
+// EDIT LISTING
+// ============================================================
+async function editListing(listingId) {
+  try {
+    const { data: l } = await db.from('listings').select('*').eq('id', listingId).single();
+    if (!l) { showToast('Listing not found', 'error'); return; }
+    // Pre-fill the host form with all fields
+    document.getElementById('lTitle').value = l.title || '';
+    document.getElementById('lDesc').value = l.description || '';
+    document.getElementById('lAddress').value = l.address || '';
+    document.getElementById('lCity').value = l.city || '';
+    document.getElementById('lState').value = l.state || '';
+    document.getElementById('lPriceNight').value = l.price_nightly || '';
+    document.getElementById('lPriceWeek').value = l.price_weekly || '';
+    document.getElementById('lPriceMonth').value = l.price_monthly || '';
+    document.getElementById('lLat').value = l.lat || '';
+    document.getElementById('lLng').value = l.lng || '';
+    document.getElementById('lRules').value = (l.rules || []).join('\n');
+    document.getElementById('lEmoji').value = l.emoji || '🏠';
+    document.getElementById('lLen').value = l.length_ft || '';
+    document.getElementById('lWid').value = l.width_ft || '';
+    document.getElementById('lHgt').value = l.height_ft || '';
+    document.getElementById('lSurface').value = l.surface_type || '';
+    document.getElementById('lInsProvider').value = l.ins_provider || '';
+    document.getElementById('lInsPolicy').value = l.ins_policy || '';
+    document.getElementById('lInsExpiry').value = l.ins_expiry || '';
+    // Set checkboxes using real field IDs
+    [['lWifi','wifi'],['lDump','dump'],['lWater','water'],['lElec','electric'],['lCovered','covered'],['lPets','pets']]
+      .forEach(([id, f]) => { const el = document.getElementById(id); if (el) el.checked = !!l[f]; });
+    // Set multi-select vehicles
+    const vehiclesSel = document.getElementById('lVehicles');
+    if (vehiclesSel && l.vehicles) {
+      Array.from(vehiclesSel.options).forEach(opt => { opt.selected = l.vehicles.includes(opt.value); });
+    }
+    // Mark as editing
+    window._editListingId = listingId;
+    document.querySelector('.submit-host-btn').textContent = 'Save Changes →';
+    showPage('host');
+    showToast('Editing listing — make your changes and save.', 'info');
+  } catch(e) { showToast('Could not load listing for editing.', 'error'); }
+}
+
+// ============================================================
+// HOSTING TAB — bookings on my listings
+// ============================================================
+async function loadHostBookings() {
+  const loader = document.getElementById('hostingLoader');
+  const list   = document.getElementById('hostingList');
+  if (!loader || !list || !currentUser) return;
+  loader.style.display = 'block'; list.innerHTML = '';
+  try {
+    const { data: myLs } = await db.from('listings').select('id').eq('host_id', currentUser.id);
+    const ids = (myLs || []).map(l => l.id);
+    if (!ids.length) {
+      loader.style.display = 'none';
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">🏠</div><h3>No listings yet</h3><p>Create a listing first to see guest bookings here.</p><button class="btn-primary" onclick="requireAuth('host')" style="margin-top:16px;padding:10px 24px;border-radius:8px">Create Listing</button></div>`;
+      return;
+    }
+    const { data, error } = await db.from('bookings')
+      .select('*, listings(title,emoji,city,state)')
+      .in('listing_id', ids)
+      .order('created_at', { ascending: false });
+    loader.style.display = 'none';
+    if (error || !data?.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><h3>No guest bookings yet</h3><p>Your bookings will appear here when guests book your spaces.</p></div>`;
+      return;
+    }
+    // Try to get guest names
+    const guestIds = [...new Set(data.map(b => b.guest_id))];
+    let guestMap = {};
+    try {
+      const { data: guests } = await db.from('profiles').select('id,name,email').in('id', guestIds);
+      (guests || []).forEach(g => { guestMap[g.id] = g; });
+    } catch(e) {}
+
+    const today = new Date().toISOString().slice(0,10);
+    list.innerHTML = data.map(b => {
+      const guest = guestMap[b.guest_id] || {};
+      const isPast = b.check_out < today;
+      const canAccept  = b.status === 'pending';
+      const canDecline = b.status === 'pending' || b.status === 'confirmed';
+      const canComplete = b.status === 'confirmed' && isPast;
+      return `<div class="hosting-booking-card">
+        <div class="hosting-booking-header">
+          <span style="font-size:1.6rem">${b.listings?.emoji||'🏠'}</span>
+          <div>
+            <div class="hosting-guest-name">👤 ${escapeHtml(guest.name||guest.email||'Guest')}</div>
+            <div class="hosting-listing-name">${escapeHtml(b.listings?.title||'Listing')} · ${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''}</div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-weight:700;color:var(--green)">$${Math.round((b.total_amount||0)/100)}</div>
+            <span class="status-badge status-${b.status||'pending'}" style="margin-top:4px;display:inline-block">${b.status||'pending'}</span>
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:var(--muted);margin-bottom:8px">📅 ${b.check_in} → ${b.check_out} (${b.nights} night${b.nights!==1?'s':''})</div>
+        <div class="booking-row-actions">
+          ${canAccept  ? `<button class="btn-sm btn-sm-green" onclick="hostUpdateBooking('${b.id}','confirmed',this)">✓ Accept</button>` : ''}
+          ${canDecline ? `<button class="btn-sm btn-sm-red"   onclick="hostUpdateBooking('${b.id}','cancelled',this)">✕ Decline</button>` : ''}
+          ${canComplete? `<button class="btn-sm btn-sm-blue"  onclick="hostUpdateBooking('${b.id}','completed',this)">Mark Complete</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { loader.style.display = 'none'; list.innerHTML = '<div class="empty-state"><p>Could not load bookings.</p></div>'; }
+}
+
+async function hostUpdateBooking(bookingId, status, btn) {
+  if (btn) { btn.disabled = true; }
+  try {
+    const { error } = await db.from('bookings').update({ status }).eq('id', bookingId);
+    if (error) throw error;
+    const labels = { confirmed: 'Booking accepted!', cancelled: 'Booking declined.', completed: 'Marked complete.' };
+    showToast(labels[status] || 'Updated.', status === 'cancelled' ? 'info' : 'success');
+    loadHostBookings();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); if (btn) btn.disabled = false; }
+}
+
+// ============================================================
+// PHOTO UPLOAD (LISTING FORM)
+// ============================================================
+function renderListingPhotoThumbs() {
+  const thumbs = document.getElementById('listingPhotoThumbs');
+  if (!thumbs) return;
+  thumbs.innerHTML = '';
+  listingPhotoFiles.forEach((f, i) => {
+    try {
+      const url = URL.createObjectURL(f);
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.id = 'pthumb-' + i;
+      div.innerHTML = `<img src="${url}" alt="Photo ${i+1}"/>
+        <div class="photo-thumb-del" onclick="removeListingPhoto(${i})">×</div>`;
+      thumbs.appendChild(div);
+    } catch(e) {
+      console.error('Failed to create object URL for preview:', e);
+    }
+  });
+}
+
+function addListingPhotos(input) {
+  const files = Array.from(input.files);
+  const remaining = 5 - listingPhotoFiles.length;
+  if (!remaining) { showToast('Maximum 5 photos allowed', 'info'); input.value = ''; return; }
+  const toAdd = files.slice(0, remaining);
+  if (files.length > remaining) showToast(`Only ${remaining} more photo(s) allowed (max 5)`, 'info');
+  toAdd.forEach(f => {
+    if (f.size > 5 * 1024 * 1024) { showToast(`${f.name} is too large (max 5MB)`, 'error'); return; }
+    listingPhotoFiles.push(f);
+  });
+  renderListingPhotoThumbs();
+  input.value = '';
+}
+
+function removeListingPhoto(idx) {
+  listingPhotoFiles.splice(idx, 1);
+  renderListingPhotoThumbs();
+}
+
+async function uploadListingPhotos() {
+  const timestamp = Date.now();
+  const urls = [];
+  for (const file of listingPhotoFiles) {
+    const ext = file.name.split('.').pop().replace(/[^a-z0-9]/gi,'').slice(0,5).toLowerCase();
+    const uniqueId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+      ? crypto.randomUUID() 
+      : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const path = `listings/${timestamp}/${uniqueId}.${ext}`;
+    const { error } = await db.storage.from('listing-photos').upload(path, file, { upsert: true, contentType: file.type });
+    if (!error) {
+      const { data } = db.storage.from('listing-photos').getPublicUrl(path);
+      if (data?.publicUrl) urls.push(data.publicUrl);
+    }
+  }
+  return urls;
+}
+
+// ============================================================
+// REVIEWS
+// ============================================================
+async function loadReviews(listingId) {
+  const container = document.getElementById('detailReviewsList');
+  if (!container) return;
+  container.innerHTML = '<div class="loader" style="padding:16px 0">Loading reviews...</div>';
+  try {
+    const { data, error } = await db.from('reviews')
+      .select('*, profiles(name)')
+      .eq('listing_id', listingId)
+      .order('created_at', { ascending: false });
+    if (error || !data?.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:.875rem;padding:8px 0">No reviews yet. Be the first to review this space!</p>';
+      return;
+    }
+    container.innerHTML = data.map(r => `
+      <div class="review-item">
+        <div class="review-header">
+          <span class="review-author">${escapeHtml(r.profiles?.name || 'Guest')}</span>
+          <span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span>
+        </div>
+        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+        <div class="review-comment">${escapeHtml(r.comment || '')}</div>
+      </div>`).join('');
+  } catch(e) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:.875rem">Could not load reviews.</p>';
+  }
+}
+
+function openReviewModal(bookingId, listingId) {
+  _reviewCtx = { bookingId, listingId, rating: 0 };
+  document.getElementById('reviewComment').value = '';
+  setReviewStar(0);
+  document.getElementById('reviewModal').classList.remove('hidden');
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').classList.add('hidden');
+}
+
+function setReviewStar(n) {
+  _reviewCtx.rating = n;
+  document.querySelectorAll('#starPicker span').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+async function submitReview() {
+  if (!currentUser) { showToast('Please log in first', 'error'); return; }
+  if (!_reviewCtx.rating) { showToast('Please select a star rating', 'error'); return; }
+  const comment = document.getElementById('reviewComment').value.trim();
+  const btn = document.querySelector('#reviewModal .auth-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  try {
+    // Duplicate review check
+    const { data: existing } = await db.from('reviews').select('id').eq('booking_id', _reviewCtx.bookingId).eq('reviewer_id', currentUser.id);
+    if (existing?.length) { showToast('You have already reviewed this booking.', 'error'); return; }
+    const { error } = await db.from('reviews').insert({
+      booking_id:  _reviewCtx.bookingId,
+      listing_id:  _reviewCtx.listingId,
+      reviewer_id: currentUser.id,
+      rating:      _reviewCtx.rating,
+      comment
+    });
+    if (error) throw error;
+    try {
+      const { data: reviews } = await db.from('reviews').select('rating').eq('listing_id', _reviewCtx.listingId);
+      if (reviews?.length) {
+        const avg = Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10;
+        await db.from('listings').update({ rating: avg, review_count: reviews.length }).eq('id', _reviewCtx.listingId);
+      }
+    } catch(e2) {}
+    closeReviewModal();
+    showToast('Review submitted! Thank you.', 'success');
+    loadMyBookings();
+  } catch(e) { showToast('Failed to submit review: ' + e.message, 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Submit Review'; } }
+}
+
+// ============================================================
+// MESSAGES
+// ============================================================
+async function loadMessagesTab() {
+  const sidebar = document.getElementById('msgSidebar');
+  if (!sidebar || !currentUser) return;
+  sidebar.innerHTML = '<div class="loader" style="padding:24px 16px">Loading...</div>';
+  _msgConvos = [];
+  try {
+    const { data: guestBk } = await db.from('bookings')
+      .select('id, listing_id, listings(title, emoji)')
+      .eq('guest_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    const { data: myLs } = await db.from('listings').select('id').eq('host_id', currentUser.id);
+    const myLsIds = (myLs || []).map(l => l.id);
+    let hostBk = [];
+    if (myLsIds.length) {
+      const { data } = await db.from('bookings')
+        .select('id, listing_id, guest_id, listings(title, emoji)')
+        .in('listing_id', myLsIds)
+        .order('created_at', { ascending: false });
+      hostBk = data || [];
+    }
+
+    const seen = new Set();
+    (guestBk || []).forEach(b => {
+      if (!seen.has(b.id)) {
+        seen.add(b.id);
+        _msgConvos.push({ bookingId: b.id, role: 'guest', title: b.listings?.title || 'Booking', emoji: b.listings?.emoji || '🏠' });
+      }
+    });
+    hostBk.forEach(b => {
+      if (!seen.has(b.id)) {
+        seen.add(b.id);
+        _msgConvos.push({ bookingId: b.id, role: 'host', title: b.listings?.title || 'Booking', emoji: b.listings?.emoji || '🏠' });
+      }
+    });
+
+    if (!_msgConvos.length) {
+      sidebar.innerHTML = '<div class="empty-state" style="padding:24px 16px;text-align:center"><p style="color:var(--muted);font-size:.85rem">No conversations yet.<br>Book a space to start messaging!</p></div>';
+      return;
+    }
+
+    // Load last message preview for each convo
+    const lastMsgs = {};
+    await Promise.all(_msgConvos.map(async c => {
+      try {
+        const { data } = await db.from('messages').select('body').eq('booking_id', c.bookingId).order('created_at', { ascending: false }).limit(1);
+        lastMsgs[c.bookingId] = data?.[0]?.body || '';
+      } catch(e) {}
+    }));
+
+    sidebar.innerHTML = _msgConvos.map(c => `
+      <div class="convo-item" id="convo-${c.bookingId}" onclick="selectConversation('${c.bookingId}')">
+        <div class="convo-name">${escapeHtml(c.emoji||'🏠')} ${escapeHtml(c.title)}</div>
+        <div class="convo-preview">${lastMsgs[c.bookingId] ? escapeHtml(lastMsgs[c.bookingId]) : (c.role==='guest'?'You are the guest':'You are the host')}</div>
+      </div>`).join('');
+  } catch(e) {
+    sidebar.innerHTML = '<div class="empty-state" style="padding:24px 16px"><p style="color:var(--muted)">Could not load conversations.</p></div>';
+  }
+}
+
+async function selectConversation(bookingId) {
+  _activeConvoId = bookingId;
+  if (_msgRealtimeSub) { try { db.removeChannel(_msgRealtimeSub); } catch(e) {} _msgRealtimeSub = null; }
+
+  document.querySelectorAll('.convo-item').forEach(el => el.classList.remove('active'));
+  const activeEl = document.getElementById('convo-' + bookingId);
+  if (activeEl) activeEl.classList.add('active');
+
+  const empty   = document.getElementById('msgEmpty');
+  const thread  = document.getElementById('msgThread');
+  const inputRow = document.getElementById('msgInputRow');
+  empty.classList.add('hidden');
+  thread.classList.remove('hidden');
+  inputRow.classList.remove('hidden');
+  thread.innerHTML = '<div class="loader" style="padding:24px">Loading messages...</div>';
+
+  try {
+    await db.from('messages').update({ read: true })
+      .eq('booking_id', bookingId).neq('sender_id', currentUser.id);
+  } catch(e) {}
+
+  await refreshMessages(bookingId, thread);
+
+  _msgRealtimeSub = db.channel('msgs-' + bookingId)
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'messages',
+      filter: `booking_id=eq.${bookingId}`
+    }, payload => {
+      if (payload.new) {
+        appendMessage(payload.new, thread);
+        if (payload.new.sender_id !== currentUser.id) {
+          db.from('messages').update({ read: true }).eq('id', payload.new.id).catch(() => {});
+        }
+      }
+    })
+    .subscribe();
+}
+
+async function refreshMessages(bookingId, threadEl) {
+  try {
+    const { data, error } = await db.from('messages')
+      .select('*').eq('booking_id', bookingId).order('created_at', { ascending: true });
+    if (error || !data?.length) {
+      threadEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;font-size:.875rem">No messages yet. Say hello!</div>';
+      return;
+    }
+    threadEl.innerHTML = '';
+    data.forEach(m => appendMessage(m, threadEl));
+    threadEl.scrollTop = threadEl.scrollHeight;
+  } catch(e) {
+    threadEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;font-size:.875rem">Could not load messages.</div>';
+  }
+}
+
+function appendMessage(msg, threadEl) {
+  const sent = msg.sender_id === currentUser?.id;
+  const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap' + (sent ? ' sent' : '');
+  wrap.innerHTML = `<div class="bubble ${sent ? 'sent' : 'recv'}">${escapeHtml(msg.body)}<div class="bubble-time">${time}</div></div>`;
+  threadEl.appendChild(wrap);
+  threadEl.scrollTop = threadEl.scrollHeight;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function sendMessage() {
+  if (!currentUser || !_activeConvoId) return;
+  const input = document.getElementById('msgInput');
+  const body = input.value.trim();
+  if (!body) return;
+  input.value = '';
+  try {
+    const { error } = await db.from('messages').insert({
+      booking_id: _activeConvoId,
+      sender_id:  currentUser.id,
+      body,
+      read: false
+    });
+    if (error) { showToast('Failed to send message', 'error'); input.value = body; }
+  } catch(e) { showToast('Failed to send message', 'error'); input.value = body; }
+}
+
+// ============================================================
+// HERO SEARCH
+// ============================================================
+function doHeroSearch() {
+  const city = document.getElementById('heroCity').value.trim();
+  if (city) document.getElementById('navSearch').value = city;
+  showPage('browse');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type='info') {
+  const ct = document.getElementById('toastContainer');
+  const t  = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  t.innerHTML = (icons[type]||'') + ' ' + escapeHtml(String(msg));
+  ct.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(async function init() {
+  // Enforce HTTPS in production
+  if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    location.replace('https://' + location.host + location.pathname + location.search);
+    return;
+  }
+
+  const today = new Date();
+  const d1 = new Date(today); d1.setDate(d1.getDate()+1);
+  const d2 = new Date(today); d2.setDate(d2.getDate()+3);
+  document.getElementById('heroIn').value  = fmtDate(d1);
+  document.getElementById('heroOut').value = fmtDate(d2);
+
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (session?.user) {
+      currentUser = session.user;
+      await loadProfile(session.user.id, session.user);
+      updateNavAuth();
+    }
+  } catch(e) {}
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('confirmed') === '1') {
+    // Retrieve bookingId from URL param or localStorage fallback
+    let bookingId = params.get('booking_id');
+    if (!bookingId) {
+      try {
+        const stored = JSON.parse(localStorage.getItem('pendingPayCtx'));
+        bookingId = stored?.bookingId;
+      } catch(e) {}
+    }
+    if (bookingId && currentUser) {
+      try {
+        await db.from('bookings').update({ status: 'confirmed' }).eq('id', bookingId).eq('guest_id', currentUser.id);
+      } catch(e) {}
+    }
+    try { localStorage.removeItem('pendingPayCtx'); } catch(e) {}
+    showPage('dashboard');
+    showToast('Payment confirmed! Booking is live.', 'success');
+    const cleanUrl = window.location.protocol === 'file:' 
+      ? window.location.pathname 
+      : window.location.origin + window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+  }
+
+  // Escape key closes the top-most open modal
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    if (!document.getElementById('authModal').classList.contains('hidden')) { closeAuth(); return; }
+    if (!document.getElementById('verifyModal').classList.contains('hidden')) { closeVerifyModal(); return; }
+    if (!document.getElementById('paymentModal').classList.contains('hidden')) { closePaymentModal(); return; }
+    if (!document.getElementById('reviewModal').classList.contains('hidden')) { closeReviewModal(); return; }
+  });
+
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session?.user) {
+      currentUser = session.user;
+      await loadProfile(session.user.id, session.user);
+      updateNavAuth();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null; currentProfile = null;
+      updateNavAuth();
+    }
+  });
+})();
+</script>
+</body>
+</html>
