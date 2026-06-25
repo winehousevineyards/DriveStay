@@ -268,9 +268,9 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .detail-back{display:flex;align-items:center;gap:8px;color:var(--muted);
   font-size:.9rem;margin-bottom:24px;cursor:pointer}
 .detail-back:hover{color:var(--green)}
-.detail-hero{font-size:1rem;text-align:center;background:linear-gradient(135deg,var(--gray2),var(--gray));display:flex;align-items:center;justify-content:center;
-  border-radius:20px;padding:48px;margin-bottom:28px;min-height:220px;
-  border:1px solid var(--border)}
+.detail-hero{font-size:1rem;text-align:center;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:20px;padding:48px;margin-bottom:28px;min-height:260px;
+  border:1px solid var(--border);gap:12px}
 .detail-title{font-size:1.8rem;font-weight:800;margin-bottom:8px}
 .detail-meta{display:flex;align-items:center;gap:16px;color:var(--muted);
   font-size:.9rem;margin-bottom:24px;flex-wrap:wrap}
@@ -909,7 +909,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <div class="browse-map" style="position:relative">
       <div id="map"></div>
       <div class="venue-toggles">
-        <h4>📍 Show on Map</h4>
+        <h4><i class="fa-solid fa-map-location-dot"></i> Show on Map</h4>
         <button class="venue-toggle" data-type="concert" onclick="toggleVenue('concert',this)">🎵 Music Venues</button>
         <button class="venue-toggle" data-type="stadium" onclick="toggleVenue('stadium',this)">🏟 Stadiums</button>
         <button class="venue-toggle" data-type="arena" onclick="toggleVenue('arena',this)">🏀 Arenas</button>
@@ -993,7 +993,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
     <p style="font-size:.75rem;color:var(--muted);margin-bottom:24px"><span style="color:var(--red)">*</span> Required fields</p>
     <form id="hostForm" onsubmit="submitListing(event)">
       <div class="form-section">
-        <h2>📍 Location &amp; Basic Info</h2>
+        <h2><i class="fa-solid fa-location-dot"></i> Location &amp; Basic Info</h2>
         <div class="form-row single"><div class="form-group"><label>Space Title <span style="color:var(--red)">*</span></label><input type="text" id="lTitle" placeholder="e.g. Quiet driveway near downtown" required/></div></div>
         <div class="form-row single"><div class="form-group"><label>Description</label><textarea id="lDesc" placeholder="Describe access, nearby landmarks, any restrictions..."></textarea></div></div>
         <div class="form-row single"><div class="form-group"><label>Street Address <span style="color:var(--red)">*</span></label><input type="text" id="lAddress" placeholder="123 Main St" required/></div></div>
@@ -2090,7 +2090,7 @@ function locateMe() {
     leafletMap.setView([lat, lng], 13);
     L.circleMarker([lat, lng], {
       radius:10, fillColor:'#3b82f6', color:'#fff', weight:3, fillOpacity:1
-    }).addTo(leafletMap).bindPopup('<b>📍 You are here</b>').openPopup();
+    }).addTo(leafletMap).bindPopup('<i class="fa-solid fa-location-crosshairs" style="color:#3b82f6"></i> <b>You are here</b>').openPopup();
     showToast('Showing spaces near you', 'success');
   }, () => { showToast('Could not get your location', 'error'); });
 }
@@ -2112,14 +2112,14 @@ function openDetail(id) {
     photoStrip.innerHTML = '';
     photoStrip.classList.add('hidden');
     emojiHero.classList.remove('hidden');
-    emojiHero.textContent = l.emoji || '🏠';
+    emojiHero.innerHTML = '<i class="fa-solid fa-car" style="font-size:4rem;color:var(--muted)"></i><span style="font-size:.8rem;color:var(--muted2);font-weight:500">No photos uploaded</span>';
   }
   document.getElementById('detailTitle').textContent = l.title;
   document.getElementById('detailMeta').innerHTML =
-    `<span>📍 ${escapeHtml(l.city)}, ${escapeHtml(l.state)}</span>` +
-    (l.rating ? `<span>⭐ ${Number(l.rating)} (${Number(l.review_count)||0} reviews)</span>` : '') +
-    (l.surface_type ? `<span>🛣 ${escapeHtml(l.surface_type)}</span>` : '') +
-    (l.length_ft ? `<span>📐 ${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '');
+    `<span><i class="fa-solid fa-location-dot" style="color:var(--green);margin-right:4px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state)}</span>` +
+    (l.rating ? `<span><i class="fa-solid fa-star" style="color:#f59e0b;margin-right:4px"></i>${Number(l.rating)} (${Number(l.review_count)||0} reviews)</span>` : '') +
+    (l.surface_type ? `<span><i class="fa-solid fa-road" style="margin-right:4px"></i>${escapeHtml(l.surface_type)}</span>` : '') +
+    (l.length_ft ? `<span><i class="fa-solid fa-ruler-combined" style="margin-right:4px"></i>${Number(l.length_ft)}×${Number(l.width_ft)||'?'} ft</span>` : '');
   document.getElementById('detailDesc').textContent = l.description || 'No description provided.';
   document.getElementById('bkPrice').innerHTML = `$${l.price_nightly} <span>/ night</span>`;
 
@@ -2465,7 +2465,7 @@ async function submitListing(e) {
     // Auto-geocode if lat/lng not manually set
     if (!listing.lat || !listing.lng) {
       const geoEl = document.getElementById('geocodeStatus');
-      if (geoEl) geoEl.textContent = '📍 Locating address on map...';
+      if (geoEl) geoEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locating address...';
       const coords = await geocodeAddress(listing.address, listing.city, listing.state);
       if (coords) {
         listing.lat = coords.lat; listing.lng = coords.lng;
@@ -2642,7 +2642,7 @@ async function loadMyListings() {
         <div class="booking-row-emoji">${l.photos?.length?`<img src="${l.photos[0]}" style="width:48px;height:48px;border-radius:10px;object-fit:cover" alt="${escapeHtml(l.title)}"/>`:escapeHtml(l.emoji||'🏠')}</div>
         <div class="booking-row-info" style="flex:1">
           <div class="booking-row-title">${escapeHtml(l.title)}</div>
-          <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · ⭐ ${l.rating||'New'} (${l.review_count||0} reviews)</div>
+          <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · <i class="fa-solid fa-star" style="color:#f59e0b"></i> ${l.rating||'New'} (${l.review_count||0} reviews)</div>
           <div class="booking-row-actions">
             <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
             ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
