@@ -766,6 +766,12 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
         <button class="filter-chip" onclick="setFilter('dump',this)">🚿 Dump Station</button>
         <button class="filter-chip" onclick="setFilter('water',this)">💧 Water Hook-up</button>
         <button class="filter-chip" onclick="setFilter('rv_friendly',this)">🚐 RV Friendly</button>
+        <button class="filter-chip" onclick="setFilter('pool',this)">🏊 Pool</button>
+        <button class="filter-chip" onclick="setFilter('spa',this)">🛁 Spa</button>
+        <button class="filter-chip" onclick="setFilter('sauna',this)">🧖 Sauna</button>
+        <button class="filter-chip" onclick="setFilter('laundry',this)">🫧 Laundry</button>
+        <button class="filter-chip" onclick="setFilter('outdoor_shower',this)">🚿 Outdoor Shower</button>
+        <button class="filter-chip" onclick="setFilter('bathroom',this)">🚽 Bathroom</button>
       </div>
       <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
         <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
@@ -919,6 +925,12 @@ nav{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid v
           <label class="check-item"><input type="checkbox" id="lPets"/> Pets Allowed</label>
           <label class="check-item"><input type="checkbox" id="lRvFriendly"/> 🚐 RV Friendly</label>
           <label class="check-item"><input type="checkbox" id="lCamera"/> 📸 Security Camera</label>
+          <label class="check-item"><input type="checkbox" id="lPool"/> 🏊 Pool</label>
+          <label class="check-item"><input type="checkbox" id="lSpa"/> 🛁 Spa</label>
+          <label class="check-item"><input type="checkbox" id="lSauna"/> 🧖 Sauna</label>
+          <label class="check-item"><input type="checkbox" id="lLaundry"/> 🫧 Laundry</label>
+          <label class="check-item"><input type="checkbox" id="lOutdoorShower"/> 🚿 Outdoor Shower</label>
+          <label class="check-item"><input type="checkbox" id="lBathroom"/> 🚽 Bathroom</label>
         </div>
       </div>
       <div class="form-section">
@@ -1769,6 +1781,12 @@ function renderListings() {
           <span class="listing-price">$${l.price_nightly}/night</span>
           ${l.price_monthly?`<span class="monthly-price">$${l.price_monthly}/mo</span>`:''}
           ${l.rating?`<span class="listing-stars">⭐ ${l.rating} (${l.review_count||0})</span>`:''}
+          ${l.pool?'<span class="tag">🏊 Pool</span>':''}
+          ${l.spa?'<span class="tag">🛁 Spa</span>':''}
+          ${l.sauna?'<span class="tag">🧖 Sauna</span>':''}
+          ${l.laundry?'<span class="tag">🫧 Laundry</span>':''}
+          ${l.outdoor_shower?'<span class="tag">🚿 Shower</span>':''}
+          ${l.bathroom?'<span class="tag">🚽 Bathroom</span>':''}
           ${l.instant_book?`<span class="instant-badge">⚡ Instant Book</span>`:''}
         </div>
       </div>
@@ -1921,6 +1939,9 @@ function openDetail(id) {
     {key:'wifi',icon:'📶',label:'WiFi'},{key:'covered',icon:'🏠',label:'Covered'},
     {key:'electric',icon:'⚡',label:'EV Charging'},{key:'dump',icon:'🚿',label:'Dump Station'},
     {key:'water',icon:'💧',label:'Water Hook-up'},{key:'pets',icon:'🐾',label:'Pets OK'},
+    {key:'pool',icon:'🏊',label:'Pool'},{key:'spa',icon:'🛁',label:'Spa'},
+    {key:'sauna',icon:'🧖',label:'Sauna'},{key:'laundry',icon:'🫧',label:'Laundry'},
+    {key:'outdoor_shower',icon:'🚿',label:'Outdoor Shower'},{key:'bathroom',icon:'🚽',label:'Bathroom'},
   ];
   document.getElementById('detailAmenities').innerHTML = amenities.map(a =>
     `<div class="amenity ${l[a.key]?'yes':'no'}">${a.icon} ${a.label}</div>`).join('');
@@ -2204,6 +2225,12 @@ async function submitListing(e) {
     pets: document.getElementById('lPets').checked,
     rv_friendly: document.getElementById('lRvFriendly').checked,
     security_camera: document.getElementById('lCamera').checked,
+    pool: document.getElementById('lPool').checked,
+    spa: document.getElementById('lSpa').checked,
+    sauna: document.getElementById('lSauna').checked,
+    laundry: document.getElementById('lLaundry').checked,
+    outdoor_shower: document.getElementById('lOutdoorShower').checked,
+    bathroom: document.getElementById('lBathroom').checked,
     instant_book: document.getElementById('lInstantBook').checked,
     length_ft: parseInt(document.getElementById('lLen').value) || null,
     width_ft: parseInt(document.getElementById('lWid').value) || null,
@@ -2573,7 +2600,9 @@ async function editListing(listingId) {
     document.getElementById('lInsExpiry').value = l.ins_expiry || '';
     // Set checkboxes using real field IDs
     [['lWifi','wifi'],['lDump','dump'],['lWater','water'],['lElec','electric'],['lCovered','covered'],['lPets','pets'],
-     ['lRvFriendly','rv_friendly'],['lCamera','security_camera'],['lInstantBook','instant_book']]
+     ['lRvFriendly','rv_friendly'],['lCamera','security_camera'],
+     ['lPool','pool'],['lSpa','spa'],['lSauna','sauna'],['lLaundry','laundry'],
+     ['lOutdoorShower','outdoor_shower'],['lBathroom','bathroom'],['lInstantBook','instant_book']]
       .forEach(([id, f]) => { const el = document.getElementById(id); if (el) el.checked = !!l[f]; });
     // Set multi-select vehicles
     const vehiclesSel = document.getElementById('lVehicles');
