@@ -1697,6 +1697,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <button class="dash-tab" onclick="switchDashTab('hosting',this)">Hosting</button>
       <button class="dash-tab" onclick="switchDashTab('messages',this)">Messages<span class="msg-tab-badge hidden" id="msgUnreadBadge"></span></button>
       <button class="dash-tab" onclick="switchDashTab('saved',this)"><i class="fa-solid fa-heart" style="color:#ef4444;margin-right:4px"></i> Saved</button>
+      <button class="dash-tab hidden" id="adminDashTab" onclick="switchDashTab('admin',this)"><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:4px"></i> Admin</button>
     </div>
     <div class="dash-panel active" id="dashBookings">
       <div class="referral-card" id="referralCard" style="display:none">
@@ -1739,6 +1740,13 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <div id="hostingList"></div>
     </div>
     <div class="dash-panel" id="dashSaved"><div id="savedListEl"></div></div>
+    <div class="dash-panel" id="dashAdmin">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h3 style="margin:0"><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:8px"></i>Admin — Listing Approvals</h3>
+        <button class="btn" style="padding:6px 16px;font-size:.82rem" onclick="loadAdminPanel()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+      </div>
+      <div id="adminPendingList"><p style="color:var(--muted)">Loading...</p></div>
+    </div>
     <div class="dash-panel" id="dashMessages">
       <div class="msg-layout">
         <div class="msg-sidebar" id="msgSidebar">
@@ -3272,6 +3280,11 @@ async function loadDashboard() {
   showReferralCard();
   loadMyBookings();
   loadMyListings();
+  // Show admin tab if admin user
+  if (isAdminUser()) {
+    const adminTab = document.getElementById('adminDashTab');
+    if (adminTab) adminTab.classList.remove('hidden');
+  }
 }
 
 async function loadMyBookings() {
@@ -3358,6 +3371,7 @@ function switchDashTab(tab, el) {
   if (tab === 'messages' && currentUser && !_messagesLoaded) { _messagesLoaded = true; loadMessagesTab(); }
   if (tab === 'hosting' && currentUser) loadHostBookings();
   if (tab === 'saved') renderSavedListings();
+  if (tab === 'admin') loadAdminPanel();
 }
 
 // ============================================================
@@ -3636,8 +3650,11 @@ async function uploadListingPhotos() {
       ? crypto.randomUUID() 
       : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const path = `listings/${timestamp}/${uniqueId}.${ext}`;
-    const { error } = await db.storage.from('listing-photos').upload(path, file, { upsert: true, contentType: file.type });
-    if (!error) {
+    const { error: upErr } = await db.storage.from('listing-photos').upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) {
+      console.error('Photo upload error:', upErr);
+      showToast(`Photo upload failed: ${upErr.message}`, 'error');
+    } else {
       const { data } = db.storage.from('listing-photos').getPublicUrl(path);
       if (data?.publicUrl) urls.push(data.publicUrl);
     }
@@ -5364,6 +5381,72 @@ const _origOpenConvo = openConvo;
 function openConvo(bookingId) {
   if (typeof _origOpenConvo === 'function') _origOpenConvo(bookingId);
   markMessagesRead(bookingId);
+}
+
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+const ADMIN_EMAILS = ['drivewayhost@pm.me', 'pdgd5gwf2x@privaterelay.appleid.com'];
+function isAdminUser() { return !!(currentUser && ADMIN_EMAILS.includes(currentUser.email)); }
+
+async function loadAdminPanel() {
+  const list = document.getElementById('adminPendingList');
+  if (!list) return;
+  list.innerHTML = '<div class="loader" style="padding:20px 0"></div>';
+  try {
+    const { data, error } = await db.from('listings')
+      .select('*, profiles(name, email)')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    if (!data?.length) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><h3>All caught up!</h3><p>No listings pending review.</p></div>';
+      return;
+    }
+    list.innerHTML = data.map(l => {
+      const photos = (l.photos || []).slice(0, 3);
+      const photoHtml = photos.length
+        ? `<div style="display:flex;gap:6px;margin:10px 0">${photos.map(u => `<img src="${escapeHtml(u)}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">`).join('')}</div>`
+        : `<div style="color:var(--muted);font-size:.8rem;margin:8px 0"><i class="fa-solid fa-image" style="margin-right:4px"></i>No photos uploaded</div>`;
+      return `
+      <div style="border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;background:var(--surface)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <div style="font-weight:700;font-size:1rem">${escapeHtml(l.title || 'Untitled')}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:2px">${escapeHtml(l.address || '')}, ${escapeHtml(l.city || '')}, ${escapeHtml(l.state || '')}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Host: <strong>${escapeHtml(l.profiles?.name || '?')}</strong> · $${l.price_nightly}/night · Submitted ${new Date(l.created_at).toLocaleDateString()}</div>
+          </div>
+          <span class="status-badge status-pending">pending</span>
+        </div>
+        ${photoHtml}
+        ${l.description ? `<div style="font-size:.82rem;color:var(--muted);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(l.description)}</div>` : ''}
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn-primary" style="background:var(--green);border:none;padding:8px 18px;border-radius:8px;font-size:.88rem;cursor:pointer" onclick="adminApproveListing('${l.id}')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve &amp; Go Live</button>
+          <button class="btn-primary" style="background:#dc2626;border:none;padding:8px 18px;border-radius:8px;font-size:.88rem;cursor:pointer" onclick="adminRejectListing('${l.id}')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = `<p style="color:#dc2626">Error loading listings: ${escapeHtml(e.message)}</p>`;
+  }
+}
+
+async function adminApproveListing(id) {
+  if (!isAdminUser()) return;
+  const { error } = await db.from('listings').update({ status: 'active' }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Listing approved and live! 🎉', 'success');
+  loadAdminPanel();
+  allListings = []; _listingsLastFetch = 0; // bust browse cache
+}
+
+async function adminRejectListing(id) {
+  if (!isAdminUser()) return;
+  const { error } = await db.from('listings').update({ status: 'rejected' }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Listing rejected.', 'info');
+  loadAdminPanel();
 }
 
 </script>
