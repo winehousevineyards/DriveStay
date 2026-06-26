@@ -41,7 +41,7 @@
 <meta name="apple-mobile-web-app-title" content="Driveway Host"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet"/>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1188,6 +1188,154 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .help-contact-methods{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .help-contact-method{display:flex;align-items:center;gap:8px;padding:12px 20px;background:#fff;border:1.5px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.18s}
 .help-contact-method:hover{border-color:var(--green);color:var(--green);box-shadow:var(--shadow-sm)}
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN REFRESH — FLOW · PERSONALITY · MICRO-INTERACTION
+   Plus Jakarta Sans headings · page transitions · scroll reveals
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Display font + extra tokens */
+:root {
+  --font-display:'Plus Jakarta Sans','Inter',system-ui,sans-serif;
+  --cream:#faf8f3;--cream2:#f2ede3;
+}
+h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
+
+/* ─── Page entrance ───────────────────────────────────────────── */
+@keyframes pageEnter {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.page.active { animation:pageEnter .38s cubic-bezier(.22,.68,0,1.12) both; }
+
+/* ─── Scroll reveal ───────────────────────────────────────────── */
+@keyframes revealUp {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.reveal { opacity:0; }
+.reveal.vis { animation:revealUp .5s cubic-bezier(.22,.68,0,1.12) both; }
+.how-grid .reveal.vis:nth-child(2) { animation-delay:.09s; }
+.how-grid .reveal.vis:nth-child(3) { animation-delay:.18s; }
+.how-grid .reveal.vis:nth-child(4) { animation-delay:.27s; }
+.protection-grid .reveal.vis:nth-child(2),.partner-grid .reveal.vis:nth-child(2) { animation-delay:.07s; }
+.protection-grid .reveal.vis:nth-child(3),.partner-grid .reveal.vis:nth-child(3) { animation-delay:.14s; }
+.protection-grid .reveal.vis:nth-child(4) { animation-delay:.21s; }
+.protection-grid .reveal.vis:nth-child(5) { animation-delay:.28s; }
+.protection-grid .reveal.vis:nth-child(6) { animation-delay:.35s; }
+
+/* ─── Hero enhancements ───────────────────────────────────────── */
+.hero {
+  min-height:80vh;
+  background:linear-gradient(148deg,rgba(7,12,22,.91) 0%,rgba(9,22,15,.86) 55%,rgba(14,52,30,.79) 100%),
+    url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+}
+.hero::after {
+  content:'';position:absolute;bottom:0;left:0;right:0;height:200px;
+  background:linear-gradient(to bottom,transparent,rgba(22,163,74,.05));
+  pointer-events:none;
+}
+.hero { position:relative; }
+.hero h1 {
+  font-size:clamp(2.4rem,5.8vw,4.8rem);
+  font-family:var(--font-display);
+  letter-spacing:-0.045em;
+  line-height:1.02;
+  margin-bottom:22px;
+}
+.hero p { font-size:clamp(1rem,1.8vw,1.22rem); }
+
+/* ─── Stats bar → dark redesign ──────────────────────────────── */
+.stats {
+  background:#071208;
+  border-bottom:none;
+  position:relative; overflow:hidden;
+}
+.stats::before {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(22,163,74,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.stat { border-right-color:rgba(255,255,255,.07); padding:44px 28px; }
+.stat:last-child { border-right:none; }
+.stat-n { font-size:clamp(2rem,3.2vw,2.9rem); font-family:var(--font-display); color:#4ade80; font-weight:900; }
+.stat-l { color:rgba(255,255,255,.45); font-size:.73rem; margin-top:10px; letter-spacing:.06em; }
+
+/* ─── Section eyebrow → pill ──────────────────────────────────── */
+.section-eyebrow {
+  display:block;width:fit-content;margin:0 auto 16px;
+  background:#f0fdf4;color:#15803d;
+  border:1.5px solid #bbf7d0;border-radius:24px;
+  padding:4px 16px;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;
+}
+
+/* ─── How-it-works → cream bg + connected steps ──────────────── */
+.how-section { background:var(--cream); padding:100px 24px; }
+.how-section h2 { letter-spacing:-0.04em; font-size:clamp(1.9rem,3.2vw,2.6rem); }
+.how-grid { background:none; gap:0; position:relative; }
+.how-grid::before {
+  content:'';position:absolute;
+  top:50px;left:calc(12.5% + 40px);right:calc(12.5% + 40px);height:2px;
+  background:linear-gradient(90deg,#dcfce7 0%,#16a34a 50%,#dcfce7 100%);
+  z-index:0;
+}
+@media(max-width:680px){ .how-grid::before { display:none; } }
+.how-card { background:none; padding:0 24px; position:relative; z-index:1; transition:transform .28s cubic-bezier(.22,.68,0,1.2); }
+.how-card:hover { transform:translateY(-5px); }
+.how-card::before { font-size:5.5rem; font-weight:900; font-family:var(--font-display); color:rgba(22,163,74,.07); top:-8px; right:8px; letter-spacing:-0.06em; }
+.how-icon { background:#fff; box-shadow:0 8px 28px rgba(22,163,74,.18),0 2px 8px rgba(0,0,0,.06); border:2.5px solid #dcfce7; position:relative; z-index:1; }
+.how-card h3 { font-family:var(--font-display); font-size:1.05rem; font-weight:800; margin-top:18px; }
+
+/* ─── Card hover lifts ────────────────────────────────────────── */
+.protection-card,.partner-card {
+  transition:transform .28s cubic-bezier(.22,.68,0,1.2),box-shadow .28s ease,border-color .2s;
+}
+.protection-card:hover { transform:translateY(-7px); box-shadow:0 24px 48px rgba(0,0,0,.1); border-color:var(--green); }
+.partner-card:hover   { transform:translateY(-7px); box-shadow:0 24px 48px rgba(0,0,0,.1); }
+
+/* ─── Trust badges polished ───────────────────────────────────── */
+.trust-badges { display:flex; overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--border); background:#fff; padding:0; }
+.trust-badges::-webkit-scrollbar { display:none; }
+.trust-badge { padding:13px 22px; border-right:1px solid var(--border); font-size:.77rem; font-weight:600; color:var(--muted); white-space:nowrap; flex-shrink:0; display:flex; align-items:center; gap:8px; transition:color .15s,background .15s; }
+.trust-badge:last-child { border-right:none; }
+.trust-badge:hover { background:#f0fdf4; color:var(--text); }
+.trust-badge i { color:var(--green); font-size:.85rem; }
+
+/* ─── Listing card enhancement ────────────────────────────────── */
+.listing-card { transition:background .15s,box-shadow .18s; }
+.listing-card:hover { background:#f8fff8; box-shadow:inset 3px 0 0 var(--green); transform:none; }
+
+/* ─── CTA richer gradient ─────────────────────────────────────── */
+.cta-section { background:linear-gradient(148deg,#060e06 0%,#14532d 55%,#166534 100%); }
+
+/* ─── Footer multi-column redesign ───────────────────────────── */
+footer { background:#060e06 !important; padding:0 !important; text-align:left !important; }
+.footer-grid {
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;
+  gap:56px;padding:72px 40px 56px;
+}
+.footer-brand-name { font-family:var(--font-display);font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px; }
+.footer-brand-name i { color:#4ade80; }
+.footer-brand-tagline { font-size:.84rem;line-height:1.75;color:#475569;max-width:240px;margin-bottom:22px; }
+.footer-chips { display:flex;flex-wrap:wrap;gap:8px; }
+.footer-chip { font-size:.71rem;font-weight:600;color:#374151;background:#0c1b0c;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:5px; }
+.footer-chip i { color:#4ade80; }
+.footer-col-title { font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8;margin-bottom:18px; }
+.footer-col a { display:block;font-size:.84rem;color:#475569;padding:5px 0;transition:color .15s;cursor:pointer; }
+.footer-col a:hover { color:#4ade80; }
+.footer-bottom { border-top:1px solid rgba(255,255,255,.05);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.76rem;color:#374151; }
+@media(max-width:860px){ .footer-grid { grid-template-columns:1fr 1fr;gap:36px;padding:56px 28px 40px; } }
+@media(max-width:520px){ .footer-grid { grid-template-columns:1fr;gap:28px;padding:48px 24px 36px; } .footer-bottom { padding:18px 24px; } }
+
+/* ─── Dark-mode compat ────────────────────────────────────────── */
+[data-theme="dark"] .stats { background:#071208; }
+[data-theme="dark"] .how-section { background:#0d1b0d; }
+[data-theme="dark"] .how-icon { background:#1a2c1a;border-color:#166534; }
+[data-theme="dark"] .trust-badge:hover { background:#0d1f0d; }
+[data-theme="dark"] .section-eyebrow { background:#0d1f0d;border-color:#166534; }
+[data-theme="dark"] .footer-chip { background:#0a160a; }
+
 /* nav more dropdown */
 .nav-more{position:relative}
 .nav-more-btn{display:flex;align-items:center;gap:4px}
@@ -1336,10 +1484,10 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <h2>Park smarter in 4 steps</h2>
     <p class="section-sub-text">From search to park in minutes — no subscriptions, no parking lots.</p>
     <div class="how-grid">
-      <div class="how-card" data-step="01"><div class="how-icon"><i class="fa-solid fa-magnifying-glass"></i></div><h3>Search</h3><p>Find driveways near your destination or event using our interactive map.</p></div>
-      <div class="how-card" data-step="02"><div class="how-icon"><i class="fa-solid fa-calendar-days"></i></div><h3>Book</h3><p>Choose your dates, review pricing &amp; fees — insurance is automatically added for both host and guest. Pay securely via Stripe.</p></div>
-      <div class="how-card" data-step="03"><div class="how-icon"><i class="fa-solid fa-car"></i></div><h3>Park</h3><p>Arrive and park with confidence. Host receives payout after check-in.</p></div>
-      <div class="how-card" data-step="04"><div class="how-icon"><i class="fa-solid fa-star"></i></div><h3>Review</h3><p>Leave a review to help the community and build your reputation.</p></div>
+      <div class="how-card reveal" data-step="01"><div class="how-icon"><i class="fa-solid fa-magnifying-glass"></i></div><h3>Search</h3><p>Find driveways near your destination or event using our interactive map.</p></div>
+      <div class="how-card reveal" data-step="02"><div class="how-icon"><i class="fa-solid fa-calendar-days"></i></div><h3>Book</h3><p>Choose your dates, review pricing &amp; fees — insurance is automatically added for both host and guest. Pay securely via Stripe.</p></div>
+      <div class="how-card reveal" data-step="03"><div class="how-icon"><i class="fa-solid fa-car"></i></div><h3>Park</h3><p>Arrive and park with confidence. Host receives payout after check-in.</p></div>
+      <div class="how-card reveal" data-step="04"><div class="how-icon"><i class="fa-solid fa-star"></i></div><h3>Review</h3><p>Leave a review to help the community and build your reputation.</p></div>
     </div>
   </div>
   <!-- FEE TRANSPARENCY SECTION -->
@@ -1381,32 +1529,32 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <h2>Every booking is protected</h2>
     <p class="section-sub">Driveway Host builds safety in — for hosts and guests alike.</p>
     <div class="protection-grid">
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="protection-title">Booking Protection</div>
         <div class="protection-desc">Every reservation includes booking protection coverage. Hosts are shielded from property damage, guests from no-shows.</div>
       </div>
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div class="protection-title">Identity Verified Guests</div>
         <div class="protection-desc">All guests must verify their driver's license and vehicle before booking. You always know who's parking in your space.</div>
       </div>
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-brands fa-stripe"></i></div>
         <div class="protection-title">Secure Payments via Stripe</div>
         <div class="protection-desc">Payments processed by Stripe — the same platform trusted by Amazon, Shopify, and millions of businesses worldwide.</div>
       </div>
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-camera"></i></div>
         <div class="protection-title">Photo Documentation</div>
         <div class="protection-desc">Hosts upload listing photos. Guests have a clear record of the space before and after. Disputes resolved with evidence.</div>
       </div>
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-star"></i></div>
         <div class="protection-title">Two-Way Reviews</div>
         <div class="protection-desc">Hosts and guests rate each other after every stay — building a trusted community, not just a transaction.</div>
       </div>
-      <div class="protection-card">
+      <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-shield"></i></div>
         <div class="protection-title">Host Insurance Required</div>
         <div class="protection-desc">Every host must carry short-term rental insurance (via Thimble or equivalent) before their listing goes live.</div>
@@ -1452,19 +1600,19 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <h2>Partner with Driveway Host</h2>
     <p class="section-sub">Own a lot, a building, or represent a community? Driveway Host partners get priority placement, dedicated support, and bulk listing tools.</p>
     <div class="partner-grid">
-      <div class="partner-card">
+      <div class="partner-card reveal">
         <div class="partner-icon"><i class="fa-solid fa-church"></i></div>
         <h3>Church & Community Orgs</h3>
         <p>Churches, mosques, temples, and community centers often have large parking lots sitting empty on weekdays. Turn idle space into mission funding — zero effort after setup.</p>
         <a href="mailto:drivewayhost@pm.me" class="partner-cta">Apply for Partnership &rarr;</a>
       </div>
-      <div class="partner-card">
+      <div class="partner-card reveal">
         <div class="partner-icon"><i class="fa-solid fa-building"></i></div>
         <h3>Businesses & Lot Owners</h3>
         <p>Commercial lots, office buildings, and retail centers: list your unused spaces, set your own hours, and let Driveway Host handle the bookings, payments, and guests.</p>
         <a href="mailto:drivewayhost@pm.me" class="partner-cta">Apply for Partnership &rarr;</a>
       </div>
-      <div class="partner-card">
+      <div class="partner-card reveal">
         <div class="partner-icon"><i class="fa-solid fa-house"></i></div>
         <h3>Realtors & Property Managers</h3>
         <p>Add a passive income stream to every property you manage. Driveway Host integrates with your workflow — list multiple properties from one account with bulk tools.</p>
@@ -2150,34 +2298,51 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   </div>
 </div>
 
-<footer style="background:#0f172a;color:#94a3b8;text-align:center;padding:40px 24px;font-size:.85rem">
-  <p style="font-weight:700;color:#fff;margin-bottom:8px">🚗 Driveway Host</p>
-  <p>Peer-to-peer driveway rental &amp; parking space marketplace</p>
-  <nav aria-label="Footer" style="margin:16px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px 24px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
-    <a href="#" onclick="showPage('home');return false;" style="color:#94a3b8;padding:4px 0">Home</a>
-    <a href="#" onclick="showPage('browse');return false;" style="color:#94a3b8;padding:4px 0">Browse Spaces</a>
-    <a href="#" onclick="requireAuth('host');return false;" style="color:#94a3b8;padding:4px 0">List Your Driveway</a>
-    <a href="#" onclick="showPage('legal');return false;" style="color:#94a3b8;padding:4px 0">How It Works</a>
-    <a href="#" onclick="showPage('events');return false;" style="color:#94a3b8;padding:4px 0">Event Parking</a>
-    <a href="#" onclick="showPage('bigrigs');return false;" style="color:#94a3b8;padding:4px 0">Big Rigs &amp; Commercial</a>
-    <a href="#" onclick="showPage('security');return false;" style="color:#94a3b8;padding:4px 0">Safety &amp; Security</a>
-    <a href="#" onclick="showPage('attendants');return false;" style="color:#94a3b8;padding:4px 0">Parking Attendants</a>
-    <a href="#" onclick="showPage('merch');return false;" style="color:#94a3b8;padding:4px 0">Merchandise</a>
-    <a href="#" onclick="showPage('blog');return false;" style="color:#94a3b8;padding:4px 0">Blog</a>
-    <a href="#" onclick="showPage('help');return false;" style="color:#94a3b8;padding:4px 0">Help Center</a>
-    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8;padding:4px 0">Partnerships</a>
-    <a href="#" onclick="showPage('tos');return false;" style="color:#94a3b8;padding:4px 0">Terms of Service</a>
-    <a href="#" onclick="showPage('privacy');return false;" style="color:#94a3b8;padding:4px 0">Privacy Policy</a>
-    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8;padding:4px 0">Support</a>
-  </nav>
-  <div style="margin:20px 0;display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
-    <span style="font-size:.78rem;color:#475569">🔒 Bookings Protected</span>
-    <span style="font-size:.78rem;color:#475569"><i class="fa-brands fa-stripe" style="margin-right:4px"></i> Payments via Stripe</span>
-    <span style="font-size:.78rem;color:#475569"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-right:4px"></i> Identity Verified Guests</span>
-    <span style="font-size:.78rem;color:#475569"><i class="fa-solid fa-hand-holding-dollar" style="color:var(--green);margin-right:4px"></i> 10% Service Fee</span>
+<footer>
+  <div class="footer-grid">
+    <!-- Brand column -->
+    <div>
+      <div class="footer-brand-name"><i class="fa-solid fa-car-side"></i> Driveway Host</div>
+      <p class="footer-brand-tagline">Peer-to-peer driveway rental &amp; private parking marketplace. Find or list parking near stadiums, airports, and events.</p>
+      <div class="footer-chips">
+        <span class="footer-chip"><i class="fa-solid fa-shield-halved"></i> Protected</span>
+        <span class="footer-chip"><i class="fa-brands fa-stripe"></i> Stripe</span>
+        <span class="footer-chip"><i class="fa-solid fa-circle-check"></i> Verified</span>
+        <span class="footer-chip"><i class="fa-solid fa-tag"></i> 10% Fee</span>
+      </div>
+    </div>
+    <!-- Product column -->
+    <div class="footer-col">
+      <div class="footer-col-title">Product</div>
+      <a onclick="showPage('browse')">Browse Spaces</a>
+      <a onclick="showPage('events')">Event Parking</a>
+      <a onclick="showPage('bigrigs')">Big Rigs &amp; Commercial</a>
+      <a onclick="showPage('attendants')">Parking Attendants</a>
+      <a onclick="requireAuth('host')">List Your Space</a>
+      <a onclick="showPage('merch')">Merchandise</a>
+    </div>
+    <!-- Company column -->
+    <div class="footer-col">
+      <div class="footer-col-title">Company</div>
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('legal')">How It Works</a>
+      <a onclick="showPage('security')">Safety &amp; Security</a>
+      <a onclick="showPage('blog')">Blog</a>
+      <a href="mailto:drivewayhost@pm.me">Partnerships</a>
+    </div>
+    <!-- Support column -->
+    <div class="footer-col">
+      <div class="footer-col-title">Support</div>
+      <a onclick="showPage('help')">Help Center</a>
+      <a href="mailto:drivewayhost@pm.me">Contact Us</a>
+      <a onclick="showPage('tos')">Terms of Service</a>
+      <a onclick="showPage('privacy')">Privacy Policy</a>
+    </div>
   </div>
-  <p style="color:#64748b">&copy; 2026 Driveway Host Inc. All rights reserved.</p>
-  <p style="color:#475569;font-size:.75rem;margin-top:8px">Stripe test mode — payments are simulated in this demo.</p>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Driveway Host Inc. All rights reserved.</span>
+    <span style="font-size:.72rem;color:#1c2e1c">Stripe test mode — payments simulated in this demo.</span>
+  </div>
 </footer>
 
 <div class="toast-container" id="toastContainer"></div>
@@ -2363,9 +2528,20 @@ let _messagesLoaded = false;
 // ============================================================
 // NAVIGATION
 // ============================================================
+function refreshReveal() {
+  if (!window._revealObs) return;
+  document.querySelectorAll('.page.active .reveal:not(.vis)').forEach(el => window._revealObs.observe(el));
+}
+
 function showPage(name, opts) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+  const _pg = document.getElementById('page-' + name);
+  // Re-trigger entrance animation
+  _pg.style.animation = 'none';
+  _pg.offsetHeight; // force reflow
+  _pg.style.animation = '';
+  _pg.classList.add('active');
+  setTimeout(refreshReveal, 60);
   if (name === 'browse') { setTimeout(() => { if (!mbMap) initMap(); else mbMap.resize(); }, 150); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
   if (name === 'home') renderRecentlyViewed();
@@ -5755,6 +5931,19 @@ async function adminRejectListing(id) {
   showToast('Listing rejected.', 'info');
   loadAdminPanel();
 }
+
+// ============================================================
+// SCROLL REVEAL OBSERVER
+// ============================================================
+(function initScrollReveal() {
+  window._revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('vis'); window._revealObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+  // Observe elements on initial active page
+  document.querySelectorAll('.page.active .reveal').forEach(el => window._revealObs.observe(el));
+})();
 
 </script>
 <!-- LIGHTBOX -->
