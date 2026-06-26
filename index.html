@@ -1070,6 +1070,133 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .autosave-dot.saved .dot{background:var(--green)}
 .autosave-dot.saved{color:var(--green)}
 
+/* ===== NEW SECTIONS ===== */
+.page-hero{padding:72px 24px 60px;text-align:center;border-bottom:1px solid var(--border)}
+.page-hero-green{background:linear-gradient(160deg,#052e16 0%,#14532d 60%,#166534 100%);color:#fff}
+.page-hero-slate{background:linear-gradient(160deg,#0f172a 0%,#1e293b 100%);color:#fff}
+.page-hero-blue{background:linear-gradient(160deg,#1e3a8a 0%,#1d4ed8 100%);color:#fff}
+.page-hero-warm{background:linear-gradient(160deg,#431407 0%,#9a3412 60%,#ea580c 100%);color:#fff}
+.page-hero h1{font-size:2.6rem;font-weight:900;margin-bottom:14px;letter-spacing:-.03em;line-height:1.1}
+.page-hero p{font-size:1.05rem;opacity:.85;max-width:540px;margin:0 auto 28px;line-height:1.65}
+.page-hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.page-hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:600;margin-bottom:16px}
+.page-wrap{max-width:1100px;margin:0 auto;padding:56px 24px}
+.page-section{margin-bottom:60px}
+.page-section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:8px}
+.page-section h2{font-size:2rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em}
+.page-section-sub{font-size:.95rem;color:var(--muted);margin-bottom:36px;line-height:1.65;max-width:560px}
+/* icon-grid shared */
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.icon-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:26px;transition:.18s}
+.icon-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:var(--shadow)}
+.icon-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px}
+.icon-card-icon.green{background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:var(--green)}
+.icon-card-icon.blue{background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#2563eb}
+.icon-card-icon.purple{background:linear-gradient(135deg,#faf5ff,#ede9fe);color:#7c3aed}
+.icon-card-icon.orange{background:linear-gradient(135deg,#fff7ed,#ffedd5);color:#ea580c}
+.icon-card-icon.slate{background:linear-gradient(135deg,#f8fafc,#f1f5f9);color:var(--muted)}
+.icon-card h3{font-size:.95rem;font-weight:800;margin-bottom:6px}
+.icon-card p{font-size:.83rem;color:var(--muted);line-height:1.65}
+/* events */
+.event-cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.event-cat-card{border:1.5px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:.18s;background:#fff}
+.event-cat-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:var(--shadow)}
+.event-cat-card .ecc-icon{font-size:2.2rem;margin-bottom:10px}
+.event-cat-card h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.event-cat-card p{font-size:.75rem;color:var(--muted)}
+.event-cta{background:linear-gradient(135deg,#14532d,#166534);border-radius:24px;padding:48px 36px;text-align:center;color:#fff;margin-top:48px}
+.event-cta h2{font-size:1.8rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em}
+.event-cta p{opacity:.85;margin-bottom:24px}
+/* big rigs */
+.bigrigs-spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:32px}
+.spec-card{background:var(--gray2);border-radius:14px;padding:20px;border:1px solid var(--border)}
+.spec-card i{font-size:1.3rem;color:var(--green);margin-bottom:8px;display:block}
+.spec-card h4{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.spec-card p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.bigrigs-cta{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:24px;padding:48px;text-align:center;color:#fff;margin-top:48px}
+/* security */
+.trust-banner{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #bbf7d0;border-radius:24px;padding:36px;display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-bottom:40px}
+.trust-banner-icon{font-size:3.5rem;flex-shrink:0}
+.trust-banner-text h2{font-size:1.5rem;font-weight:900;color:var(--green-dk);margin-bottom:8px}
+.trust-banner-text p{font-size:.9rem;color:#166534;line-height:1.65}
+.attendant-hero{background:linear-gradient(135deg,#14532d,#15803d);color:#fff;border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;margin-bottom:40px;flex-wrap:wrap}
+@media(max-width:640px){.attendant-hero{grid-template-columns:1fr}.attendant-pricing-box{text-align:center}}
+.attendant-hero h2{font-size:1.6rem;font-weight:900;margin-bottom:10px}
+.attendant-hero p{opacity:.9;font-size:.92rem;line-height:1.65;margin-bottom:18px}
+.attendant-pricing-box{background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:24px 28px;text-align:center;flex-shrink:0}
+.attendant-pricing-box .price{font-size:2.4rem;font-weight:900}
+.attendant-pricing-box .per{font-size:.8rem;opacity:.8;margin-top:2px}
+.attendant-features{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.attendant-feature{display:flex;align-items:center;gap:8px;font-size:.85rem;opacity:.95}
+.attendant-feature i{color:#4ade80;flex-shrink:0}
+/* merch */
+.merch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.merch-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;background:#fff;transition:.2s}
+.merch-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.merch-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
+.merch-badge{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;border-radius:20px;padding:2px 10px;font-size:.68rem;font-weight:700}
+.merch-body{padding:16px}
+.merch-name{font-weight:700;font-size:.92rem;margin-bottom:4px}
+.merch-desc{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+.merch-price{font-size:1.1rem;font-weight:900;color:var(--green);margin-bottom:10px}
+.merch-btn{width:100%;padding:9px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;font-size:.83rem;cursor:pointer;border:none;transition:.15s}
+.merch-btn:hover{background:#15803d}
+.merch-soon{background:var(--gray2);color:var(--muted)}
+.merch-soon:hover{background:var(--gray2)}
+/* blog */
+.blog-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.blog-cat-chip{padding:6px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.15s;color:var(--muted);background:#fff}
+.blog-cat-chip:hover{border-color:var(--green);color:var(--green)}
+.blog-cat-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.blog-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;background:#fff;cursor:pointer;transition:.2s}
+.blog-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.blog-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
+.blog-body{padding:20px}
+.blog-tag{display:inline-block;padding:3px 10px;background:var(--gray2);border-radius:20px;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.blog-tag.hosting{background:#f0fdf4;color:#166534}
+.blog-tag.tips{background:#eff6ff;color:#2563eb}
+.blog-tag.news{background:#faf5ff;color:#7c3aed}
+.blog-tag.guide{background:#fff7ed;color:#ea580c}
+.blog-title{font-size:1rem;font-weight:800;line-height:1.4;margin-bottom:8px;color:var(--text)}
+.blog-excerpt{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.blog-meta{font-size:.75rem;color:var(--muted2);display:flex;gap:12px;align-items:center}
+/* help / faq */
+.help-search-wrap{max-width:560px;margin:0 auto 40px;position:relative}
+.help-search-wrap input{width:100%;padding:14px 20px 14px 46px;border:1.5px solid var(--border);border-radius:14px;font-size:.95rem;outline:none;background:#fff;transition:.2s}
+.help-search-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.help-search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.help-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:40px}
+.help-cat{border:1.5px solid var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;text-align:center;transition:.18s;background:#fff;display:flex;flex-direction:column;align-items:center;gap:8px}
+.help-cat:hover,.help-cat.active{border-color:var(--green);background:#f0fdf4;color:var(--green)}
+.help-cat i{font-size:1.3rem}
+.help-cat span{font-size:.78rem;font-weight:700}
+.faq-group{max-width:760px;margin:0 auto 40px}
+.faq-group-title{font-size:1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.faq-group-title i{color:var(--green)}
+.faq-list{display:flex;flex-direction:column;gap:8px}
+.faq-item{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+.faq-q{padding:15px 18px;font-weight:600;font-size:.88rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:background .15s}
+.faq-q:hover{background:var(--gray)}
+.faq-q .faq-chevron{flex-shrink:0;color:var(--muted);transition:transform .2s;font-size:.8rem}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-a{font-size:.85rem;color:var(--muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 18px}
+.faq-item.open .faq-a{max-height:500px;padding:0 18px 16px}
+.help-contact{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1.5px solid var(--border);border-radius:24px;padding:40px;text-align:center;margin-top:40px}
+.help-contact h2{font-size:1.4rem;font-weight:800;margin-bottom:10px}
+.help-contact p{color:var(--muted);margin-bottom:20px}
+.help-contact-methods{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.help-contact-method{display:flex;align-items:center;gap:8px;padding:12px 20px;background:#fff;border:1.5px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.18s}
+.help-contact-method:hover{border-color:var(--green);color:var(--green);box-shadow:var(--shadow-sm)}
+/* nav more dropdown */
+.nav-more{position:relative}
+.nav-more-btn{display:flex;align-items:center;gap:4px}
+.nav-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1.5px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);min-width:190px;padding:6px;z-index:2000;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .15s,transform .15s}
+.nav-more:hover .nav-dropdown,.nav-more:focus-within .nav-dropdown{opacity:1;pointer-events:all;transform:translateY(0)}
+.nav-dropdown a{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:.84rem;font-weight:600;color:var(--text);text-decoration:none;cursor:pointer;transition:background .12s}
+.nav-dropdown a:hover{background:var(--gray);color:var(--green)}
+.nav-dropdown-divider{height:1px;background:var(--border);margin:4px 0}
+
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
@@ -1103,6 +1230,19 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   <div class="nav-links">
     <button class="btn-ghost" id="btnBrowse" onclick="showPage('browse')">Browse</button>
     <button class="btn-ghost" id="btnHowItWorks" onclick="showPage('legal')">How It Works</button>
+    <div class="nav-more" tabindex="0">
+      <button class="btn-ghost nav-more-btn">More <i class="fa-solid fa-chevron-down" style="font-size:.65rem;color:var(--muted)"></i></button>
+      <div class="nav-dropdown">
+        <a onclick="showPage('events')"><i class="fa-solid fa-calendar-star" style="color:var(--green)"></i> Event Parking</a>
+        <a onclick="showPage('bigrigs')"><i class="fa-solid fa-truck" style="color:var(--orange)"></i> Big Rigs</a>
+        <a onclick="showPage('security')"><i class="fa-solid fa-shield-halved" style="color:#2563eb"></i> Safety & Security</a>
+        <a onclick="showPage('attendants')"><i class="fa-solid fa-user-tie" style="color:#7c3aed"></i> Parking Attendants</a>
+        <div class="nav-dropdown-divider"></div>
+        <a onclick="showPage('merch')"><i class="fa-solid fa-bag-shopping" style="color:var(--orange)"></i> Merchandise</a>
+        <a onclick="showPage('blog')"><i class="fa-solid fa-newspaper" style="color:var(--muted)"></i> Blog</a>
+        <a onclick="showPage('help')"><i class="fa-solid fa-circle-question" style="color:var(--green)"></i> Help Center</a>
+      </div>
+    </div>
     <button class="btn-outline" onclick="requireAuth('host')">List Your Space</button>
     <button class="btn-ghost" id="btnLogin" onclick="openAuth('login')">Log In</button>
     <button class="btn-primary" id="btnSignup" onclick="openAuth('register')">Sign Up</button>
@@ -1118,6 +1258,13 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 <div class="nav-mobile-menu" id="navMobileMenu">
   <button class="btn-ghost" onclick="showPage('browse');closeMobileMenu()"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px;color:var(--muted)"></i> Browse Spaces</button>
   <button class="btn-ghost" onclick="showPage('legal');closeMobileMenu()"><i class="fa-solid fa-circle-question" style="margin-right:6px;color:var(--muted)"></i> How It Works</button>
+  <button class="btn-ghost" onclick="showPage('events');closeMobileMenu()"><i class="fa-solid fa-calendar-star" style="margin-right:6px;color:var(--green)"></i> Event Parking</button>
+  <button class="btn-ghost" onclick="showPage('bigrigs');closeMobileMenu()"><i class="fa-solid fa-truck" style="margin-right:6px;color:var(--orange)"></i> Big Rigs</button>
+  <button class="btn-ghost" onclick="showPage('security');closeMobileMenu()"><i class="fa-solid fa-shield-halved" style="margin-right:6px;color:#2563eb"></i> Safety & Security</button>
+  <button class="btn-ghost" onclick="showPage('attendants');closeMobileMenu()"><i class="fa-solid fa-user-tie" style="margin-right:6px;color:#7c3aed"></i> Parking Attendants</button>
+  <button class="btn-ghost" onclick="showPage('merch');closeMobileMenu()"><i class="fa-solid fa-bag-shopping" style="margin-right:6px;color:var(--orange)"></i> Merchandise</button>
+  <button class="btn-ghost" onclick="showPage('blog');closeMobileMenu()"><i class="fa-solid fa-newspaper" style="margin-right:6px;color:var(--muted)"></i> Blog</button>
+  <button class="btn-ghost" onclick="showPage('help');closeMobileMenu()"><i class="fa-solid fa-circle-question" style="margin-right:6px;color:var(--green)"></i> Help Center</button>
   <button class="btn-outline" onclick="requireAuth('host');closeMobileMenu()"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List Your Space</button>
   <hr style="border:none;border-top:1px solid var(--border);margin:4px 0"/>
   <button class="btn-ghost" onclick="toggleDarkMode();closeMobileMenu()" style="justify-content:flex-start"><i class="fa-solid fa-moon" style="margin-right:6px;color:var(--muted)"></i> <span id="darkModeLabel">Dark Mode</span></button>
@@ -1356,6 +1503,9 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
         <button class="filter-chip" onclick="setFilter('dump',this)"><i class="fa-solid fa-recycle"></i> Dump Station</button>
         <button class="filter-chip" onclick="setFilter('water',this)"><i class="fa-solid fa-droplet"></i> Water Hook-up</button>
         <button class="filter-chip" onclick="setFilter('rv_friendly',this)"><i class="fa-solid fa-van-shuttle"></i> RV Friendly</button>
+        <button class="filter-chip" onclick="setFilter('big_rig',this)"><i class="fa-solid fa-truck"></i> Big Rig / Commercial</button>
+        <button class="filter-chip" onclick="setFilter('event_parking',this)"><i class="fa-solid fa-calendar-star"></i> Event Parking</button>
+        <button class="filter-chip" onclick="setFilter('attendant',this)"><i class="fa-solid fa-user-tie"></i> Attended Parking</button>
         <button class="filter-chip" onclick="setFilter('pool',this)"><i class="fa-solid fa-person-swimming"></i> Pool</button>
         <button class="filter-chip" onclick="setFilter('spa',this)"><i class="fa-solid fa-hot-tub-person"></i> Spa</button>
         <button class="filter-chip" onclick="setFilter('sauna',this)"><i class="fa-solid fa-fire"></i> Sauna</button>
@@ -2003,15 +2153,22 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 <footer style="background:#0f172a;color:#94a3b8;text-align:center;padding:40px 24px;font-size:.85rem">
   <p style="font-weight:700;color:#fff;margin-bottom:8px">🚗 Driveway Host</p>
   <p>Peer-to-peer driveway rental &amp; parking space marketplace</p>
-  <nav aria-label="Footer" style="margin:16px 0;display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
-    <a href="#" onclick="showPage('home');return false;" style="color:#94a3b8">Home</a>
-    <a href="#" onclick="showPage('browse');return false;" style="color:#94a3b8">Browse Spaces</a>
-    <a href="#" onclick="requireAuth('host');return false;" style="color:#94a3b8">List Your Driveway</a>
-    <a href="#" onclick="showPage('legal');return false;" style="color:#94a3b8">How It Works</a>
-    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8">Partnerships</a>
-    <a href="#" onclick="showPage('tos');return false;" style="color:#94a3b8">Terms of Service</a>
-    <a href="#" onclick="showPage('privacy');return false;" style="color:#94a3b8">Privacy Policy</a>
-    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8">Support</a>
+  <nav aria-label="Footer" style="margin:16px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px 24px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+    <a href="#" onclick="showPage('home');return false;" style="color:#94a3b8;padding:4px 0">Home</a>
+    <a href="#" onclick="showPage('browse');return false;" style="color:#94a3b8;padding:4px 0">Browse Spaces</a>
+    <a href="#" onclick="requireAuth('host');return false;" style="color:#94a3b8;padding:4px 0">List Your Driveway</a>
+    <a href="#" onclick="showPage('legal');return false;" style="color:#94a3b8;padding:4px 0">How It Works</a>
+    <a href="#" onclick="showPage('events');return false;" style="color:#94a3b8;padding:4px 0">Event Parking</a>
+    <a href="#" onclick="showPage('bigrigs');return false;" style="color:#94a3b8;padding:4px 0">Big Rigs &amp; Commercial</a>
+    <a href="#" onclick="showPage('security');return false;" style="color:#94a3b8;padding:4px 0">Safety &amp; Security</a>
+    <a href="#" onclick="showPage('attendants');return false;" style="color:#94a3b8;padding:4px 0">Parking Attendants</a>
+    <a href="#" onclick="showPage('merch');return false;" style="color:#94a3b8;padding:4px 0">Merchandise</a>
+    <a href="#" onclick="showPage('blog');return false;" style="color:#94a3b8;padding:4px 0">Blog</a>
+    <a href="#" onclick="showPage('help');return false;" style="color:#94a3b8;padding:4px 0">Help Center</a>
+    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8;padding:4px 0">Partnerships</a>
+    <a href="#" onclick="showPage('tos');return false;" style="color:#94a3b8;padding:4px 0">Terms of Service</a>
+    <a href="#" onclick="showPage('privacy');return false;" style="color:#94a3b8;padding:4px 0">Privacy Policy</a>
+    <a href="mailto:drivewayhost@pm.me" style="color:#94a3b8;padding:4px 0">Support</a>
   </nav>
   <div style="margin:20px 0;display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
     <span style="font-size:.78rem;color:#475569">🔒 Bookings Protected</span>
@@ -2078,6 +2235,24 @@ const SAMPLE_LISTINGS = [
     lat:39.7563, lng:-104.9942, price_nightly:32, price_monthly:520, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
     rules:['No commercial vehicles'] },
+  { id:'s7', emoji:'🚛', title:'Commercial Pull-Through Lot – Dallas',
+    description:'Gravel surface pull-through lot, 80ft+ length clearance. 50A electric hookup, freshwater fill, dump station. Ideal for semi-trucks and big rigs. Secure fence, camera monitored.',
+    address:'4200 I-35 Frontage Rd', city:'Dallas', state:'TX',
+    lat:32.7978, lng:-96.8503, price_nightly:95, price_monthly:1800, wifi:true, covered:false, electric:true, dump:true, water:true, pets:false,
+    instant_book:true, rv_friendly:true, big_rig:true, vehicles:['Semi-Truck','Box Truck','RV','Trailer'], rating:4.8, review_count:14, status:'active',
+    rules:['Max vehicle height: 15ft','No hazmat loads','Quiet hours 10pm–6am'] },
+  { id:'s8', emoji:'🎟️', title:'Stadium Event Lot – Game Day Parking',
+    description:'Paved residential lot, 5-min walk to SoFi Stadium. Perfect for NFL and soccer events. Attendant on-site during major events. Book in advance — fills up fast.',
+    address:'3900 W Century Blvd', city:'Inglewood', state:'CA',
+    lat:33.9536, lng:-118.3390, price_nightly:65, price_monthly:0, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
+    instant_book:true, rv_friendly:false, event_parking:true, attendant:true, vehicles:['Sedan','SUV','Truck'], rating:4.9, review_count:47, status:'active',
+    rules:['Game day only — no daily parking','Arrive 2hrs before kickoff'] },
+  { id:'s9', emoji:'🏟️', title:'Concert Venue Parking – Near Hollywood Bowl',
+    description:'Wide concrete driveway 3 blocks from Hollywood Bowl. Hosted by local family for 10+ years. Attended by a parking host during events — they\'ll guide you in.',
+    address:'2412 N Highland Ave', city:'Los Angeles', state:'CA',
+    lat:34.1020, lng:-118.3378, price_nightly:55, price_monthly:0, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
+    instant_book:false, rv_friendly:false, event_parking:true, attendant:true, vehicles:['Sedan','SUV'], rating:5.0, review_count:88, status:'active',
+    rules:['Concert nights only','Attendant greets guests — wait in driveway upon arrival'] },
 ];
 
 const VENUE_DATA = [
@@ -2204,7 +2379,7 @@ function showPage(name, opts) {
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', help:'Help Center' };
   setPageTitle(titles[name] || null);
 }
 
@@ -4521,8 +4696,59 @@ async function checkUnreadMessages() {
     showPage('browse');
   } else if (hash === '#page-dashboard') {
     showPage('dashboard');
+  } else if (hash === '#page-events' || hash === '#events') {
+    showPage('events');
+  } else if (hash === '#page-bigrigs' || hash === '#bigrigs') {
+    showPage('bigrigs');
+  } else if (hash === '#page-security' || hash === '#security') {
+    showPage('security');
+  } else if (hash === '#page-attendants' || hash === '#attendants') {
+    showPage('attendants');
+  } else if (hash === '#page-merch' || hash === '#merch') {
+    showPage('merch');
+  } else if (hash === '#page-blog' || hash === '#blog') {
+    showPage('blog');
+  } else if (hash === '#page-help' || hash === '#help') {
+    showPage('help');
   }
 })();
+
+// ============================================================
+// NEW SECTION HELPERS
+// ============================================================
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  // close all in same list
+  item.closest('.faq-list').querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function filterBlog(cat, btn) {
+  document.querySelectorAll('.blog-cat-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#blogGrid .blog-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+  });
+}
+
+function openBlogPost(slug) {
+  showToast('Full article coming soon!', 'info');
+}
+
+function searchHelp(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = (!lq || text.includes(lq)) ? '' : 'none';
+  });
+}
+
+function scrollToFaqGroup(group, btn) {
+  document.querySelectorAll('.help-cat').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const el = document.getElementById('faq-' + group);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 // ============================================================
 // BACK TO TOP
@@ -5602,6 +5828,782 @@ async function adminRejectListing(id) {
     <div class="guest-profile-name" id="guestProfileName">—</div>
     <div class="guest-profile-meta" id="guestProfileMeta"></div>
     <div id="guestReviewsList"></div>
+  </div>
+</div>
+
+<!-- ===== EVENTS PAGE ===== -->
+<div class="page" id="page-events">
+  <div class="page-hero page-hero-green">
+    <div class="page-hero-badge"><i class="fa-solid fa-calendar-star"></i> Event Parking</div>
+    <h1>Park Smarter at Any Event</h1>
+    <p>Book a private driveway near stadiums, concert venues, festivals, and more. Cheaper than lots — closer than you'd expect.</p>
+    <div class="page-hero-btns">
+      <button class="btn-primary" style="padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;background:#fff;color:#166534" onclick="setFilter('event_parking',document.querySelector('.filter-chip[onclick*=event_parking]'));showPage('browse')"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px"></i> Find Event Parking</button>
+      <button class="btn-outline" style="padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1)" onclick="requireAuth('host')"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List Your Space</button>
+    </div>
+  </div>
+  <div class="page-wrap">
+    <div class="page-section">
+      <div class="page-section-label">Browse by Event Type</div>
+      <h2>What Kind of Event?</h2>
+      <p class="page-section-sub">Driveway Host has parking for every occasion — just tell us where you're headed.</p>
+      <div class="event-cat-grid">
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">🏟️</div>
+          <h3>Sports Games</h3>
+          <p>NFL, NBA, MLB, NHL, MLS & college sports</p>
+        </div>
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">🎵</div>
+          <h3>Concerts</h3>
+          <p>Amphitheaters, arenas, outdoor festivals</p>
+        </div>
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">🎪</div>
+          <h3>Festivals</h3>
+          <p>Food, art, culture, and music festivals</p>
+        </div>
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">💍</div>
+          <h3>Weddings</h3>
+          <p>Overflow parking near venues & chapels</p>
+        </div>
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">🎓</div>
+          <h3>Graduations</h3>
+          <p>Campus parking near auditoriums</p>
+        </div>
+        <div class="event-cat-card" onclick="showPage('browse')">
+          <div class="ecc-icon">🏢</div>
+          <h3>Conferences</h3>
+          <p>Convention centers & business events</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">How It Works</div>
+      <h2>3 Steps to Stress-Free Event Parking</h2>
+      <p class="page-section-sub">No app download. No parking-lot lines. No surprises.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <h3>1. Search Near Your Venue</h3>
+          <p>Enter the venue or stadium name and pick your event date. We'll show you all available driveways within walking distance.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-bolt"></i></div>
+          <h3>2. Book Instantly</h3>
+          <p>Most spots are Instant Book — no waiting for host approval. Pay securely through Stripe and receive your confirmation.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-location-dot"></i></div>
+          <h3>3. Show Up & Park</h3>
+          <p>Your booking confirmation includes the exact address and any access instructions from the host. Walk right in.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">For Hosts</div>
+      <h2>Earn Big on Event Days</h2>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon orange"><i class="fa-solid fa-dollar-sign"></i></div>
+          <h3>Premium Rates</h3>
+          <p>Event-night parking can earn 3–5× your normal nightly rate. Hosts near major stadiums earn $75–$150 per event.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
+          <h3>You Control Your Calendar</h3>
+          <p>Block off dates whenever you want. List only for specific events. Your driveway, your rules.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon orange"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Protected Up to $10,000</h3>
+          <p>Every booking is covered by our Host Protection program. Park your guests with confidence.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="event-cta">
+      <h2>Ready to List for Your Next Local Event?</h2>
+      <p>It takes less than 5 minutes to create a listing. Start earning this weekend.</p>
+      <button onclick="requireAuth('host')" style="background:#fff;color:#166534;padding:12px 32px;border-radius:12px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15);transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List My Space</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BIG RIGS PAGE ===== -->
+<div class="page" id="page-bigrigs">
+  <div class="page-hero page-hero-slate">
+    <div class="page-hero-badge"><i class="fa-solid fa-truck"></i> Commercial Vehicle Parking</div>
+    <h1>Big Rig & Commercial Parking</h1>
+    <p>Find pull-through spaces, wide-clearance driveways, and commercial lots that actually fit your rig — semi-trucks, box trucks, RVs, and oversized vehicles welcome.</p>
+    <div class="page-hero-btns">
+      <button style="padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;background:#fff;color:#0f172a;border:none;cursor:pointer" onclick="setFilter('big_rig',document.querySelector('.filter-chip[onclick*=big_rig]'));showPage('browse')"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px"></i> Find Commercial Spaces</button>
+    </div>
+  </div>
+  <div class="page-wrap">
+    <div class="page-section">
+      <div class="page-section-label">Vehicle Requirements</div>
+      <h2>Spaces Built for Larger Vehicles</h2>
+      <p class="page-section-sub">All "Big Rig" listings are host-verified to meet minimum commercial vehicle requirements.</p>
+      <div class="bigrigs-spec-grid">
+        <div class="spec-card">
+          <i class="fa-solid fa-ruler-horizontal"></i>
+          <h4>Minimum 60 ft Length</h4>
+          <p>Pull-through or pull-off access for long vehicles including semi-trailers.</p>
+        </div>
+        <div class="spec-card">
+          <i class="fa-solid fa-arrows-left-right"></i>
+          <h4>14 ft+ Width Clearance</h4>
+          <p>Wide enough for dual rear-axle trucks and wide-load vehicles.</p>
+        </div>
+        <div class="spec-card">
+          <i class="fa-solid fa-weight-hanging"></i>
+          <h4>Weight-Rated Surface</h4>
+          <p>Gravel, concrete, or asphalt rated for commercial vehicle weight loads.</p>
+        </div>
+        <div class="spec-card">
+          <i class="fa-solid fa-plug-circle-bolt"></i>
+          <h4>Shore Power Available</h4>
+          <p>Many hosts offer 30-amp or 50-amp electrical hookups for overnight stops.</p>
+        </div>
+        <div class="spec-card">
+          <i class="fa-solid fa-droplet"></i>
+          <h4>Water Hookup</h4>
+          <p>Freshwater fill and grey water dump stations at select locations.</p>
+        </div>
+        <div class="spec-card">
+          <i class="fa-solid fa-moon"></i>
+          <h4>Overnight Stays OK</h4>
+          <p>Book by the night or by the week. No time limits during your reservation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">Use Cases</div>
+      <h2>Who Books Big Rig Spaces?</h2>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon slate"><i class="fa-solid fa-truck-moving"></i></div>
+          <h3>Long-Haul Truckers</h3>
+          <p>Safe, legal overnight stops away from crowded highway rest areas. Sleep better, drive safer.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon slate"><i class="fa-solid fa-caravan"></i></div>
+          <h3>RV & Motorhome Travelers</h3>
+          <p>Alternative to expensive RV parks. Hookups available at select hosts.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon slate"><i class="fa-solid fa-warehouse"></i></div>
+          <h3>Delivery & Box Trucks</h3>
+          <p>Secure staging area near job sites, warehouses, or city drop zones.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon slate"><i class="fa-solid fa-film"></i></div>
+          <h3>Film & Production Crews</h3>
+          <p>Trailers, grip trucks, and production vehicles need space — we have it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">For Hosts</div>
+      <h2>Have a Big Property? Earn More.</h2>
+      <p class="page-section-sub">Hosts with commercial-capable spaces can charge 2–4× standard rates. Truckers pay premium for safe, convenient stops.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
+          <h3>$60–$200/night</h3>
+          <p>Average big rig booking rate on Driveway Host, depending on hookups and location.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-calendar-week"></i></div>
+          <h3>Weekly Stays Common</h3>
+          <p>Many commercial drivers book 3–7 nights at a time. Less turnover, more earnings.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-check-circle"></i></div>
+          <h3>Flag Your Listing</h3>
+          <p>Enable "Big Rig Friendly" on your listing to appear in commercial vehicle searches.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bigrigs-cta">
+      <h2 style="font-size:1.8rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em">Got the Space? List It.</h2>
+      <p style="opacity:.75;margin-bottom:24px">Wide driveways, gravel lots, farm access roads — if a big rig fits, you can earn from it.</p>
+      <button onclick="requireAuth('host')" style="background:#fff;color:#0f172a;padding:12px 32px;border-radius:12px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List a Commercial Space</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECURITY & SAFETY PAGE ===== -->
+<div class="page" id="page-security">
+  <div class="page-hero page-hero-blue">
+    <div class="page-hero-badge"><i class="fa-solid fa-shield-halved"></i> Trust & Safety</div>
+    <h1>Your Safety Is Our Priority</h1>
+    <p>Every booking on Driveway Host is backed by identity verification, payment protection, and a dedicated trust & safety team.</p>
+  </div>
+  <div class="page-wrap">
+    <div class="trust-banner">
+      <div class="trust-banner-icon">🛡️</div>
+      <div class="trust-banner-text">
+        <h2>Host Protection Program — Up to $10,000</h2>
+        <p>Every booking is covered. If a guest damages your property, our Host Protection program covers verified repairs up to $10,000 per incident — at no cost to you.</p>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">Platform Safety</div>
+      <h2>How We Protect Everyone</h2>
+      <p class="page-section-sub">Layers of trust and verification built into every transaction.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-id-card"></i></div>
+          <h3>Identity Verification</h3>
+          <p>All guests must verify their identity before booking. Government ID + selfie match via our verification partner.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-lock"></i></div>
+          <h3>Secure Payments</h3>
+          <p>All payments flow through Stripe. We never store card details. Hosts receive payouts automatically within 24 hours of check-in.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-star"></i></div>
+          <h3>Two-Way Reviews</h3>
+          <p>Hosts and guests review each other after every stay. Consistent bad actors are removed from the platform.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-headset"></i></div>
+          <h3>24/7 Support</h3>
+          <p>Our trust & safety team is available around the clock. Disputes are reviewed within 24 hours.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-camera"></i></div>
+          <h3>Photo Documentation</h3>
+          <p>Hosts are encouraged to photograph their space before and after each booking to support any claims.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon blue"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <h3>Dispute Resolution</h3>
+          <p>Something went wrong? File a dispute in your dashboard and our team will mediate fairly, typically within 24–48 hours.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">Safety Tips</div>
+      <h2>Best Practices</h2>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-user-check"></i></div>
+          <h3>For Hosts</h3>
+          <p>Always check guest profiles and reviews before accepting bookings. Use our messaging system — never share personal contact details outside the app. Document your space with photos before each stay.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-car"></i></div>
+          <h3>For Guests</h3>
+          <p>Only park during your reserved time window. Respect the host's rules. If you have trouble accessing the space, contact the host through the app or reach our support team.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon green"><i class="fa-solid fa-phone"></i></div>
+          <h3>Emergency Contact</h3>
+          <p>For urgent safety concerns during a booking, contact local emergency services first, then reach our 24/7 trust & safety line at <strong>drivewayhost@pm.me</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PARKING ATTENDANTS PAGE ===== -->
+<div class="page" id="page-attendants">
+  <div class="page-hero" style="background:linear-gradient(160deg,#2e1065 0%,#4c1d95 60%,#7c3aed 100%);color:#fff;padding:72px 24px 60px;text-align:center;border-bottom:1px solid var(--border)">
+    <div class="page-hero-badge" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25)"><i class="fa-solid fa-user-tie"></i> Professional Attendants</div>
+    <h1>Hire a Parking Attendant</h1>
+    <p>Add a professional parking attendant to any event, business, or private occasion. Vetted, trained, uniformed staff — booked through Driveway Host.</p>
+    <div class="page-hero-btns">
+      <button style="padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;background:#fff;color:#4c1d95;border:none;cursor:pointer" onclick="document.getElementById('attendantRequestForm').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-calendar-plus" style="margin-right:6px"></i> Request an Attendant</button>
+    </div>
+  </div>
+  <div class="page-wrap">
+    <div class="attendant-hero">
+      <div>
+        <h2>Professional Parking Management — On Demand</h2>
+        <p>Our network of licensed parking attendants can manage overflow lots, direct traffic at weddings, operate valet services, and enforce parking rules at your venue. Available for single events or recurring shifts.</p>
+        <div class="attendant-features">
+          <div class="attendant-feature"><i class="fa-solid fa-circle-check"></i> Background-checked & uniformed staff</div>
+          <div class="attendant-feature"><i class="fa-solid fa-circle-check"></i> Licensed for public & private events</div>
+          <div class="attendant-feature"><i class="fa-solid fa-circle-check"></i> Traffic direction & overflow management</div>
+          <div class="attendant-feature"><i class="fa-solid fa-circle-check"></i> Valet service available on request</div>
+          <div class="attendant-feature"><i class="fa-solid fa-circle-check"></i> Minimum 4-hour booking</div>
+        </div>
+      </div>
+      <div class="attendant-pricing-box">
+        <div class="price">$35</div>
+        <div class="per">per hour / per attendant</div>
+        <div style="font-size:.75rem;opacity:.75;margin-top:8px">4-hour minimum<br>Valet: +$12/hr</div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">Use Cases</div>
+      <h2>When to Book an Attendant</h2>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-champagne-glasses"></i></div>
+          <h3>Weddings & Private Events</h3>
+          <p>Make a great first impression. Attendants greet guests, direct parking, and ensure a smooth arrival experience.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-building"></i></div>
+          <h3>Corporate Events</h3>
+          <p>Large office parties, product launches, or conferences with high guest volume and limited parking infrastructure.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-futbol"></i></div>
+          <h3>Tailgate & Stadium Overflow</h3>
+          <p>Manage large numbers of vehicles in private lots adjacent to stadiums, keeping flow smooth and space maximized.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-store"></i></div>
+          <h3>Business Parking Lots</h3>
+          <p>Retail centers, restaurants, and medical offices needing a human presence to manage customer parking.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section" id="attendantRequestForm">
+      <div class="page-section-label">Get Started</div>
+      <h2>Request an Attendant</h2>
+      <p class="page-section-sub">Fill out the form below and our team will confirm availability and send a quote within 2 hours.</p>
+      <div style="max-width:560px;background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:28px">
+        <div style="display:grid;gap:14px">
+          <div>
+            <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Event Type</label>
+            <select style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none;background:#fff">
+              <option>Wedding / Private Party</option>
+              <option>Corporate Event</option>
+              <option>Stadium / Venue Overflow</option>
+              <option>Business Parking Lot</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Date & Time</label>
+            <input type="date" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none"/>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Hours Needed</label>
+              <select style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none;background:#fff">
+                <option>4 hours</option>
+                <option>6 hours</option>
+                <option>8 hours</option>
+                <option>10+ hours</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em"># Attendants</label>
+              <select style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none;background:#fff">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Location / Address</label>
+            <input type="text" placeholder="Venue address or city" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none"/>
+          </div>
+          <div>
+            <label style="display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Additional Notes</label>
+            <textarea placeholder="Valet needed? Specific uniform requirements? Number of expected vehicles?" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;outline:none;min-height:80px;resize:vertical"></textarea>
+          </div>
+          <button onclick="showToast('Request sent! Our team will contact you within 2 hours.','success')" style="padding:12px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;font-size:.9rem;border:none;cursor:pointer;transition:.15s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='var(--green)'"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Send Request</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section">
+      <div class="page-section-label">Become an Attendant</div>
+      <h2>Earn $35–$55/hr as a Parking Attendant</h2>
+      <p class="page-section-sub">Join our network of professional parking attendants. Flexible shifts, good pay, and work outdoors at events you'll love.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-id-badge"></i></div>
+          <h3>Requirements</h3>
+          <p>Valid driver's license, clean background check, ability to stand for extended periods, and professional appearance.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3>Free Training</h3>
+          <p>We provide online certification covering traffic management, customer service, and emergency procedures.</p>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon purple"><i class="fa-solid fa-mobile-screen"></i></div>
+          <h3>App-Based Scheduling</h3>
+          <p>Accept or decline shifts from your phone. Get paid via direct deposit within 3 business days of each event.</p>
+        </div>
+      </div>
+      <div style="margin-top:24px">
+        <button onclick="showToast('Application submitted! We\'ll be in touch within 3 business days.','success')" style="padding:12px 28px;background:var(--green);color:#fff;border-radius:12px;font-weight:700;font-size:.9rem;border:none;cursor:pointer"><i class="fa-solid fa-user-plus" style="margin-right:6px"></i> Apply to Be an Attendant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MERCHANDISE PAGE ===== -->
+<div class="page" id="page-merch">
+  <div class="page-hero" style="background:linear-gradient(160deg,#431407 0%,#9a3412 100%);color:#fff;padding:72px 24px 60px;text-align:center;border-bottom:1px solid var(--border)">
+    <div class="page-hero-badge" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25)"><i class="fa-solid fa-bag-shopping"></i> Merch Store</div>
+    <h1>Driveway Host Gear</h1>
+    <p>Rep the brand. Whether you're a host, a guest, or just a fan of smarter parking — we've got you covered.</p>
+  </div>
+  <div class="page-wrap">
+    <div class="page-section">
+      <div class="page-section-label">Shop</div>
+      <h2>Official Merchandise</h2>
+      <p class="page-section-sub" style="margin-bottom:40px">All items ship within 5–7 business days. Free shipping on orders over $50.</p>
+      <div class="merch-grid">
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#14532d,#22c55e)">
+            <span>👕</span>
+            <span class="merch-badge">Bestseller</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Classic Logo Tee</div>
+            <div class="merch-desc">100% cotton, unisex fit. "Driveway Host" green logo on chest. Sizes XS–3XL.</div>
+            <div class="merch-price">$28</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#0f172a,#1e293b)">
+            <span>🧢</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Snapback Hat</div>
+            <div class="merch-desc">Structured 6-panel hat with embroidered DH logo. One size fits most.</div>
+            <div class="merch-price">$34</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#1e293b,#334155)">
+            <span>🧥</span>
+            <span class="merch-badge" style="background:#7c3aed">New</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Host Hoodie</div>
+            <div class="merch-desc">Premium heavyweight hoodie with "Park Here. Earn Here." on back. Sizes S–2XL.</div>
+            <div class="merch-price">$62</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+            <span>🪪</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Host Windshield Sign</div>
+            <div class="merch-desc">Professionally printed laminated card for your guests to display. Pack of 10.</div>
+            <div class="merch-price">$12</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
+            <span>🛍️</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Canvas Tote Bag</div>
+            <div class="merch-desc">Heavy-duty canvas tote with DH wordmark. Perfect for farmers markets, groceries & more.</div>
+            <div class="merch-price">$22</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
+            <span>📱</span>
+            <span class="merch-badge" style="background:#2563eb">Coming Soon</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Phone Case</div>
+            <div class="merch-desc">Slim protective case with DH logo. iPhone 14/15 & Samsung Galaxy S23/S24.</div>
+            <div class="merch-price">$19</div>
+            <button class="merch-btn merch-soon" onclick="showToast('This item is coming soon. We\'ll notify you!','info')">Notify Me</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#fdf4ff,#ede9fe)">
+            <span>🧲</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Sticker Pack (10)</div>
+            <div class="merch-desc">Weatherproof vinyl stickers. Logos, icons, and "Park Smarter" slogans.</div>
+            <div class="merch-price">$8</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+        <div class="merch-card">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">
+            <span>☕</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Insulated Travel Mug</div>
+            <div class="merch-desc">20 oz double-wall stainless steel. "Driveway Host" laser-engraved. Keeps drinks hot 8 hrs.</div>
+            <div class="merch-price">$38</div>
+            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:32px;background:var(--gray2);border-radius:16px;padding:20px;text-align:center;border:1px solid var(--border)">
+        <p style="font-size:.85rem;color:var(--muted)"><i class="fa-solid fa-truck" style="margin-right:6px;color:var(--green)"></i> <strong>Full shop launching Summer 2026.</strong> Join the waitlist and get 20% off your first order.</p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;max-width:400px;margin-left:auto;margin-right:auto">
+          <input type="email" placeholder="your@email.com" style="flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;outline:none"/>
+          <button onclick="showToast('You\'re on the list! Check your inbox soon.','success')" style="padding:9px 18px;background:var(--green);color:#fff;border-radius:8px;font-weight:700;font-size:.85rem;border:none;cursor:pointer">Join List</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BLOG PAGE ===== -->
+<div class="page" id="page-blog">
+  <div class="page-hero" style="background:linear-gradient(160deg,#f8fafc 0%,#f1f5f9 100%);padding:72px 24px 60px;text-align:center;border-bottom:1px solid var(--border)">
+    <div class="page-section-label">Driveway Host Blog</div>
+    <h1 style="color:var(--text)">Tips, Guides & Parking News</h1>
+    <p style="color:var(--muted)">Hosting advice, guest tips, industry news, and the future of private parking.</p>
+  </div>
+  <div class="page-wrap">
+    <div class="blog-cats">
+      <button class="blog-cat-chip active" onclick="filterBlog('all',this)">All</button>
+      <button class="blog-cat-chip" onclick="filterBlog('hosting',this)">Hosting Tips</button>
+      <button class="blog-cat-chip" onclick="filterBlog('guide',this)">Guides</button>
+      <button class="blog-cat-chip" onclick="filterBlog('news',this)">News</button>
+      <button class="blog-cat-chip" onclick="filterBlog('tips',this)">Guest Tips</button>
+    </div>
+    <div class="blog-grid" id="blogGrid">
+      <div class="blog-card" data-category="hosting" onclick="openBlogPost('maximize-driveway')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">💰</div>
+        <div class="blog-body">
+          <div class="blog-tag hosting">Hosting Tips</div>
+          <div class="blog-title">How to Maximize Earnings from Your Driveway</div>
+          <div class="blog-excerpt">From dynamic pricing to premium photos — 8 proven strategies that top hosts use to earn $500+/month from a single parking space.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 18, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 6 min read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" data-category="guide" onclick="openBlogPost('event-parking-guide')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">🏟️</div>
+        <div class="blog-body">
+          <div class="blog-tag guide">Guide</div>
+          <div class="blog-title">The Complete Guide to Event Parking on Driveway Host</div>
+          <div class="blog-excerpt">Everything you need to know about finding, booking, and navigating private parking near stadiums, concerts, and festivals.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 10, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 8 min read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" data-category="news" onclick="openBlogPost('bigrigs-launch')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#1e293b,#334155)">🚚</div>
+        <div class="blog-body">
+          <div class="blog-tag news">News</div>
+          <div class="blog-title">Driveway Host Launches Big Rig & Commercial Vehicle Parking</div>
+          <div class="blog-excerpt">We're opening our platform to semi-trucks, box trucks, and commercial vehicles — with 200+ verified spaces at launch and more coming weekly.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 5, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 3 min read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" data-category="hosting" onclick="openBlogPost('host-photography')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#faf5ff,#ede9fe)">📸</div>
+        <div class="blog-body">
+          <div class="blog-tag hosting">Hosting Tips</div>
+          <div class="blog-title">Take Better Photos of Your Parking Space (and Get More Bookings)</div>
+          <div class="blog-excerpt">Listings with 5+ professional-looking photos get 3× more bookings. Here's a simple guide to shooting your space like a pro — with your phone.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> May 28, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 4 min read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" data-category="tips" onclick="openBlogPost('best-price-tips')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">💡</div>
+        <div class="blog-body">
+          <div class="blog-tag tips">Guest Tips</div>
+          <div class="blog-title">7 Ways to Find the Cheapest Parking Near Any Venue</div>
+          <div class="blog-excerpt">Last-minute parking on game day doesn't have to mean $60 lots. Here's how savvy guests use Driveway Host to save 40–70% every time.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> May 20, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 5 min read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" data-category="guide" onclick="openBlogPost('rv-parking-guide')">
+        <div class="blog-thumb" style="background:linear-gradient(135deg,#f0fdf4,#bbf7d0)">🚐</div>
+        <div class="blog-body">
+          <div class="blog-tag guide">Guide</div>
+          <div class="blog-title">The RV Traveler's Guide to Finding Private Hookup Sites</div>
+          <div class="blog-excerpt">Skip crowded campgrounds. Thousands of private driveways on Driveway Host offer electric hookups, dump stations, and water — at a fraction of the cost.</div>
+          <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> May 12, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 7 min read</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HELP CENTER PAGE ===== -->
+<div class="page" id="page-help">
+  <div class="page-hero" style="background:linear-gradient(160deg,#f8fafc 0%,#f0fdf4 100%);padding:72px 24px 60px;text-align:center;border-bottom:1px solid var(--border)">
+    <div class="page-section-label">Help Center</div>
+    <h1 style="color:var(--text)">How Can We Help?</h1>
+    <p style="color:var(--muted)">Find answers to common questions about booking, hosting, payments, and more.</p>
+    <div class="help-search-wrap" style="max-width:520px;margin:0 auto">
+      <span class="help-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input type="text" placeholder="Search help articles..." oninput="searchHelp(this.value)" style="width:100%;padding:13px 18px 13px 44px;border:1.5px solid var(--border);border-radius:12px;font-size:.95rem;outline:none;background:#fff;transition:.2s" onfocus="this.style.borderColor='var(--green)';this.style.boxShadow='0 0 0 3px rgba(22,163,74,.1)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow=''"/>
+    </div>
+  </div>
+  <div class="page-wrap">
+    <div class="help-cats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:40px">
+      <div class="help-cat active" onclick="scrollToFaqGroup('booking',this)"><i class="fa-solid fa-calendar-check"></i><span>Booking</span></div>
+      <div class="help-cat" onclick="scrollToFaqGroup('hosting',this)"><i class="fa-solid fa-house"></i><span>Hosting</span></div>
+      <div class="help-cat" onclick="scrollToFaqGroup('payments',this)"><i class="fa-solid fa-credit-card"></i><span>Payments</span></div>
+      <div class="help-cat" onclick="scrollToFaqGroup('cancellation',this)"><i class="fa-solid fa-xmark-circle"></i><span>Cancellations</span></div>
+      <div class="help-cat" onclick="scrollToFaqGroup('safety',this)"><i class="fa-solid fa-shield-halved"></i><span>Safety</span></div>
+      <div class="help-cat" onclick="scrollToFaqGroup('account',this)"><i class="fa-solid fa-user-circle"></i><span>Account</span></div>
+    </div>
+
+    <div class="faq-group" id="faq-booking">
+      <div class="faq-group-title"><i class="fa-solid fa-calendar-check"></i> Booking</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I book a parking space? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Browse available spaces on the Browse page. Click a listing to view details, select your dates and times, then click "Book Now." You'll be prompted to sign in (or create a free account) and then pay securely via Stripe. You'll receive a booking confirmation by email with the host's address and access instructions.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What is Instant Book? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Instant Book listings are confirmed immediately — no need to wait for host approval. These spaces display a ⚡ bolt icon in search results. You can filter for Instant Book spaces using the filter chips on the Browse page.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I book a space for multiple nights? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Yes. Most listings support multi-night bookings. Use the date picker in the booking form to select your check-in and check-out dates. Many hosts also offer discounted monthly rates, which you'll see listed on their space's detail page.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I access the space after booking? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">After booking, you'll receive the host's exact address, any gate codes or access instructions, and the host's contact info through our in-app messaging system. If you have trouble finding or accessing the space, message the host directly through your dashboard.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What happens if the space isn't available when I arrive? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">First, contact the host through your dashboard. If the issue can't be resolved, contact our 24/7 support team. In verified cases where the space is unusable, we'll issue a full refund and help you find an alternative nearby.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-group" id="faq-hosting">
+      <div class="faq-group-title"><i class="fa-solid fa-house"></i> Hosting</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I list my driveway? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Click "List Your Space" in the navigation. Sign in or create an account, then fill out the listing form with your space details — size, amenities, availability, and pricing. Once submitted, your listing goes into a quick review process and typically goes live within a few hours.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How much should I charge? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Rates depend on your location, amenities, and proximity to events. Standard driveways average $25–$55/night. Spaces near stadiums or in cities can command $60–$150+ on event nights. We recommend starting at the lower end of your market and adjusting based on demand. Use the Browse page to see what similar spaces near you charge.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">When do I get paid? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Hosts receive payouts via Stripe 24 hours after the guest's check-in time. This delay protects against last-minute cancellations. Payouts go directly to your connected bank account and typically clear within 1–3 business days depending on your bank.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What is the host service fee? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Driveway Host charges a 10% service fee on each booking, deducted from your payout. For example, if your space is listed at $40/night and a guest books for 2 nights ($80 total), you receive $72. Guests also pay a small booking fee on their end to help cover platform costs.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I decline a booking request? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Yes. If your listing is not set to Instant Book, you can review and decline booking requests within 24 hours. For Instant Book listings, guests can book immediately, but you can still cancel a booking with appropriate notice if there's a conflict. Frequent cancellations may affect your host standing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-group" id="faq-payments">
+      <div class="faq-group-title"><i class="fa-solid fa-credit-card"></i> Payments</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What payment methods are accepted? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">We accept all major credit and debit cards (Visa, Mastercard, American Express, Discover), Apple Pay, and Google Pay through our Stripe integration. Payment information is encrypted and never stored on our servers.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Is my payment information secure? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Yes. All payments are processed by Stripe, a PCI-DSS Level 1 certified payment processor. Driveway Host never sees or stores your full card number — only the last 4 digits for display purposes. Stripe's encryption and fraud detection protect every transaction.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">When is my card charged? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Your card is charged immediately when you complete a booking. For Instant Book listings, the full amount is charged at the time of booking. For request-to-book listings, a hold is placed on your card when you submit the request, and charged only if the host accepts.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-group" id="faq-cancellation">
+      <div class="faq-group-title"><i class="fa-solid fa-xmark-circle"></i> Cancellations & Refunds</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What is the cancellation policy? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">The default policy is: Full refund if cancelled 48+ hours before check-in. 50% refund if cancelled 24–48 hours before check-in. No refund for cancellations within 24 hours of check-in. Individual hosts may set stricter or more flexible policies — check the listing's detail page before booking.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I cancel a booking? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Go to your Dashboard → Bookings, find the booking you want to cancel, and click "Cancel." The system will show your refund amount based on the applicable policy. Refunds typically appear on your statement within 5–10 business days.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What if the host cancels on me? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">If a host cancels your confirmed booking, you'll receive a full refund automatically. We'll also apply a platform credit toward your next booking as compensation. Hosts who cancel confirmed bookings receive a warning and may be suspended from the platform after repeated violations.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-group" id="faq-safety">
+      <div class="faq-group-title"><i class="fa-solid fa-shield-halved"></i> Safety & Trust</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Are hosts and guests verified? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Yes. All users must verify their email address. Guests must also verify their identity with a government-issued ID before their first booking. Hosts with Verified badges have completed additional identity and property verification through our trust & safety process.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What does Host Protection cover? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Our Host Protection program covers property damage caused by guests during a booking, up to $10,000 per incident. To file a claim, document the damage with photos, submit a report through your dashboard within 48 hours of check-out, and our team will review it within 3–5 business days.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What if I have a safety emergency during a booking? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Always call 911 first for any immediate safety emergency. Then contact our 24/7 trust & safety support team via email at drivewayhost@pm.me. For non-emergency disputes or concerns, use the Dispute feature in your dashboard.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-group" id="faq-account">
+      <div class="faq-group-title"><i class="fa-solid fa-user-circle"></i> Account</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I create an account? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Click "Sign Up" in the top navigation. Enter your email and a password, choose whether you're joining as a guest or host (you can do both), and verify your email address. Your account is ready immediately.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I be both a host and a guest? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">Absolutely. One account handles both. Your dashboard has separate sections for your bookings (as a guest) and your listings and host bookings. Many of our most active users both rent out their own driveway and book spaces in other cities when they travel.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I delete my account? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
+          <div class="faq-a">To request account deletion, email us at drivewayhost@pm.me with the subject line "Account Deletion Request." Please note that we're required to retain certain transaction records for legal and tax purposes for up to 7 years, but your personal profile will be removed.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-contact">
+      <h2>Still Need Help?</h2>
+      <p>Our support team typically responds within 2–4 hours during business hours.</p>
+      <div class="help-contact-methods">
+        <a href="mailto:drivewayhost@pm.me" class="help-contact-method" style="color:var(--text);text-decoration:none">
+          <i class="fa-solid fa-envelope" style="color:var(--green)"></i> Email Support
+        </a>
+        <div class="help-contact-method" onclick="showToast('Live chat launching soon!','info')">
+          <i class="fa-solid fa-comments" style="color:var(--green)"></i> Live Chat (Soon)
+        </div>
+        <div class="help-contact-method" onclick="showPage('legal')">
+          <i class="fa-solid fa-book" style="color:var(--green)"></i> How It Works
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
