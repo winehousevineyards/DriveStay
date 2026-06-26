@@ -165,12 +165,14 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
   box-shadow:0 2px 8px rgba(22,163,74,.3)}
 .browse-count{padding:10px 16px;font-size:.8rem;color:var(--muted);border-bottom:1px solid var(--border)}
 .listing-card{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;
-  display:flex;gap:14px;transition:.18s;background:#fff}
-.listing-card:hover{background:var(--gray);transform:none}
+  display:flex;gap:14px;transition:.2s ease;background:#fff}
+.listing-card:hover{background:#f7fdf7;box-shadow:inset 3px 0 0 var(--green)}
 .listing-card.map-active{background:#f0fdf4;border-left:3px solid var(--green)}
-.listing-emoji{width:72px;height:72px;border-radius:14px;background:var(--gray2);
+.listing-emoji{width:84px;height:72px;border-radius:12px;background:var(--gray2);
   display:flex;align-items:center;justify-content:center;font-size:1.6rem;
   flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+.listing-emoji img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.listing-card:hover .listing-emoji img{transform:scale(1.05)}
 .listing-info{flex:1;min-width:0}
 .listing-title{font-weight:700;font-size:.88rem;margin-bottom:3px;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;color:var(--text)}
@@ -2384,54 +2386,67 @@ const SAMPLE_LISTINGS = [
     address:'1234 Laurel Canyon Blvd', city:'Los Angeles', state:'CA',
     lat:34.1122, lng:-118.3392, price_nightly:45, price_monthly:720, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.9, review_count:23, status:'active',
+    verified:true,
+    photos:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&q=80'],
     rules:['No overnight parties','No commercial vehicles'] },
   { id:'s2', emoji:'🅿️', title:'Covered Garage Spot – Downtown Austin',
     description:'Single covered garage spot. EV charger available. Minutes from 6th Street.',
     address:'800 Congress Ave', city:'Austin', state:'TX',
     lat:30.2672, lng:-97.7431, price_nightly:28, price_monthly:480, wifi:true, covered:true, electric:true, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV','Motorcycle'], rating:4.7, review_count:11, status:'active',
+    verified:true,
+    photos:['https://images.unsplash.com/photo-1506521781263-d8422e82e27a?w=400&h=300&fit=crop&q=80'],
     rules:['EV charger: $5/night extra'] },
   { id:'s3', emoji:'🌳', title:'Shaded Lot – Near Wrigley Field',
     description:'Large shaded lot, fits up to 3 vehicles. Close to Wrigley Field — perfect for Cubs games.',
     address:'1060 W Addison St', city:'Chicago', state:'IL',
     lat:41.9484, lng:-87.6553, price_nightly:55, price_monthly:860, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
     instant_book:false, rv_friendly:false, vehicles:['Sedan','SUV','Truck'], rating:4.8, review_count:34, status:'active',
+    photos:['https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&h=300&fit=crop&q=80'],
     rules:['No overnight stays without permission','Quiet after 10pm'] },
   { id:'s4', emoji:'🚐', title:'RV-Friendly Full Hookup – Nashville',
     description:'Full hookup RV spot: 30A electric, dump station, water. Near Grand Ole Opry. Fits rigs up to 40ft.',
     address:'2804 Opryland Dr', city:'Nashville', state:'TN',
     lat:36.2010, lng:-86.6944, price_nightly:75, price_monthly:1400, wifi:true, covered:false, electric:true, dump:true, water:true, pets:true,
     instant_book:true, rv_friendly:true, vehicles:['RV','Van','Trailer'], rating:4.6, review_count:8, status:'active',
+    photos:['https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=400&h=300&fit=crop&q=80'],
     rules:['Max 40ft','Check-in after 2pm','Check-out by noon'] },
   { id:'s5', emoji:'🚗', title:'Budget Driveway – Brooklyn Heights',
     description:'Tight but fits a standard sedan or small SUV. Safe neighborhood, minutes from subway.',
     address:'100 Hicks St', city:'Brooklyn', state:'NY',
     lat:40.6981, lng:-73.9966, price_nightly:35, price_monthly:560, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:false, rv_friendly:false, vehicles:['Sedan','Motorcycle'], rating:4.5, review_count:19, status:'active',
+    photos:['https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=400&h=300&fit=crop&q=80'],
     rules:['Compact cars only','No tall vehicles'] },
   { id:'s6', emoji:'🏢', title:'Downtown Parking Spot – Denver',
     description:'Paved surface spot in private residential courtyard. Walking distance to Coors Field.',
     address:'2001 Blake St', city:'Denver', state:'CO',
     lat:39.7563, lng:-104.9942, price_nightly:32, price_monthly:520, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
+    photos:['https://images.unsplash.com/photo-1561747420-e60571fc7f87?w=400&h=300&fit=crop&q=80'],
     rules:['No commercial vehicles'] },
   { id:'s7', emoji:'🚛', title:'Commercial Pull-Through Lot – Dallas',
     description:'Gravel surface pull-through lot, 80ft+ length clearance. 50A electric hookup, freshwater fill, dump station. Ideal for semi-trucks and big rigs. Secure fence, camera monitored.',
     address:'4200 I-35 Frontage Rd', city:'Dallas', state:'TX',
     lat:32.7978, lng:-96.8503, price_nightly:95, price_monthly:1800, wifi:true, covered:false, electric:true, dump:true, water:true, pets:false,
     instant_book:true, rv_friendly:true, big_rig:true, vehicles:['Semi-Truck','Box Truck','RV','Trailer'], rating:4.8, review_count:14, status:'active',
+    photos:['https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=400&h=300&fit=crop&q=80'],
     rules:['Max vehicle height: 15ft','No hazmat loads','Quiet hours 10pm–6am'] },
   { id:'s8', emoji:'🎟️', title:'Stadium Event Lot – Game Day Parking',
     description:'Paved residential lot, 5-min walk to SoFi Stadium. Perfect for NFL and soccer events. Attendant on-site during major events. Book in advance — fills up fast.',
     address:'3900 W Century Blvd', city:'Inglewood', state:'CA',
     lat:33.9536, lng:-118.3390, price_nightly:65, price_monthly:0, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, event_parking:true, attendant:true, vehicles:['Sedan','SUV','Truck'], rating:4.9, review_count:47, status:'active',
+    verified:true,
+    photos:['https://images.unsplash.com/photo-1568605117036-5c9ce8a98bcc?w=400&h=300&fit=crop&q=80'],
     rules:['Game day only — no daily parking','Arrive 2hrs before kickoff'] },
   { id:'s9', emoji:'🏟️', title:'Concert Venue Parking – Near Hollywood Bowl',
     description:'Wide concrete driveway 3 blocks from Hollywood Bowl. Hosted by local family for 10+ years. Attended by a parking host during events — they\'ll guide you in.',
     address:'2412 N Highland Ave', city:'Los Angeles', state:'CA',
     lat:34.1020, lng:-118.3378, price_nightly:55, price_monthly:0, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
     instant_book:false, rv_friendly:false, event_parking:true, attendant:true, vehicles:['Sedan','SUV'], rating:5.0, review_count:88, status:'active',
+    verified:true,
+    photos:['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=300&fit=crop&q=80'],
     rules:['Concert nights only','Attendant greets guests — wait in driveway upon arrival'] },
 ];
 
