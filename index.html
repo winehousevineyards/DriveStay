@@ -2329,6 +2329,10 @@ function updateNavAuth() {
   document.getElementById('mobileLogoutBtn')?.classList.toggle('hidden', !in_);
   // Check notifications when auth state changes
   if (in_) { setTimeout(() => { checkNotifications(); checkUnreadMessages(); }, 1000); }
+  // Admin tab: show only for admin users, and re-run loadDashboard if we're on dashboard page
+  const adminTab = document.getElementById('adminDashTab');
+  if (adminTab) adminTab.classList.toggle('hidden', !isAdminUser());
+  if (in_ && document.getElementById('page-dashboard')?.classList.contains('active')) loadDashboard();
 }
 
 // ============================================================
