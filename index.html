@@ -42,11 +42,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet"/>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script type="application/ld+json">
@@ -223,16 +220,16 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
   color:var(--muted);transition:.15s;border:none;background:none}
 .map-layer-btn.active{background:var(--green);color:#fff;box-shadow:0 1px 4px rgba(22,163,74,.3)}
 
-/* ── Custom Leaflet overrides ── */
-.leaflet-popup-content-wrapper{border-radius:16px!important;box-shadow:0 8px 32px rgba(0,0,0,.18)!important;
-  border:1px solid var(--border)!important;padding:0!important;overflow:hidden!important}
-.leaflet-popup-content{margin:0!important;font-family:'Inter',system-ui,sans-serif!important;
-  font-size:.85rem!important;line-height:1.5!important}
-.leaflet-popup-tip-container{margin-top:-1px}
-.leaflet-control-zoom{border-radius:12px!important;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.15)!important;border:1px solid var(--border)!important}
-.leaflet-control-zoom a{font-size:1rem!important;line-height:26px!important;width:28px!important;height:28px!important;color:var(--text)!important}
-.leaflet-control-zoom a:hover{background:var(--gray)!important}
-.leaflet-control-attribution{border-radius:8px 0 0 0!important;background:rgba(255,255,255,.85)!important;backdrop-filter:blur(8px)!important;font-size:.65rem!important}
+/* ── Mapbox GL overrides ── */
+.mapboxgl-popup-content{border-radius:16px!important;box-shadow:0 8px 32px rgba(0,0,0,.18)!important;
+  border:1px solid var(--border)!important;padding:0!important;overflow:hidden!important;
+  font-family:'Inter',system-ui,sans-serif!important;font-size:.85rem!important}
+.mapboxgl-popup-tip{display:none}
+.mapboxgl-popup-close-button{font-size:1.1rem;color:var(--muted);padding:6px 10px;line-height:1;z-index:1}
+.mapboxgl-ctrl-group{border-radius:12px!important;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.15)!important;border:1px solid var(--border)!important}
+.mapboxgl-ctrl-group button{width:30px!important;height:30px!important}
+.mapboxgl-ctrl-attrib{border-radius:8px 0 0 0!important;background:rgba(255,255,255,.85)!important;backdrop-filter:blur(8px)!important;font-size:.65rem!important}
+.mapboxgl-canvas{border-radius:inherit}
 
 /* ── Price pin markers ── */
 .price-pin{background:var(--green);color:#fff;border-radius:20px;padding:4px 10px;
@@ -2174,10 +2171,13 @@ let allListings = [], filteredListings = [];
 let _listingsLastFetch = 0;
 let currentFilter = 'all';
 let selectedListing = null;
-let leafletMap = null, mapMarkers = [];
+let mbMap = null, _mbMarkers = [], _userMarker = null;
 let venueMarkers = { concert:[], stadium:[], arena:[], poi:[], park:[], airport:[] };
 let venueVisible  = { concert:true, stadium:true, arena:true, poi:true, park:true, airport:true };
-let markerCluster = null;
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiZHJpdmV3YXlqb3N0IiwiYSI6ImNtcXZibXB4NTAwbGQzeXB4azdwcjI5aDkifQ.Mno11i9S3YPK8oSKA7bA3A';
+const MB_STYLES = { streets:'mapbox://styles/mapbox/streets-v12', satellite:'mapbox://styles/mapbox/satellite-streets-v12', dark:'mapbox://styles/mapbox/dark-v11' };
+const CLUSTER_ZOOM = 11;
+let _activeStyle = 'streets';
 let stripeElements = null;
 let afterAuthAction = null, selectedRole = 'guest';
 let listingPhotoFiles = [];
@@ -2191,7 +2191,7 @@ let _messagesLoaded = false;
 function showPage(name, opts) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  if (name === 'browse') { setTimeout(() => { if (!leafletMap) initMap(); }, 50); loadListings(); }
+  if (name === 'browse') { setTimeout(() => { if (!mbMap) initMap(); }, 50); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
   if (name === 'home') renderRecentlyViewed();
   if (name === 'host') setTimeout(initHostFormAutosave, 100);
@@ -2537,103 +2537,134 @@ function buildListingCard(l) {
 // ============================================================
 // MAP
 // ============================================================
-let _tileLayers = {};
-let _activeLayer = 'voyager';
+// Mapbox style vars declared above with MB_STYLES/_activeStyle
 
 function initMap() {
-  if (leafletMap) return;
-  leafletMap = L.map('map', { zoomControl: false, preferCanvas: true }).setView([39.5, -98.35], 5);
+  if (mbMap) return;
+  mapboxgl.accessToken = MAPBOX_TOKEN;
+  mbMap = new mapboxgl.Map({
+    container: 'map',
+    style: MB_STYLES.streets,
+    center: [-98.35, 39.5],
+    zoom: 4
+  });
+  mbMap.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left');
 
-  // ── Tile layers ──────────────────────────────────────────────────────────
-  _tileLayers.voyager = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    { attribution:'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com">CARTO</a>', subdomains:'abcd', maxZoom:19 }
-  );
-  _tileLayers.satellite = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    { attribution:'Tiles © Esri — Source: Esri, Maxar, GeoEye, i-cubed, USDA FSA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community', maxZoom:18 }
-  );
-  _tileLayers.dark = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    { attribution:'© OSM © CARTO', subdomains:'abcd', maxZoom:19 }
-  );
-  _tileLayers.voyager.addTo(leafletMap);
+  mbMap.on('load', () => {
+    // GeoJSON source for cluster bubbles
+    mbMap.addSource('listings-src', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+      cluster: true, clusterMaxZoom: CLUSTER_ZOOM - 1, clusterRadius: 55
+    });
+    mbMap.addLayer({
+      id: 'clusters', type: 'circle', source: 'listings-src',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': '#16a34a',
+        'circle-radius': ['step', ['get', 'point_count'], 22, 3, 30, 10, 38],
+        'circle-stroke-width': 3, 'circle-stroke-color': '#fff', 'circle-opacity': 0.92
+      }
+    });
+    mbMap.addLayer({
+      id: 'cluster-count', type: 'symbol', source: 'listings-src',
+      filter: ['has', 'point_count'],
+      layout: { 'text-field': '{point_count_abbreviated} spaces', 'text-size': 11,
+        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'] },
+      paint: { 'text-color': '#ffffff' }
+    });
+    mbMap.on('click', 'clusters', (e) => {
+      const f = mbMap.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      mbMap.getSource('listings-src').getClusterExpansionZoom(f[0].properties.cluster_id, (err, zoom) => {
+        if (!err) mbMap.easeTo({ center: f[0].geometry.coordinates, zoom });
+      });
+    });
+    mbMap.on('mouseenter', 'clusters', () => { mbMap.getCanvas().style.cursor = 'pointer'; });
+    mbMap.on('mouseleave', 'clusters', () => { mbMap.getCanvas().style.cursor = ''; });
+    mbMap.on('zoom', _updatePinVisibility);
+    _addVenueMarkers();
+    if (filteredListings.length) renderMapMarkers();
+  });
+}
 
-  // ── Zoom control (styled) ──────────────────────────────────────────────
-  L.control.zoom({ position:'topleft' }).addTo(leafletMap);
+const _venueConfig = {
+  concert: { color:'#7c3aed', bg:'#f3e8ff', icon:'<i class="fa-solid fa-music"></i>' },
+  stadium: { color:'#166534', bg:'#dcfce7', icon:'<i class="fa-solid fa-football"></i>' },
+  arena:   { color:'#1e40af', bg:'#dbeafe', icon:'<i class="fa-solid fa-basketball"></i>' },
+  poi:     { color:'#c2410c', bg:'#ffedd5', icon:'<i class="fa-solid fa-city"></i>' },
+  park:    { color:'#065f46', bg:'#d1fae5', icon:'<i class="fa-solid fa-tree"></i>' },
+  airport: { color:'#1d4ed8', bg:'#dbeafe', icon:'<i class="fa-solid fa-plane"></i>' },
+};
 
-  // ── Venue markers ─────────────────────────────────────────────────────
-  const venueConfig = {
-    concert: { color:'#7c3aed', bg:'#f3e8ff', icon:'<i class="fa-solid fa-music"></i>' },
-    stadium: { color:'#166534', bg:'#dcfce7', icon:'<i class="fa-solid fa-football"></i>' },
-    arena:   { color:'#1e40af', bg:'#dbeafe', icon:'<i class="fa-solid fa-basketball"></i>' },
-    poi:     { color:'#c2410c', bg:'#ffedd5', icon:'<i class="fa-solid fa-city"></i>' },
-    park:    { color:'#065f46', bg:'#d1fae5', icon:'<i class="fa-solid fa-tree"></i>' },
-    airport: { color:'#1d4ed8', bg:'#dbeafe', icon:'<i class="fa-solid fa-plane"></i>' },
-  };
-
+function _addVenueMarkers() {
+  Object.keys(venueMarkers).forEach(k => venueMarkers[k] = []);
   VENUE_DATA.forEach(v => {
-    const cfg = venueConfig[v.type] || { color:'#64748b', bg:'#f1f5f9', icon:'<i class="fa-solid fa-location-dot"></i>' };
-    const sz = v.type==='stadium'||v.type==='arena' ? 32 : 28;
-    const mk = L.marker([v.lat, v.lng], {
-      icon: L.divIcon({
-        html: `<div class="venue-pin" style="background:${cfg.color};width:${sz}px;height:${sz}px;font-size:${sz===32?.75:.68}rem">${cfg.icon}</div>`,
-        className: '', iconAnchor:[sz/2, sz/2]
-      })
-    }).addTo(leafletMap).bindPopup(`
+    const cfg = _venueConfig[v.type] || { color:'#64748b', bg:'#f1f5f9', icon:'<i class="fa-solid fa-location-dot"></i>' };
+    const sz = (v.type==='stadium'||v.type==='arena') ? 32 : 28;
+    const el = document.createElement('div');
+    el.innerHTML = `<div class="venue-pin" style="background:${cfg.color};width:${sz}px;height:${sz}px;font-size:${sz===32?.75:.68}rem">${cfg.icon}</div>`;
+    el.style.display = venueVisible[v.type] ? '' : 'none';
+    const popup = new mapboxgl.Popup({ maxWidth:'220px', offset:14 }).setHTML(`
       <div class="venue-popup">
         <div style="width:28px;height:28px;border-radius:8px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:.9rem;color:${cfg.color}">${cfg.icon}</div>
         <div class="venue-popup-name">${escapeHtml(v.name)}</div>
         <div class="venue-popup-city">${escapeHtml(v.city||'')}</div>
-        <a href="#" data-city="${escapeHtml(v.city?.split(',')[0]||'')}" class="venue-search-link venue-popup-link">
+        <a href="#" class="venue-search-link venue-popup-link" data-city="${escapeHtml(v.city?.split(',')[0]||'')}">
           <i class="fa-solid fa-magnifying-glass"></i> Find parking nearby
         </a>
-      </div>
-    `, { maxWidth:220, className:'ds-popup' }).on('popupopen', function() {
-      const link = this.getPopup().getElement()?.querySelector('.venue-search-link');
-      if (link) link.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('navSearch').value = this.dataset.city; filterListings(); });
+      </div>`);
+    popup.on('open', () => {
+      setTimeout(() => {
+        const link = document.querySelector('.mapboxgl-popup .venue-search-link');
+        if (link) link.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('navSearch').value = this.dataset.city; filterListings(); });
+      }, 50);
     });
-    if (venueMarkers[v.type]) venueMarkers[v.type].push(mk);
+    const mk = new mapboxgl.Marker({ element: el, anchor: 'center' }).setLngLat([v.lng, v.lat]).setPopup(popup).addTo(mbMap);
+    venueMarkers[v.type].push(mk);
   });
+}
 
-  // ── Cluster layer ─────────────────────────────────────────────────────
-  markerCluster = L.markerClusterGroup({
-    showCoverageOnHover: false,
-    spiderfyOnMaxZoom: true,
-    disableClusteringAtZoom: 14,
-    maxClusterRadius: 60,
-    iconCreateFunction: function(cluster) {
-      const count = cluster.getChildCount();
-      return L.divIcon({
-        html: `<div class="cluster-pin">${count} spaces</div>`,
-        className: '', iconAnchor:[44,14]
-      });
-    }
-  });
-  leafletMap.addLayer(markerCluster);
+function _updatePinVisibility() {
+  const show = mbMap.getZoom() >= CLUSTER_ZOOM;
+  _mbMarkers.forEach(m => { m._element.style.opacity = show ? '1' : '0'; m._element.style.pointerEvents = show ? '' : 'none'; });
 }
 
 function switchMapLayer(name, btn) {
-  if (name === _activeLayer) return;
-  leafletMap.removeLayer(_tileLayers[_activeLayer]);
-  _tileLayers[name].addTo(leafletMap);
-  _activeLayer = name;
+  if (!mbMap || name === _activeStyle) return;
+  _activeStyle = name;
+  mbMap.setStyle(MB_STYLES[name] || MB_STYLES.streets);
   document.querySelectorAll('.map-layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer===name));
-  // Adjust dark-mode: make price pins visible
-  document.querySelectorAll('.price-pin').forEach(p => {
-    p.style.background = name==='dark' ? '#22c55e' : '';
-    p.style.border = name==='satellite'||name==='dark' ? '2.5px solid rgba(255,255,255,.9)' : '';
+  // Re-add source/layers after style reload
+  mbMap.once('style.load', () => {
+    mbMap.addSource('listings-src', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: filteredListings.filter(l=>l.lat&&l.lng).map(l=>({ type:'Feature', geometry:{type:'Point',coordinates:[l.lng,l.lat]}, properties:{id:String(l.id)} })) },
+      cluster: true, clusterMaxZoom: CLUSTER_ZOOM - 1, clusterRadius: 55
+    });
+    mbMap.addLayer({ id:'clusters', type:'circle', source:'listings-src', filter:['has','point_count'],
+      paint:{'circle-color':'#16a34a','circle-radius':['step',['get','point_count'],22,3,30,10,38],'circle-stroke-width':3,'circle-stroke-color':'#fff','circle-opacity':0.92} });
+    mbMap.addLayer({ id:'cluster-count', type:'symbol', source:'listings-src', filter:['has','point_count'],
+      layout:{'text-field':'{point_count_abbreviated} spaces','text-size':11,'text-font':['DIN Offc Pro Medium','Arial Unicode MS Bold']},
+      paint:{'text-color':'#ffffff'} });
+    _addVenueMarkers();
   });
 }
 
-let _selectedMarkerId = null;
-
 function renderMapMarkers() {
-  if (!leafletMap || !markerCluster) return;
-  markerCluster.clearLayers();
-  mapMarkers = [];
-  filteredListings.forEach(l => {
-    if (!l.lat || !l.lng) return;
+  if (!mbMap) return;
+  _mbMarkers.forEach(m => m.remove());
+  _mbMarkers = [];
+
+  const features = filteredListings.filter(l => l.lat && l.lng).map(l => ({
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [l.lng, l.lat] },
+    properties: { id: String(l.id) }
+  }));
+  try { if (mbMap.getSource('listings-src')) mbMap.getSource('listings-src').setData({ type:'FeatureCollection', features }); } catch(e) {}
+
+  const showPins = mbMap.getZoom() >= CLUSTER_ZOOM;
+
+  filteredListings.filter(l => l.lat && l.lng).forEach(l => {
     const price = '$' + (Number(l.price_nightly)|0);
     const stars = l.rating ? `<span class="map-popup-rating"><i class="fa-solid fa-star" style="color:#f59e0b;font-size:.65rem"></i> ${l.rating}</span>` : '';
     const photoHtml = l.photos?.length
@@ -2646,12 +2677,7 @@ function renderMapMarkers() {
       l.instant_book && '<span style="font-size:.65rem;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:20px;padding:2px 7px;font-weight:700"><i class="fa-solid fa-bolt"></i> Instant</span>',
     ].filter(Boolean).slice(0,3).join(' ');
 
-    const mk = L.marker([l.lat, l.lng], {
-      icon: L.divIcon({
-        html: `<div class="price-pin" data-lid="${escapeHtml(String(l.id))}">${price}</div>`,
-        className: '', iconAnchor:[20,30]
-      })
-    }).bindPopup(`
+    const popup = new mapboxgl.Popup({ maxWidth:'240px', offset:30 }).setHTML(`
       <div class="map-popup">
         ${photoHtml}
         <div class="map-popup-body">
@@ -2661,58 +2687,68 @@ function renderMapMarkers() {
           <div><span class="map-popup-price">${price}<span style="font-weight:400;font-size:.72rem;color:var(--muted)">/night</span></span>${stars}</div>
           <a href="#" data-id="${escapeHtml(String(l.id))}" class="popup-book-btn map-popup-btn">View Space &rarr;</a>
         </div>
-      </div>
-    `, { maxWidth:240, className:'ds-popup' })
-    .on('popupopen', function() {
-      // Highlight the selected marker
-      if (_selectedMarkerId) {
-        document.querySelectorAll('.price-pin').forEach(p => p.classList.remove('selected'));
-      }
-      const pin = this.getIcon().options.html.match(/data-lid="([^"]+)"/)?.[1];
-      if (pin) document.querySelector(`.price-pin[data-lid="${pin}"]`)?.classList.add('selected');
-      _selectedMarkerId = l.id;
-      // Highlight sidebar card
+      </div>`);
+    popup.on('open', () => {
       document.querySelectorAll('.listing-card').forEach(c => c.classList.toggle('map-active', c.dataset.id === String(l.id)));
-      const btn = this.getPopup().getElement()?.querySelector('.popup-book-btn');
-      if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); openDetail(this.dataset.id); });
-    })
-    .on('popupclose', function() {
+      setTimeout(() => {
+        const btn = document.querySelector('.mapboxgl-popup .popup-book-btn');
+        if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); openDetail(this.dataset.id); });
+        const pin = document.querySelector(`.price-pin[data-lid="${CSS.escape(String(l.id))}"]`);
+        if (pin) { document.querySelectorAll('.price-pin').forEach(p => p.classList.remove('selected')); pin.classList.add('selected'); }
+      }, 30);
+    });
+    popup.on('close', () => {
       document.querySelectorAll('.listing-card').forEach(c => c.classList.remove('map-active'));
-      _selectedMarkerId = null;
+      document.querySelectorAll('.price-pin').forEach(p => p.classList.remove('selected'));
     });
 
-    markerCluster.addLayer(mk);
-    mapMarkers.push(mk);
+    const el = document.createElement('div');
+    el.innerHTML = `<div class="price-pin" data-lid="${escapeHtml(String(l.id))}">${price}</div>`;
+    el.style.opacity = showPins ? '1' : '0';
+    el.style.pointerEvents = showPins ? '' : 'none';
+    el.style.transition = 'opacity .2s';
+
+    const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([l.lng, l.lat]).setPopup(popup).addTo(mbMap);
+    _mbMarkers.push(marker);
   });
 
-  // Fit map to markers
+  // Fit bounds
   const withCoords = filteredListings.filter(l => l.lat && l.lng);
-  if (withCoords.length > 0 && mapMarkers.length > 0) {
+  if (withCoords.length > 1) {
     try {
-      const group = L.featureGroup(mapMarkers);
-      leafletMap.fitBounds(group.getBounds().pad(0.3), { maxZoom: 12 });
+      const bounds = withCoords.reduce((b, l) => b.extend([l.lng, l.lat]),
+        new mapboxgl.LngLatBounds([withCoords[0].lng, withCoords[0].lat], [withCoords[0].lng, withCoords[0].lat]));
+      mbMap.fitBounds(bounds, { padding:80, maxZoom:12, duration:600 });
     } catch(e) {}
+  } else if (withCoords.length === 1) {
+    mbMap.flyTo({ center:[withCoords[0].lng, withCoords[0].lat], zoom:13 });
   }
 }
 
 function toggleVenue(type, el) {
   venueVisible[type] = !venueVisible[type];
   el.classList.toggle('off', !venueVisible[type]);
-  venueMarkers[type]?.forEach(mk => { try { venueVisible[type] ? mk.addTo(leafletMap) : leafletMap.removeLayer(mk); } catch(e){} });
+  venueMarkers[type]?.forEach(mk => {
+    if (mk._element) mk._element.style.display = venueVisible[type] ? '' : 'none';
+  });
 }
 
 function locateMe() {
-  if (!leafletMap) return;
+  if (!mbMap) return;
   if (!navigator.geolocation) { showToast('Geolocation not supported by your browser', 'error'); return; }
   showToast('Finding your location...', 'info');
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude: lat, longitude: lng } = pos.coords;
     _userLat = lat; _userLng = lng;
-    leafletMap.setView([lat, lng], 13);
-    L.circleMarker([lat, lng], {
-      radius:10, fillColor:'#3b82f6', color:'#fff', weight:3, fillOpacity:1
-    }).addTo(leafletMap).bindPopup('<i class="fa-solid fa-location-crosshairs" style="color:#3b82f6"></i> <b>You are here</b>').openPopup();
-    // Sort by distance and show nearby badge
+    mbMap.flyTo({ center:[lng, lat], zoom:13, duration:1000 });
+    if (_userMarker) _userMarker.remove();
+    const el = document.createElement('div');
+    el.innerHTML = '<div style="width:16px;height:16px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 4px rgba(59,130,246,.3)"></div>';
+    _userMarker = new mapboxgl.Marker({ element:el, anchor:'center' })
+      .setLngLat([lng, lat])
+      .setPopup(new mapboxgl.Popup({ offset:14 }).setHTML('<i class="fa-solid fa-location-crosshairs" style="color:#3b82f6"></i> <b>You are here</b>'))
+      .addTo(mbMap);
     const sortEl = document.getElementById('browseSort');
     if (sortEl) { sortEl.value = 'distance'; }
     applyFilter();
@@ -4474,7 +4510,7 @@ function setBrowseView(view) {
     map.classList.remove('hidden-mobile');
     mapBtn?.classList.add('active');
     listBtn?.classList.remove('active');
-    setTimeout(() => leafletMap?.invalidateSize(), 100);
+    setTimeout(() => mbMap?.resize(), 100);
   }
 }
 
