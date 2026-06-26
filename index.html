@@ -3560,7 +3560,7 @@ async function loadMyBookings() {
     list.innerHTML = data.map(b => {
       const isPast = b.check_out < today;
       const isFuture = b.check_in > today;
-      const canCancel = (b.status==='pending'||b.status==='confirmed') && isFuture;
+      const canCancel = b.status==='pending' || (b.status==='confirmed' && isFuture);
       const canComplete = b.status==='confirmed' && isPast;
       const canReview  = b.status==='completed';
       return `<div class="booking-row" style="flex-wrap:wrap">
@@ -3571,7 +3571,7 @@ async function loadMyBookings() {
           <div class="booking-row-actions">
             <span class="status-badge status-${b.status||'pending'}">${b.status||'pending'}</span>
             <span class="booking-row-amt" style="font-weight:700;color:var(--green)">$${Math.round((b.total_amount||0)/100)}</span>
-            ${canCancel?`<button class="btn-sm btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`:''}
+            ${canCancel?`<button class="btn-sm btn-sm-red" onclick="cancelBooking('${b.id}')">${b.status==='pending'?'<i class="fa-solid fa-xmark" style="margin-right:4px"></i> Remove Request':'Cancel'}</button>`:''}
             ${canComplete?`<button class="btn-sm btn-sm-blue" onclick="markBookingComplete('${b.id}')">Mark Complete</button>`:''}
             ${canReview?`<button class="btn-sm btn-sm-green" onclick="openReviewModal('${b.id}','${b.listing_id}')">Leave Review ★</button>`:''}
             ${b.status==='confirmed'?`<button class="extend-btn" onclick="openExtendModal('${b.id}','${b.check_out}')"><i class="fa-solid fa-calendar-plus"></i> Extend</button>`:''}
