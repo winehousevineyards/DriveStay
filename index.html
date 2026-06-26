@@ -1176,7 +1176,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
   </div>
   <div class="trust-badges">
     <span class="trust-badge"><i class="fa-solid fa-shield-halved"></i> Every booking protected</span>
-    <span class="trust-badge"><i class="fa-solid fa-tag"></i> Only 10% service fee — lowest in the market</span>
+    <span class="trust-badge"><i class="fa-solid fa-tag"></i> 10% fee + mandatory insurance every booking</span>
     <span class="trust-badge"><i class="fa-solid fa-bolt"></i> List your space in 5 minutes</span>
     <span class="trust-badge"><i class="fa-solid fa-earth-americas"></i> 340+ cities nationwide</span>
     <span class="trust-badge"><i class="fa-solid fa-star"></i> 4.9 avg host rating</span>
@@ -1193,7 +1193,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <p class="section-sub-text">From search to park in minutes — no subscriptions, no parking lots.</p>
     <div class="how-grid">
       <div class="how-card" data-step="01"><div class="how-icon"><i class="fa-solid fa-magnifying-glass"></i></div><h3>Search</h3><p>Find driveways near your destination or event using our interactive map.</p></div>
-      <div class="how-card" data-step="02"><div class="how-icon"><i class="fa-solid fa-calendar-days"></i></div><h3>Book</h3><p>Choose your dates, review pricing &amp; fees, then pay securely via Stripe.</p></div>
+      <div class="how-card" data-step="02"><div class="how-icon"><i class="fa-solid fa-calendar-days"></i></div><h3>Book</h3><p>Choose your dates, review pricing &amp; fees — insurance is automatically added for both host and guest. Pay securely via Stripe.</p></div>
       <div class="how-card" data-step="03"><div class="how-icon"><i class="fa-solid fa-car"></i></div><h3>Park</h3><p>Arrive and park with confidence. Host receives payout after check-in.</p></div>
       <div class="how-card" data-step="04"><div class="how-icon"><i class="fa-solid fa-star"></i></div><h3>Review</h3><p>Leave a review to help the community and build your reputation.</p></div>
     </div>
@@ -1209,8 +1209,8 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       </div>
       <div class="fee-row us-row">
         <span><i class="fa-solid fa-car"></i> Driveway Host <span class="fee-badge">US</span></span>
-        <span class="fee-green">10%</span>
-        <span class="fee-green">Free</span>
+        <span class="fee-green">10% + insurance</span>
+        <span class="fee-green">Included ✓</span>
       </div>
       <div class="fee-row">
         <span>Parkt</span>
@@ -1228,7 +1228,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
         <span class="fee-red">Listed price cut</span>
       </div>
     </div>
-    <p style="font-size:.78rem;color:var(--muted);margin-top:16px">*Fees based on published platform rates as of 2026. Driveway Host guest fee covers booking protection.</p>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:16px">*Fees based on published platform rates as of 2026. Driveway Host fees include mandatory host &amp; guest protection insurance on every booking.</p>
   </div>
 
   <!-- BOOKING PROTECTION SECTION -->
@@ -1462,8 +1462,13 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
             <div class="price-row hidden" id="bkPromoRow"><span id="bkPromoLabel"><i class="fa-solid fa-tag" style="color:var(--green);margin-right:3px"></i> Promo discount</span><span id="bkPromoAmt"></span></div>
             <div class="price-row hidden" id="bkDiscRow"><span id="bkDiscLabel"></span><span id="bkDiscAmt"></span></div>
             <div class="price-row"><span>Service fee (10%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— lowest in market</span></span><span id="bkBroker">$0</span></div>
-            <div class="price-row"><span>Booking protection (3%)</span><span id="bkInsurance">$0</span></div>
+            <div class="price-row"><span><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:4px"></i>Guest protection (4%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— trip &amp; liability</span></span><span id="bkGuestProt">$0</span></div>
+            <div class="price-row"><span><i class="fa-solid fa-house-chimney-crack" style="color:var(--green);margin-right:4px"></i>Host protection (3%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— property damage</span></span><span id="bkHostProt">$0</span></div>
             <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
+            <div style="margin-top:8px;padding:8px 10px;background:#f0fdf4;border-radius:8px;font-size:.75rem;color:#166534;display:flex;align-items:center;gap:6px">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Every booking insured — host &amp; guest protected</span>
+            </div>
           </div>
           <div class="promo-row">
             <input class="promo-input" id="promoInput" placeholder="Promo code (optional)" oninput="this.value=this.value.toUpperCase()"/>
@@ -1768,7 +1773,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
     <div class="legal-section">
       <h2>How Driveway Host Works</h2>
       <p>Driveway Host is a peer-to-peer marketplace connecting property owners ("Hosts") who have spare driveway or parking space with travelers and commuters ("Guests") seeking convenient, affordable parking.</p>
-      <p>We charge a <strong>12% broker fee</strong> and a <strong>3% guest insurance fee</strong> on each booking subtotal. Hosts receive their payout via Stripe Connect within 24 hours of guest check-in.</p>
+      <p>We charge a <strong>10% service fee</strong>, a <strong>4% guest protection fee</strong>, and a <strong>3% host protection fee</strong> on each booking subtotal. Insurance is mandatory on all bookings and covers guest trip liability and host property damage. Hosts receive their payout via Stripe Connect within 24 hours of guest check-in.</p>
     </div>
     <div class="legal-section">
       <h2>Discount Structure</h2>
@@ -2881,9 +2886,11 @@ function calcBooking() {
   const promoPct = window._promoDiscount || 0;
   const promoAmt = Math.round(subtotal * promoPct);
   const afterPromo = subtotal - promoAmt;
-  const broker   = Math.round(afterPromo * 0.10);
-  const ins      = Math.round(afterPromo * 0.03);
-  const total    = afterPromo + broker + ins;
+  const broker    = Math.round(afterPromo * 0.10);
+  const guestProt = Math.round(afterPromo * 0.04);  // guest trip + liability coverage
+  const hostProt  = Math.round(afterPromo * 0.03);  // host property damage coverage
+  const ins       = guestProt + hostProt;            // total insurance (for DB compat)
+  const total     = afterPromo + broker + guestProt + hostProt;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -2895,7 +2902,8 @@ function calcBooking() {
     document.getElementById('bkDiscAmt').textContent = '-$' + discount;
   } else { dRow.classList.add('hidden'); }
   document.getElementById('bkBroker').textContent = '$' + broker;
-  document.getElementById('bkInsurance').textContent = '$' + ins;
+  document.getElementById('bkGuestProt').textContent = '$' + guestProt;
+  document.getElementById('bkHostProt').textContent = '$' + hostProt;
   document.getElementById('bkTotal').textContent = '$' + total;
   // Show promo row
   const promoRow = document.getElementById('bkPromoRow');
@@ -2905,7 +2913,7 @@ function calcBooking() {
   // Asynchronously verify availability
   btn.disabled = true;
   btn.textContent = 'Checking availability...';
-  window._bkCtx = { nights, base, discount, subtotal, broker, ins, total, checkIn, checkOut, totalCents: total * 100 };
+  window._bkCtx = { nights, base, discount, subtotal, broker, guestProt, hostProt, ins, total, checkIn, checkOut, totalCents: total * 100 };
 
   checkAvailability(l.id, inV, outV).then(available => {
     if (available) {
@@ -2979,9 +2987,13 @@ function showConfirmPage(l, ctx, bookingId) {
     <div class="confirm-row"><span>Check In</span><span>${escapeHtml(ctx.checkIn.toLocaleDateString())}</span></div>
     <div class="confirm-row"><span>Check Out</span><span>${escapeHtml(ctx.checkOut.toLocaleDateString())}</span></div>
     <div class="confirm-row"><span>${Number(ctx.nights)|0} night${(Number(ctx.nights)|0)!==1?'s':''}</span><span>$${Number(ctx.base)|0}</span></div>
-    <div class="confirm-row"><span>Broker fee (12%)</span><span>$${Number(ctx.broker)|0}</span></div>
-    <div class="confirm-row"><span>Insurance fee (3%)</span><span>$${Number(ctx.ins)|0}</span></div>
-    <div class="confirm-row"><span><b>Total</b></span><span><b>$${Number(ctx.total)|0}</b></span></div>`;
+    <div class="confirm-row"><span>Service fee (10%)</span><span>$${Number(ctx.broker)|0}</span></div>
+    <div class="confirm-row"><span>Guest protection (4%)</span><span>$${Number(ctx.guestProt)||0}</span></div>
+    <div class="confirm-row"><span>Host protection (3%)</span><span>$${Number(ctx.hostProt)||0}</span></div>
+    <div class="confirm-row"><span><b>Total</b></span><span><b>$${Number(ctx.total)|0}</b></span></div>
+    <div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:.8rem;color:#166534;text-align:center">
+      <i class="fa-solid fa-shield-halved"></i> This booking is fully insured — host &amp; guest protected
+    </div>`;
   showPage('confirm');
 }
 
