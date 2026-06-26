@@ -2573,14 +2573,42 @@ function initMap() {
         'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'] },
       paint: { 'text-color': '#ffffff' }
     });
+    // Unclustered individual point (shows when point is alone, not part of a cluster)
+    mbMap.addLayer({
+      id: 'unclustered-point', type: 'circle', source: 'listings-src',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-color': '#16a34a',
+        'circle-radius': 10,
+        'circle-stroke-width': 2.5,
+        'circle-stroke-color': '#ffffff',
+        'circle-opacity': 0.9
+      }
+    });
+    mbMap.addLayer({
+      id: 'unclustered-price', type: 'symbol', source: 'listings-src',
+      filter: ['!', ['has', 'point_count']],
+      layout: { 'text-field': '$', 'text-size': 10, 'text-font': ['DIN Offc Pro Medium','Arial Unicode MS Bold'] },
+      paint: { 'text-color': '#ffffff' }
+    });
+
     mbMap.on('click', 'clusters', (e) => {
       const f = mbMap.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       mbMap.getSource('listings-src').getClusterExpansionZoom(f[0].properties.cluster_id, (err, zoom) => {
         if (!err) mbMap.easeTo({ center: f[0].geometry.coordinates, zoom });
       });
     });
+    mbMap.on('click', 'unclustered-point', (e) => {
+      const id = e.features[0].properties.id;
+      const listing = filteredListings.find(l => String(l.id) === String(id));
+      if (!listing) return;
+      const marker = _mbMarkers.find(m => m._element?.querySelector(`[data-lid="${id}"]`));
+      if (marker) { marker.togglePopup(); mbMap.easeTo({ center: [listing.lng, listing.lat], duration: 300 }); }
+    });
     mbMap.on('mouseenter', 'clusters', () => { mbMap.getCanvas().style.cursor = 'pointer'; });
     mbMap.on('mouseleave', 'clusters', () => { mbMap.getCanvas().style.cursor = ''; });
+    mbMap.on('mouseenter', 'unclustered-point', () => { mbMap.getCanvas().style.cursor = 'pointer'; });
+    mbMap.on('mouseleave', 'unclustered-point', () => { mbMap.getCanvas().style.cursor = ''; });
     mbMap.on('zoom', _updatePinVisibility);
     _addVenueMarkers();
     if (filteredListings.length) renderMapMarkers();
@@ -2627,6 +2655,11 @@ function _addVenueMarkers() {
 function _updatePinVisibility() {
   const show = mbMap.getZoom() >= CLUSTER_ZOOM;
   _mbMarkers.forEach(m => { m._element.style.opacity = show ? '1' : '0'; m._element.style.pointerEvents = show ? '' : 'none'; });
+  // Hide GL unclustered-point layer when zoomed in (DOM price pins take over)
+  if (mbMap.getLayer('unclustered-point')) {
+    mbMap.setLayoutProperty('unclustered-point', 'visibility', show ? 'none' : 'visible');
+    mbMap.setLayoutProperty('unclustered-price', 'visibility', show ? 'none' : 'visible');
+  }
 }
 
 function switchMapLayer(name, btn) {
