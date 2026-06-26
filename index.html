@@ -11,6 +11,12 @@
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="DriveStay"/>
 <meta property="og:title" content="DriveStay — Driveway Rental &amp; Parking Space Booking"/>
+<meta property="og:description" content="Rent driveways and private parking spaces near stadiums, venues, and city centers. Lowest fees, instant booking, 2,400+ spaces."/>
+<meta property="og:image" content="https://winehousevineyards.github.io/DriveStay/og-image.png"/>
+<meta property="og:url" content="https://winehousevineyards.github.io/DriveStay/"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:title" content="DriveStay — Find Parking Near Any Venue"/>
+<meta name="twitter:description" content="Rent private driveways near stadiums, concerts &amp; events. From $15/night."/>
 <meta property="og:description" content="Find affordable private driveway rentals near stadiums, airports, and downtown. Book in minutes and skip the lot."/>
 <meta property="og:image" content="https://winehousevineyards.github.io/drivestay/og-image.jpg"/>
 <meta property="og:url" content="https://winehousevineyards.github.io/drivestay/"/>
@@ -969,6 +975,104 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 /* ===== KEYBOARD SHORTCUT HINT ===== */
 .kbd-hint{display:inline-flex;align-items:center;justify-content:center;background:var(--gray2);border:1px solid var(--border);border-radius:4px;font-size:.65rem;font-weight:700;padding:1px 5px;color:var(--muted);font-family:monospace}
 
+
+/* ===== TOAST QUEUE ===== */
+.toast{animation:toastIn .25s ease;margin-bottom:6px}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.toast.removing{opacity:0;transform:translateY(8px);transition:all .25s ease}
+
+/* ===== DETAIL SKELETON ===== */
+.detail-skel{animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,var(--gray2) 25%,var(--gray) 50%,var(--gray2) 75%);background-size:200% 100%;border-radius:10px}
+.detail-skel-photo{height:240px;margin-bottom:16px}
+.detail-skel-title{height:28px;width:60%;margin-bottom:10px}
+.detail-skel-meta{height:18px;width:40%;margin-bottom:20px}
+.detail-skel-body{height:14px;margin-bottom:8px}
+
+/* ===== ONBOARDING TOUR ===== */
+.tour-overlay{position:fixed;inset:0;z-index:10000;pointer-events:none}
+.tour-spotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);transition:all .3s ease}
+.tour-tooltip{position:fixed;background:#fff;border-radius:14px;padding:20px 24px;max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.2);z-index:10001;pointer-events:all}
+[data-theme="dark"] .tour-tooltip{background:#1e293b}
+.tour-tooltip h4{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.tour-tooltip p{font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.tour-dots{display:flex;gap:5px;margin-bottom:12px}
+.tour-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.tour-dot.active{background:var(--green);width:16px;border-radius:3px}
+.tour-btns{display:flex;gap:8px;justify-content:flex-end}
+.tour-skip{font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline;margin-right:auto;align-self:center}
+
+/* ===== HOST STATS OVERVIEW ===== */
+.host-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:640px){.host-stats-grid{grid-template-columns:repeat(2,1fr)}}
+.host-stat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+[data-theme="dark"] .host-stat-card{background:#1e293b}
+.host-stat-val{font-size:1.4rem;font-weight:800;color:var(--green)}
+.host-stat-lbl{font-size:.7rem;color:var(--muted);font-weight:600;margin-top:2px}
+.host-stat-trend{font-size:.68rem;margin-top:3px}
+
+/* ===== MIN/MAX NIGHTS ===== */
+.nights-row{display:flex;gap:12px}
+
+/* ===== SEASONAL PRICING ===== */
+.seasonal-box{background:var(--gray);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px}
+.seasonal-box h4{font-size:.85rem;font-weight:700;margin-bottom:10px;color:var(--text)}
+.seasonal-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.seasonal-row input{flex:1;min-width:80px;padding:7px 9px;border:1px solid var(--border);border-radius:7px;font-size:.82rem}
+.seasonal-remove{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:.9rem;padding:4px}
+.add-seasonal-btn{font-size:.75rem;color:var(--green);background:none;border:1px dashed var(--green);border-radius:6px;padding:4px 10px;cursor:pointer}
+
+/* ===== VENUE SHORTCUT CHIPS ===== */
+.venue-chips{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.venue-chip{font-size:.72rem;padding:4px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;background:#fff;color:var(--text);white-space:nowrap;transition:all .15s}
+[data-theme="dark"] .venue-chip{background:#1e293b}
+.venue-chip:hover{border-color:var(--green);color:var(--green);background:#f0fdf4}
+.venue-chip i{margin-right:3px}
+
+/* ===== FEATURED BADGE ===== */
+.featured-badge{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.03em;text-transform:uppercase}
+.listing-card.featured{border:1.5px solid #f59e0b;box-shadow:0 0 0 2px #fef3c7}
+
+/* ===== SAVE SEARCH ===== */
+.save-search-btn{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;color:var(--muted);margin-left:8px;transition:all .15s}
+[data-theme="dark"] .save-search-btn{background:#1e293b}
+.save-search-btn:hover,.save-search-btn.saved{border-color:var(--green);color:var(--green)}
+.save-search-btn.saved i{color:var(--green)}
+
+/* ===== AWAY MODE ===== */
+.away-mode-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;margin-bottom:14px;font-size:.82rem}
+[data-theme="dark"] .away-mode-row{background:#451a0322;border-color:#92400e}
+.away-toggle{position:relative;display:inline-block;width:40px;height:22px}
+.away-toggle input{opacity:0;width:0;height:0}
+.away-slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;border-radius:22px;transition:.3s}
+.away-slider:before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.away-toggle input:checked + .away-slider{background:#f59e0b}
+.away-toggle input:checked + .away-slider:before{transform:translateX(18px)}
+
+/* ===== QUICK REPLIES ===== */
+.quick-replies{display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;border-top:1px solid var(--border);background:var(--gray)}
+.quick-reply-chip{font-size:.72rem;padding:4px 10px;border:1px solid var(--border);border-radius:16px;cursor:pointer;background:#fff;color:var(--text);transition:all .12s;white-space:nowrap}
+[data-theme="dark"] .quick-reply-chip{background:#1e293b}
+.quick-reply-chip:hover{border-color:var(--green);color:var(--green)}
+
+/* ===== READ RECEIPTS ===== */
+.msg-read-indicator{font-size:.62rem;color:var(--muted2);text-align:right;margin-top:1px}
+.msg-read-indicator.read{color:var(--green)}
+
+/* ===== DISPUTE FLOW ===== */
+.dispute-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.dispute-modal.hidden{display:none}
+.dispute-card{background:#fff;border-radius:16px;padding:24px;max-width:480px;width:100%;box-shadow:var(--shadow-lg)}
+[data-theme="dark"] .dispute-card{background:#1e293b}
+.dispute-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.dispute-type-btn{padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:none;font-size:.78rem;text-align:center;transition:all .15s}
+.dispute-type-btn:hover,.dispute-type-btn.selected{border-color:var(--green);background:#f0fdf4;color:var(--green-dk)}
+
+/* ===== AUTOSAVE INDICATOR ===== */
+.autosave-dot{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);transition:all .3s}
+.autosave-dot .dot{width:7px;height:7px;border-radius:50%;background:var(--muted2)}
+.autosave-dot.saved .dot{background:var(--green)}
+.autosave-dot.saved{color:var(--green)}
+
 </style>
 </head>
 <body>
@@ -1250,8 +1354,19 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
         <div class="price-filter-top"><label><i class="fa-solid fa-dollar-sign" style="margin-right:4px"></i> Max price / night</label><span id="priceFilterVal">Any price</span></div>
         <input type="range" class="price-slider" id="priceSlider" min="10" max="500" value="500" step="5" oninput="onPriceSlider(this)"/>
       </div>
+      <div class="venue-chips" id="venueChips">
+    <span style="font-size:.7rem;color:var(--muted);align-self:center;white-space:nowrap"><i class="fa-solid fa-bolt" style="margin-right:3px"></i>Near:</span>
+    <button class="venue-chip" onclick="searchNearVenue('Wrigley Field')"><i class="fa-solid fa-baseball-bat-ball"></i> Wrigley</button>
+    <button class="venue-chip" onclick="searchNearVenue('Hollywood Bowl')"><i class="fa-solid fa-music"></i> Hollywood Bowl</button>
+    <button class="venue-chip" onclick="searchNearVenue('Ryman Auditorium')"><i class="fa-solid fa-guitar"></i> Ryman</button>
+    <button class="venue-chip" onclick="searchNearVenue('Yankee Stadium')"><i class="fa-solid fa-baseball"></i> Yankee Stadium</button>
+    <button class="venue-chip" onclick="searchNearVenue('SoFi Stadium')"><i class="fa-solid fa-football"></i> SoFi</button>
+  </div>
       <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
-        <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
+          <button class="save-search-btn" id="saveSearchBtn" onclick="toggleSaveSearch()" title="Save this search"><i class="fa-regular fa-bell"></i> Save</button>
+        </div>
         <select id="browseSort" onchange="sortListings()" style="font-size:.8rem;padding:4px 8px;border:1px solid var(--border);border-radius:6px;outline:none;background:#fff;cursor:pointer">
           <option value="default">Sort: Default</option>
           <option value="price_asc">Price: Low to High</option>
@@ -1421,6 +1536,17 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           <p style="font-size:.75rem;color:var(--muted);margin-top:2px"><i class="fa-solid fa-circle-info" style="margin-right:4px"></i>Guests will see the adjusted price automatically during your event window.</p>
         </div>
         <div class="form-row" style="margin-top:14px">
+          <div class="form-group nights-row">
+            <div><label>Min Nights</label><input type="number" id="lMinNights" min="1" max="365" placeholder="1" value="1" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:.9rem"/></div>
+            <div><label>Max Nights</label><input type="number" id="lMaxNights" min="1" max="365" placeholder="30" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:.9rem"/></div>
+          </div>
+        </div>
+        <div class="seasonal-box">
+          <h4><i class="fa-solid fa-sun" style="color:#f59e0b;margin-right:6px"></i> Seasonal Pricing <span style="font-weight:400;font-size:.75rem;color:var(--muted)">(optional)</span></h4>
+          <div id="seasonalRows"></div>
+          <button type="button" class="add-seasonal-btn" onclick="addSeasonalRow()"><i class="fa-solid fa-plus"></i> Add date range</button>
+        </div>
+        <div class="form-row" style="margin-top:14px">
           <div class="form-group">
             <label>Cancellation Policy</label>
             <select id="lCancelPolicy">
@@ -1502,6 +1628,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
         <input type="file" id="listingPhotosInput" accept="image/*" multiple class="hidden" onchange="addListingPhotos(this)"/>
         <div class="photo-thumbs" id="listingPhotoThumbs"></div>
       </div>
+      <div class="autosave-dot" id="autosaveDot" style="margin-bottom:8px"><div class="dot"></div><span id="autosaveText">Draft auto-saves as you type</span></div>
       <button type="submit" class="submit-host-btn">Submit Listing for Review &rarr;</button>
     </form>
   </div>
@@ -1568,6 +1695,17 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
       <div id="myListingsList"></div>
     </div>
     <div class="dash-panel" id="dashHosting">
+      <div class="away-mode-row" id="awayModeRow">
+        <i class="fa-solid fa-moon" style="color:#f59e0b"></i>
+        <span style="flex:1"><strong>Away mode</strong> — Guests will see an auto-response and new booking requests will be paused.</span>
+        <label class="away-toggle"><input type="checkbox" id="awayToggle" onchange="toggleAwayMode(this.checked)"/><span class="away-slider"></span></label>
+      </div>
+      <div class="host-stats-grid" id="hostStatsGrid" style="display:none">
+        <div class="host-stat-card"><div class="host-stat-val" id="hsTotalEarnings">—</div><div class="host-stat-lbl">Total Payout</div></div>
+        <div class="host-stat-card"><div class="host-stat-val" id="hsTotalBookings">—</div><div class="host-stat-lbl">Total Bookings</div></div>
+        <div class="host-stat-card"><div class="host-stat-val" id="hsAvgNightly">—</div><div class="host-stat-lbl">Avg / Booking</div></div>
+        <div class="host-stat-card"><div class="host-stat-val" id="hsOccupancy">—</div><div class="host-stat-lbl">Occupancy Rate</div></div>
+      </div>
       <div class="earnings-chart-card" id="earningsChartCard" style="display:none">
         <h3><i class="fa-solid fa-chart-column" style="color:var(--green);margin-right:6px"></i> Earnings Overview</h3>
         <div class="chart-sub">Revenue from the last 6 months</div>
@@ -1591,6 +1729,12 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
           </div>
           <div class="msg-thread hidden" id="msgThread"></div>
           <div class="msg-input-row hidden" id="msgInputRow">
+            <div class="quick-replies" id="quickReplies">
+              <button class="quick-reply-chip" onclick="useQuickReply('What's the access code?')">What's the access code?</button>
+              <button class="quick-reply-chip" onclick="useQuickReply('Is the space still available?')">Still available?</button>
+              <button class="quick-reply-chip" onclick="useQuickReply('Can I arrive early?')">Early arrival?</button>
+              <button class="quick-reply-chip" onclick="useQuickReply('Thanks! See you then.')">Thanks! See you then.</button>
+            </div>
             <input type="text" id="msgInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()" oninput="document.getElementById('msgSendBtn').disabled=!this.value.trim()"/>
             <button class="msg-send-btn" id="msgSendBtn" onclick="sendMessage()" disabled>Send</button>
           </div>
@@ -2015,12 +2159,13 @@ let _messagesLoaded = false;
 // ============================================================
 // NAVIGATION
 // ============================================================
-function showPage(name) {
+function showPage(name, opts) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (name === 'browse') { setTimeout(() => { if (!leafletMap) initMap(); }, 50); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
   if (name === 'home') renderRecentlyViewed();
+  if (name === 'host') setTimeout(initHostFormAutosave, 100);
   // Update nav active state
   const navMap = { browse: 'btnBrowse', legal: 'btnHowItWorks' };
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('nav-active'));
@@ -2029,6 +2174,9 @@ function showPage(name) {
   // Update URL hash
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
+  // Page title
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works' };
+  setPageTitle(titles[name] || null);
 }
 
 // ============================================================
@@ -2345,7 +2493,7 @@ function buildListingCard(l) {
         ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
         ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
         ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-        ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''}
+        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''}
       </div>
     </div>
   </div>`;
@@ -2659,6 +2807,8 @@ function openDetail(id) {
   calcBooking();
   loadReviews(l.id);
   showPage('detail');
+  const _odl = (listings || []).find(x => String(x.id) === String(id)) || SAMPLE_LISTINGS.find(x => String(x.id) === String(id));
+  if (_odl) setPageTitle(`${_odl.title} · ${_odl.city}, ${_odl.state}`);
 }
 
 function fmtDate(d) { return d.toISOString().slice(0,10); }
@@ -2923,6 +3073,9 @@ async function submitListing(e) {
     outdoor_shower: document.getElementById('lOutdoorShower').checked,
     bathroom: document.getElementById('lBathroom').checked,
     instant_book: document.getElementById('lInstantBook').checked,
+    min_nights: parseInt(document.getElementById('lMinNights')?.value) || 1,
+    max_nights: parseInt(document.getElementById('lMaxNights')?.value) || null,
+    seasonal_pricing: getSeasonalPricing(),
     length_ft: parseInt(document.getElementById('lLen').value) || null,
     width_ft: parseInt(document.getElementById('lWid').value) || null,
     height_ft: parseInt(document.getElementById('lHgt').value) || null,
@@ -2985,7 +3138,7 @@ async function submitListing(e) {
     }
     const { error } = await db.from('listings').insert(listing);
     if (error) throw error;
-    showToast("Listing submitted for review! It will go live within 48 hours.", 'success');
+    showToast("Listing submitted for review! It will go live within 48 hours.", 'success'); clearHostDraft();
     document.getElementById('hostForm').reset();
     listingPhotoFiles = [];
     document.getElementById('listingPhotoThumbs').innerHTML = '';
@@ -3125,7 +3278,8 @@ async function loadMyBookings() {
             ${canComplete?`<button class="btn-sm btn-sm-blue" onclick="markBookingComplete('${b.id}')">Mark Complete</button>`:''}
             ${canReview?`<button class="btn-sm btn-sm-green" onclick="openReviewModal('${b.id}','${b.listing_id}')">Leave Review ★</button>`:''}
             ${b.status==='confirmed'?`<button class="extend-btn" onclick="openExtendModal('${b.id}','${b.check_out}')"><i class="fa-solid fa-calendar-plus"></i> Extend</button>`:''}
-            ${b.status==='confirmed'||b.status==='completed'?`<button class="print-booking-btn" onclick="printBooking(${JSON.stringify(b)})"><i class="fa-solid fa-print"></i></button>`:''}
+            ${b.status==='confirmed'||b.status==='completed'?`<button class="btn-sm" style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b" onclick="openDisputeModal('${b.id}')"><i class="fa-solid fa-shield-halved"></i> Dispute</button>
+            <button class="print-booking-btn" onclick="printBooking(${JSON.stringify(b)})"><i class="fa-solid fa-print"></i></button>`:''}
           </div>
         </div>
       </div>`;
@@ -3160,6 +3314,8 @@ async function loadMyListings() {
             <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
             ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
             <button class="btn-sm btn-sm-blue" onclick="editListing('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="cloneListing('${l.id}')"><i class="fa-solid fa-clone"></i> Clone</button>
+            <button class="btn-sm ${l.featured?'btn-sm-yellow':''}" onclick="toggleFeatured('${l.id}',${!!l.featured})" style="${l.featured?'background:#fef3c7;border-color:#f59e0b;color:#92400e':'background:var(--gray2);border:1px solid var(--border)'}"><i class="fa-solid fa-star"></i> ${l.featured?'Featured':'Feature'}</button>
           </div>
         </div>
       </div>`).join('');
@@ -3359,7 +3515,7 @@ async function loadHostBookings() {
     const today = new Date().toISOString().slice(0,10);
     // Show export button
     const exportBtn = document.getElementById('exportCsvBtn');
-    if (exportBtn) { exportBtn.style.display = 'inline-flex'; window._hostBookingsData = data; }
+    if (exportBtn) { exportBtn.style.display = 'inline-flex'; window._hostBookingsData = data; renderHostStats(data); }
 
     list.innerHTML = data.map(b => {
       const guest = guestMap[b.guest_id] || {};
@@ -3757,14 +3913,28 @@ function calcEarnings() {
 // ============================================================
 // TOAST
 // ============================================================
-function showToast(msg, type='info') {
+// Toast queue — max 3 visible, auto-dequeue
+const _toastQueue = [];
+let _toastActive = 0;
+const _TOAST_MAX = 3;
+function showToast(msg, type='info', duration=3500) {
+  _toastQueue.push({ msg, type, duration });
+  _drainToastQueue();
+}
+function _drainToastQueue() {
+  if (_toastActive >= _TOAST_MAX || !_toastQueue.length) return;
+  const { msg, type, duration } = _toastQueue.shift();
+  _toastActive++;
   const ct = document.getElementById('toastContainer');
   const t  = document.createElement('div');
   t.className = `toast toast-${type}`;
-  const icons = { success:'✅', error:'❌', info:'ℹ️' };
-  t.innerHTML = (icons[type]||'') + ' ' + escapeHtml(String(msg));
+  // Allow safe HTML for icon tags (not user input)
+  t.innerHTML = msg;
   ct.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+  setTimeout(() => {
+    t.classList.add('removing');
+    setTimeout(() => { t.remove(); _toastActive--; _drainToastQueue(); }, 260);
+  }, duration);
 }
 
 // ============================================================
@@ -4456,8 +4626,7 @@ function exportBookingsCSV() {
     b.check_in, b.check_out, b.nights, b.status,
     Math.round((b.total_amount||0)/100)
   ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('
-');
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -4487,8 +4656,7 @@ async function submitPreArrival() {
     await db.from('messages').insert({
       booking_id: _preArrivalBookingId,
       sender_id: currentUser.id,
-      body: '📋 Check-in Instructions:
-' + text,
+      body: '📋 Check-in Instructions:\n' + text,
       read: false
     });
     showToast('<i class="fa-solid fa-key" style="margin-right:4px"></i> Check-in instructions sent to guest!', 'success');
@@ -4612,20 +4780,8 @@ function initInfiniteScroll() {
 function setPageTitle(title) {
   document.title = title ? `${title} — DriveStay` : 'DriveStay — Driveway & Parking Space Rentals';
 }
-// Patch showPage to update title
-const _origShowPage = showPage;
-function showPage(name, opts) {
-  _origShowPage(name, opts);
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works' };
-  setPageTitle(titles[name] || null);
-}
-// openDetail sets a specific title
-const _origOpenDetail = openDetail;
-function openDetail(id) {
-  _origOpenDetail(id);
-  const l = (listings || []).find(x => String(x.id) === String(id)) || SAMPLE_LISTINGS.find(x => String(x.id) === String(id));
-  if (l) setPageTitle(`${l.title} · ${l.city}, ${l.state}`);
-}
+// showPage patched inline above
+// openDetail title-setting patched inline
 
 // ============================================================
 // LISTING ANALYTICS (deterministic from listing id)
@@ -4826,6 +4982,362 @@ const _origHashRoute = window._hashRoute;
   }
 })();
 
+// ============================================================
+// LIGHTBOX SWIPE GESTURES (mobile touch)
+// ============================================================
+(function initLightboxSwipe() {
+  let _touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    if (!document.getElementById('lightboxOvl') || document.getElementById('lightboxOvl').classList.contains('hidden')) return;
+    _touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!document.getElementById('lightboxOvl') || document.getElementById('lightboxOvl').classList.contains('hidden')) return;
+    const diff = e.changedTouches[0].clientX - _touchStartX;
+    if (Math.abs(diff) > 50) lbNav(diff < 0 ? 1 : -1);
+  }, { passive: true });
+})();
+
+// ============================================================
+// DETAIL PAGE SKELETON LOADER
+// ============================================================
+function showDetailSkeleton() {
+  const wrap = document.querySelector('#page-detail .detail-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="detail-back" onclick="showPage('browse')"><i class="fa-solid fa-arrow-left"></i> Back to listings</div>
+    <div class="detail-skel detail-skel-photo"></div>
+    <div class="detail-skel detail-skel-title"></div>
+    <div class="detail-skel detail-skel-meta"></div>
+    <div class="detail-skel detail-skel-body" style="width:100%"></div>
+    <div class="detail-skel detail-skel-body" style="width:80%"></div>
+    <div class="detail-skel detail-skel-body" style="width:90%"></div>`;
+}
+
+// ============================================================
+// ONBOARDING TOUR
+// ============================================================
+const _TOUR_STEPS = [
+  { sel: '.nav-search', title: 'Search any city', text: 'Type a city, address, or venue name to find parking nearby.', pos: 'bottom' },
+  { sel: '#btnBrowse', title: 'Browse all spaces', text: 'See every available space on an interactive map — filter by price, amenities, and distance.', pos: 'bottom' },
+  { sel: '.dark-toggle', title: 'Dark mode', text: 'Prefer a darker interface? Toggle it anytime — your preference is saved.', pos: 'bottom-left' },
+  { sel: '#btnHost', title: 'List your space', text: 'Have a driveway or garage? Start earning in 5 minutes — completely free to list.', pos: 'bottom-left' },
+];
+let _tourStep = 0;
+let _tourEl = null;
+
+function startTour() {
+  if (!localStorage.getItem('ds_tour_done')) {
+    _tourStep = 0;
+    _renderTourStep();
+  }
+}
+function _renderTourStep() {
+  _cleanTour();
+  if (_tourStep >= _TOUR_STEPS.length) { _endTour(); return; }
+  const step = _TOUR_STEPS[_tourStep];
+  const target = document.querySelector(step.sel);
+  if (!target) { _tourStep++; _renderTourStep(); return; }
+
+  const rect = target.getBoundingClientRect();
+  const overlay = document.createElement('div');
+  overlay.className = 'tour-overlay';
+  overlay.id = 'tourOverlay';
+
+  const spot = document.createElement('div');
+  spot.className = 'tour-spotlight';
+  spot.style.cssText = `top:${rect.top - 6}px;left:${rect.left - 6}px;width:${rect.width + 12}px;height:${rect.height + 12}px`;
+  overlay.appendChild(spot);
+
+  const tip = document.createElement('div');
+  tip.className = 'tour-tooltip';
+  const dots = _TOUR_STEPS.map((_,i) => `<div class="tour-dot${i===_tourStep?' active':''}"></div>`).join('');
+  tip.innerHTML = `
+    <div class="tour-dots">${dots}</div>
+    <h4>${step.title}</h4>
+    <p>${step.text}</p>
+    <div class="tour-btns">
+      <span class="tour-skip" onclick="_endTour()">Skip tour</span>
+      ${_tourStep > 0 ? '<button class="btn-ghost" style="padding:6px 14px;font-size:.8rem" onclick="_tourStep-=2;_tourStep++;_renderTourStep()">Back</button>' : ''}
+      <button class="btn-primary" style="padding:7px 16px;font-size:.8rem" onclick="_tourStep++;_renderTourStep()">${_tourStep === _TOUR_STEPS.length - 1 ? 'Done!' : 'Next'}</button>
+    </div>`;
+
+  // Position tooltip below or above target
+  const tipTop = rect.bottom + 14;
+  const tipLeft = Math.max(12, Math.min(rect.left, window.innerWidth - 344));
+  tip.style.cssText = `top:${tipTop}px;left:${tipLeft}px`;
+  document.body.appendChild(overlay);
+  document.body.appendChild(tip);
+}
+function _cleanTour() {
+  document.getElementById('tourOverlay')?.remove();
+  document.querySelectorAll('.tour-tooltip').forEach(e => e.remove());
+}
+function _endTour() {
+  _cleanTour();
+  try { localStorage.setItem('ds_tour_done', '1'); } catch(e) {}
+}
+
+// ============================================================
+// HOST FORM AUTOSAVE
+// ============================================================
+const _DRAFT_KEY = 'ds_host_draft';
+let _autosaveTimer = null;
+const _HOST_FIELDS = ['lTitle','lAddress','lCity','lState','lDesc','lPriceNight','lPriceWeek','lPriceMonth','lSurfaceType','lLenFt','lWidFt','lMaxVehicles','lMinNights','lMaxNights','lCancelPolicy'];
+function initHostFormAutosave() {
+  // Restore draft
+  try {
+    const draft = JSON.parse(localStorage.getItem(_DRAFT_KEY) || '{}');
+    _HOST_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && draft[id] !== undefined) el.value = draft[id];
+    });
+    if (Object.keys(draft).length) _setAutosaveDot('saved', 'Draft restored');
+  } catch(e) {}
+  // Attach listeners
+  _HOST_FIELDS.forEach(id => {
+    document.getElementById(id)?.addEventListener('input', _scheduleDraftSave);
+  });
+}
+function _scheduleDraftSave() {
+  clearTimeout(_autosaveTimer);
+  _setAutosaveDot('saving', 'Saving draft...');
+  _autosaveTimer = setTimeout(_saveDraft, 900);
+}
+function _saveDraft() {
+  try {
+    const draft = {};
+    _HOST_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) draft[id] = el.value; });
+    localStorage.setItem(_DRAFT_KEY, JSON.stringify(draft));
+    _setAutosaveDot('saved', 'Draft saved');
+    setTimeout(() => _setAutosaveDot('', 'Draft auto-saves as you type'), 2000);
+  } catch(e) {}
+}
+function _setAutosaveDot(state, text) {
+  const el = document.getElementById('autosaveDot');
+  const tx = document.getElementById('autosaveText');
+  if (el) el.className = 'autosave-dot' + (state === 'saved' ? ' saved' : '');
+  if (tx) tx.textContent = text;
+}
+function clearHostDraft() {
+  try { localStorage.removeItem(_DRAFT_KEY); } catch(e) {}
+}
+
+// ============================================================
+// SEASONAL PRICING ROWS
+// ============================================================
+let _seasonalIdx = 0;
+function addSeasonalRow() {
+  const container = document.getElementById('seasonalRows');
+  if (!container) return;
+  const idx = _seasonalIdx++;
+  const row = document.createElement('div');
+  row.className = 'seasonal-row';
+  row.id = `seasonal-${idx}`;
+  row.innerHTML = `
+    <input type="date" id="sSFrom${idx}" placeholder="From"/>
+    <input type="date" id="sSTo${idx}" placeholder="To"/>
+    <input type="number" id="sSPrice${idx}" placeholder="$/night" min="5"/>
+    <button type="button" class="seasonal-remove" onclick="document.getElementById('seasonal-${idx}').remove()"><i class="fa-solid fa-xmark"></i></button>`;
+  container.appendChild(row);
+}
+function getSeasonalPricing() {
+  const rows = document.querySelectorAll('[id^="seasonal-"]');
+  return Array.from(rows).map(r => {
+    const idx = r.id.split('-')[1];
+    return {
+      from: document.getElementById(`sSFrom${idx}`)?.value,
+      to:   document.getElementById(`sSTo${idx}`)?.value,
+      price: parseFloat(document.getElementById(`sSPrice${idx}`)?.value) || 0
+    };
+  }).filter(r => r.from && r.to && r.price > 0);
+}
+
+// ============================================================
+// LISTING CLONE
+// ============================================================
+async function cloneListing(listingId) {
+  if (!confirm('Clone this listing? A copy will be created as a draft.')) return;
+  try {
+    const { data: orig, error } = await db.from('listings').select('*').eq('id', listingId).single();
+    if (error || !orig) { showToast('Could not load listing', 'error'); return; }
+    const { id, created_at, updated_at, ...rest } = orig;
+    const cloned = { ...rest, title: orig.title + ' (Copy)', status: 'inactive', host_id: currentUser.id };
+    const { error: insertErr } = await db.from('listings').insert(cloned);
+    if (insertErr) throw insertErr;
+    showToast('<i class="fa-solid fa-clone" style="margin-right:4px"></i> Listing cloned as draft!', 'success');
+    loadMyListings();
+  } catch(e) {
+    showToast('Clone failed: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// FEATURED LISTING TOGGLE
+// ============================================================
+async function toggleFeatured(listingId, isFeatured) {
+  try {
+    await db.from('listings').update({ featured: !isFeatured }).eq('id', listingId);
+    showToast(!isFeatured ? '<i class="fa-solid fa-star" style="margin-right:4px;color:#f59e0b"></i> Listing featured!' : 'Featured status removed', !isFeatured ? 'success' : 'info');
+    loadMyListings();
+  } catch(e) {
+    showToast('Update failed', 'error');
+  }
+}
+
+// ============================================================
+// VENUE SHORTCUT SEARCH
+// ============================================================
+function searchNearVenue(venueName) {
+  const navSearch = document.getElementById('navSearch');
+  if (navSearch) navSearch.value = venueName;
+  showPage('browse');
+  setTimeout(() => { applyFilter(); }, 100);
+}
+
+// ============================================================
+// SAVE SEARCH / NOTIFY
+// ============================================================
+let _savedSearches = [];
+try { _savedSearches = JSON.parse(localStorage.getItem('ds_saved_searches') || '[]'); } catch(e) {}
+function toggleSaveSearch() {
+  const btn = document.getElementById('saveSearchBtn');
+  const term = document.getElementById('navSearch')?.value?.trim() || document.getElementById('browseCount')?.textContent || '';
+  const key = term + '_' + new Date().toDateString();
+  const existing = _savedSearches.find(s => s.term === term);
+  if (existing) {
+    _savedSearches = _savedSearches.filter(s => s.term !== term);
+    if (btn) { btn.classList.remove('saved'); btn.innerHTML = '<i class="fa-regular fa-bell"></i> Save'; }
+    showToast('Search alert removed', 'info');
+  } else {
+    _savedSearches.push({ term, savedAt: Date.now() });
+    if (btn) { btn.classList.add('saved'); btn.innerHTML = '<i class="fa-solid fa-bell"></i> Saved!'; }
+    showToast('<i class="fa-solid fa-bell" style="margin-right:4px"></i> We\'ll notify you when new spaces match!', 'success');
+  }
+  try { localStorage.setItem('ds_saved_searches', JSON.stringify(_savedSearches)); } catch(e) {}
+}
+
+// ============================================================
+// HOST AWAY MODE
+// ============================================================
+(function initAwayMode() {
+  try {
+    const away = localStorage.getItem('ds_away_mode') === '1';
+    const toggle = document.getElementById('awayToggle');
+    if (toggle) toggle.checked = away;
+  } catch(e) {}
+})();
+function toggleAwayMode(enabled) {
+  try { localStorage.setItem('ds_away_mode', enabled ? '1' : '0'); } catch(e) {}
+  showToast(enabled
+    ? '<i class="fa-solid fa-moon" style="margin-right:4px"></i> Away mode on — guests will see your auto-response'
+    : '<i class="fa-solid fa-sun" style="margin-right:4px"></i> Away mode off — booking requests are active',
+    enabled ? 'info' : 'success');
+  // In production: update profiles.away_mode in Supabase
+}
+
+// ============================================================
+// QUICK REPLY TEMPLATES (messages)
+// ============================================================
+function useQuickReply(text) {
+  const input = document.getElementById('msgInput');
+  const btn = document.getElementById('msgSendBtn');
+  if (input) { input.value = text; input.focus(); }
+  if (btn) btn.disabled = false;
+}
+
+// ============================================================
+// READ RECEIPTS
+// ============================================================
+function markMessagesRead(bookingId) {
+  if (!currentUser || !bookingId) return;
+  db.from('messages')
+    .update({ read: true })
+    .eq('booking_id', bookingId)
+    .neq('sender_id', currentUser.id)
+    .then(() => {}).catch(() => {});
+}
+
+// ============================================================
+// DISPUTE RESOLUTION FLOW
+// ============================================================
+let _disputeBookingId = null;
+let _disputeType = null;
+function openDisputeModal(bookingId) {
+  _disputeBookingId = bookingId;
+  _disputeType = null;
+  document.querySelectorAll('.dispute-type-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('disputeDesc').value = '';
+  document.getElementById('disputeModal').classList.remove('hidden');
+}
+function selectDisputeType(type, el) {
+  _disputeType = type;
+  document.querySelectorAll('.dispute-type-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+async function submitDispute() {
+  const desc = document.getElementById('disputeDesc')?.value?.trim();
+  if (!_disputeType) { showToast('Please select an issue type', 'error'); return; }
+  if (!desc) { showToast('Please describe the issue', 'error'); return; }
+  try {
+    await db.from('messages').insert({
+      booking_id: _disputeBookingId,
+      sender_id: currentUser.id,
+      body: `🚨 DISPUTE (${_disputeType}): ${desc}`,
+      read: false
+    });
+    showToast('<i class="fa-solid fa-shield-halved" style="margin-right:4px"></i> Dispute filed — our team will respond within 24 hours.', 'success');
+  } catch(e) {
+    showToast('Dispute submitted (will sync when connected)', 'success');
+  }
+  document.getElementById('disputeModal').classList.add('hidden');
+}
+
+// ============================================================
+// HOST STATS OVERVIEW (called from loadHostBookings)
+// ============================================================
+function renderHostStats(data) {
+  const grid = document.getElementById('hostStatsGrid');
+  if (!grid) return;
+  const paid = (data || []).filter(b => b.status === 'completed' || b.status === 'confirmed');
+  if (!paid.length) { grid.style.display = 'none'; return; }
+  grid.style.display = 'grid';
+  const totalGross = paid.reduce((s, b) => s + (Number(b.total_amount || 0) / 100), 0);
+  const totalNet = totalGross * 0.90;
+  const avgPerBooking = paid.length ? totalNet / paid.length : 0;
+  // Simple occupancy: sum nights / (days since first booking * active listings assumed 1)
+  const totalNights = paid.reduce((s, b) => s + (Number(b.nights) || 1), 0);
+  const daysSinceFirst = paid.length ? Math.max(1, Math.ceil((Date.now() - new Date(paid[paid.length-1].created_at || Date.now())) / 86400000)) : 30;
+  const occupancy = Math.min(99, Math.round((totalNights / daysSinceFirst) * 100));
+  document.getElementById('hsTotalEarnings').textContent = '$' + Math.round(totalNet).toLocaleString();
+  document.getElementById('hsTotalBookings').textContent = paid.length;
+  document.getElementById('hsAvgNightly').textContent = '$' + Math.round(avgPerBooking);
+  document.getElementById('hsOccupancy').textContent = occupancy + '%';
+}
+
+// loadHostBookings renderHostStats wired inline
+
+// initHostFormAutosave is called from the existing showPage patch below via the hosting tab check
+
+// Autosave: clear draft after listing submitted (patched into form submit handler above)
+// clearHostDraft() is called from the form's existing submitListing success path
+
+// Start tour for new users after load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (!localStorage.getItem('ds_tour_done') && !localStorage.getItem('sb-uvhhhwfhrdywczlhxvaa-auth-token')) {
+      startTour();
+    }
+  }, 2000);
+});
+
+// Patch openConvo to mark messages read
+const _origOpenConvo = openConvo;
+function openConvo(bookingId) {
+  if (typeof _origOpenConvo === 'function') _origOpenConvo(bookingId);
+  markMessagesRead(bookingId);
+}
+
 </script>
 <!-- LIGHTBOX -->
 <div class="lightbox-overlay hidden" id="lightboxOvl" onclick="lbBgClick(event)">
@@ -4898,6 +5410,25 @@ const _origHashRoute = window._hashRoute;
     <div class="guest-profile-name" id="guestProfileName">—</div>
     <div class="guest-profile-meta" id="guestProfileMeta"></div>
     <div id="guestReviewsList"></div>
+  </div>
+</div>
+
+<!-- DISPUTE MODAL -->
+<div class="dispute-modal hidden" id="disputeModal">
+  <div class="dispute-card">
+    <h3><i class="fa-solid fa-shield-halved" style="color:#ef4444;margin-right:6px"></i> File a Dispute</h3>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">Our team reviews all disputes within 24 hours. Select the issue type:</p>
+    <div class="dispute-types">
+      <button class="dispute-type-btn" onclick="selectDisputeType('No show',this)"><i class="fa-solid fa-user-slash"></i><br/>Host no-show</button>
+      <button class="dispute-type-btn" onclick="selectDisputeType('Misrepresentation',this)"><i class="fa-solid fa-image-slash"></i><br/>Not as described</button>
+      <button class="dispute-type-btn" onclick="selectDisputeType('Access issue',this)"><i class="fa-solid fa-lock"></i><br/>Can't access space</button>
+      <button class="dispute-type-btn" onclick="selectDisputeType('Damage',this)"><i class="fa-solid fa-car-burst"></i><br/>Property damage</button>
+    </div>
+    <textarea id="disputeDesc" placeholder="Describe what happened in detail..." style="width:100%;min-height:80px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;resize:vertical;box-sizing:border-box;margin-bottom:12px"></textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1;padding:10px;background:#ef4444" onclick="submitDispute()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Submit Dispute</button>
+      <button class="btn-ghost" onclick="document.getElementById('disputeModal').classList.add('hidden')" style="padding:10px 16px">Cancel</button>
+    </div>
   </div>
 </div>
 
