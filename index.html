@@ -2840,7 +2840,7 @@ function openDetail(id) {
   calcBooking();
   loadReviews(l.id);
   showPage('detail');
-  const _odl = (listings || []).find(x => String(x.id) === String(id)) || SAMPLE_LISTINGS.find(x => String(x.id) === String(id));
+  const _odl = (allListings || []).find(x => String(x.id) === String(id)) || SAMPLE_LISTINGS.find(x => String(x.id) === String(id));
   if (_odl) setPageTitle(`${_odl.title} · ${_odl.city}, ${_odl.state}`);
 }
 
