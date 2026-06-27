@@ -854,7 +854,7 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .rv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .rv-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm)}
 .rv-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.rv-card-img{height:120px;background:var(--gray2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.rv-card-img{height:120px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .rv-card-img img{width:100%;height:100%;object-fit:cover}
 .rv-card-img .rv-icon{font-size:2rem;color:var(--muted)}
 .rv-card-body{padding:10px 12px}
@@ -1083,10 +1083,10 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .page-hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .page-hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:600;margin-bottom:16px}
 .page-wrap{max-width:1100px;margin:0 auto;padding:56px 24px}
-.page-section{margin-bottom:60px}
+.page-section{margin-bottom:60px;text-align:center}
 .page-section-label{display:inline-block;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#15803d;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:24px;padding:4px 14px;margin-bottom:14px}
 .page-section h2{font-size:2rem;font-weight:900;margin-bottom:10px;letter-spacing:-.03em;font-family:var(--font-display)}
-.page-section-sub{font-size:.95rem;color:var(--muted);margin-bottom:36px;line-height:1.65;max-width:560px}
+.page-section-sub{font-size:.95rem;color:var(--muted);margin-bottom:36px;line-height:1.65;max-width:560px;margin-left:auto;margin-right:auto}
 /* icon-grid shared */
 .icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
 .icon-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:26px;transition:.22s cubic-bezier(.22,.68,0,1.2)}
@@ -1232,8 +1232,19 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
 .blog-grid .reveal.vis:nth-child(2),.event-cat-grid .reveal.vis:nth-child(2),.icon-grid .reveal.vis:nth-child(2) { animation-delay:.07s; }
 .blog-grid .reveal.vis:nth-child(3),.event-cat-grid .reveal.vis:nth-child(3),.icon-grid .reveal.vis:nth-child(3) { animation-delay:.14s; }
 .blog-grid .reveal.vis:nth-child(4),.event-cat-grid .reveal.vis:nth-child(4),.icon-grid .reveal.vis:nth-child(4) { animation-delay:.21s; }
-.blog-grid .reveal.vis:nth-child(5),.event-cat-grid .reveal.vis:nth-child(5) { animation-delay:.28s; }
-.blog-grid .reveal.vis:nth-child(6),.event-cat-grid .reveal.vis:nth-child(6) { animation-delay:.35s; }
+.blog-grid .reveal.vis:nth-child(5),.event-cat-grid .reveal.vis:nth-child(5),.icon-grid .reveal.vis:nth-child(5) { animation-delay:.28s; }
+.blog-grid .reveal.vis:nth-child(6),.event-cat-grid .reveal.vis:nth-child(6),.icon-grid .reveal.vis:nth-child(6) { animation-delay:.35s; }
+.icon-grid .reveal.vis:nth-child(7) { animation-delay:.42s; }
+.icon-grid .reveal.vis:nth-child(8) { animation-delay:.49s; }
+/* ── Venue ticker ───────────────────────────────────── */
+.venue-ticker-wrap{background:#f0fdf4;border-top:1px solid #d1fae5;border-bottom:1px solid #d1fae5;padding:9px 0;overflow:hidden;position:relative}
+.venue-ticker-wrap::before,.venue-ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:1;pointer-events:none}
+.venue-ticker-wrap::before{left:0;background:linear-gradient(to right,#f0fdf4,transparent)}
+.venue-ticker-wrap::after{right:0;background:linear-gradient(to left,#f0fdf4,transparent)}
+.venue-ticker{display:flex;gap:36px;width:max-content;animation:venueTicker 30s linear infinite;white-space:nowrap;align-items:center}
+.venue-ticker span{font-size:.78rem;font-weight:700;color:#15803d;display:inline-flex;align-items:center;gap:5px}
+.venue-ticker span::before{content:'·';color:#86efac;font-size:1.1rem;line-height:1}
+@keyframes venueTicker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ─── Hero enhancements ───────────────────────────────────────── */
 .hero {
@@ -6073,6 +6084,12 @@ async function adminRejectListing(id) {
       <button class="btn-outline" style="padding:12px 28px;border-radius:12px;font-size:.95rem;font-weight:700;color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1)" onclick="requireAuth('host')"><i class="fa-solid fa-plus" style="margin-right:6px"></i> List Your Space</button>
     </div>
   </div>
+  <div class="venue-ticker-wrap" aria-hidden="true">
+    <div class="venue-ticker">
+      <span>🏟️ Dodger Stadium</span><span>🎵 Hollywood Bowl</span><span>🏈 SoFi Stadium</span><span>⚽ Rose Bowl</span><span>🎤 Kia Forum</span><span>🏀 Chase Center</span><span>⚾ Fenway Park</span><span>🏒 Madison Square Garden</span><span>🏟️ Wrigley Field</span><span>🎪 Coachella Valley</span><span>🎓 UCLA Pauley Pavilion</span><span>🏈 AT&amp;T Stadium</span><span>🎵 Red Rocks Amphitheatre</span><span>🏟️ Levi's Stadium</span>
+      <span>🏟️ Dodger Stadium</span><span>🎵 Hollywood Bowl</span><span>🏈 SoFi Stadium</span><span>⚽ Rose Bowl</span><span>🎤 Kia Forum</span><span>🏀 Chase Center</span><span>⚾ Fenway Park</span><span>🏒 Madison Square Garden</span><span>🏟️ Wrigley Field</span><span>🎪 Coachella Valley</span><span>🎓 UCLA Pauley Pavilion</span><span>🏈 AT&amp;T Stadium</span><span>🎵 Red Rocks Amphitheatre</span><span>🏟️ Levi's Stadium</span>
+    </div>
+  </div>
   <div class="page-wrap">
     <div class="page-section">
       <div class="page-section-label">Browse by Event Type</div>
@@ -6117,17 +6134,17 @@ async function adminRejectListing(id) {
       <h2>3 Steps to Stress-Free Event Parking</h2>
       <p class="page-section-sub">No app download. No parking-lot lines. No surprises.</p>
       <div class="icon-grid">
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-magnifying-glass"></i></div>
           <h3>1. Search Near Your Venue</h3>
           <p>Enter the venue or stadium name and pick your event date. We'll show you all available driveways within walking distance.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-bolt"></i></div>
           <h3>2. Book Instantly</h3>
           <p>Most spots are Instant Book — no waiting for host approval. Pay securely through Stripe and receive your confirmation.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-location-dot"></i></div>
           <h3>3. Show Up & Park</h3>
           <p>Your booking confirmation includes the exact address and any access instructions from the host. Walk right in.</p>
@@ -6139,17 +6156,17 @@ async function adminRejectListing(id) {
       <div class="page-section-label">For Hosts</div>
       <h2>Earn Big on Event Days</h2>
       <div class="icon-grid">
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon orange"><i class="fa-solid fa-dollar-sign"></i></div>
           <h3>Premium Rates</h3>
           <p>Event-night parking can earn 3–5× your normal nightly rate. Hosts near major stadiums earn $75–$150 per event.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
           <h3>You Control Your Calendar</h3>
           <p>Block off dates whenever you want. List only for specific events. Your driveway, your rules.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon orange"><i class="fa-solid fa-shield-halved"></i></div>
           <h3>Protected Up to $10,000</h3>
           <p>Every booking is covered by our Host Protection program. Park your guests with confidence.</p>
@@ -6218,22 +6235,22 @@ async function adminRejectListing(id) {
       <div class="page-section-label">Use Cases</div>
       <h2>Who Books Big Rig Spaces?</h2>
       <div class="icon-grid">
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon slate"><i class="fa-solid fa-truck-moving"></i></div>
           <h3>Long-Haul Truckers</h3>
           <p>Safe, legal overnight stops away from crowded highway rest areas. Sleep better, drive safer.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon slate"><i class="fa-solid fa-caravan"></i></div>
           <h3>RV & Motorhome Travelers</h3>
           <p>Alternative to expensive RV parks. Hookups available at select hosts.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon slate"><i class="fa-solid fa-warehouse"></i></div>
           <h3>Delivery & Box Trucks</h3>
           <p>Secure staging area near job sites, warehouses, or city drop zones.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon slate"><i class="fa-solid fa-film"></i></div>
           <h3>Film & Production Crews</h3>
           <p>Trailers, grip trucks, and production vehicles need space — we have it.</p>
@@ -6246,17 +6263,17 @@ async function adminRejectListing(id) {
       <h2>Have a Big Property? Earn More.</h2>
       <p class="page-section-sub">Hosts with commercial-capable spaces can charge 2–4× standard rates. Truckers pay premium for safe, convenient stops.</p>
       <div class="icon-grid">
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
           <h3>$60–$200/night</h3>
           <p>Average big rig booking rate on Driveway Host, depending on hookups and location.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-calendar-week"></i></div>
           <h3>Weekly Stays Common</h3>
           <p>Many commercial drivers book 3–7 nights at a time. Less turnover, more earnings.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-check-circle"></i></div>
           <h3>Flag Your Listing</h3>
           <p>Enable "Big Rig Friendly" on your listing to appear in commercial vehicle searches.</p>
@@ -6274,7 +6291,7 @@ async function adminRejectListing(id) {
 
 <!-- ===== SECURITY & SAFETY PAGE ===== -->
 <div class="page" id="page-security">
-  <div class="page-hero page-hero-blue">
+  <div class="page-hero page-hero-green">
     <div class="page-hero-badge"><i class="fa-solid fa-shield-halved"></i> Trust & Safety</div>
     <h1>Your Safety Is Our Priority</h1>
     <p>Every booking on Driveway Host is backed by identity verification, payment protection, and a dedicated trust & safety team.</p>
@@ -6293,33 +6310,33 @@ async function adminRejectListing(id) {
       <h2>How We Protect Everyone</h2>
       <p class="page-section-sub">Layers of trust and verification built into every transaction.</p>
       <div class="icon-grid">
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-id-card"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-id-card"></i></div>
           <h3>Identity Verification</h3>
           <p>All guests must verify their identity before booking. Government ID + selfie match via our verification partner.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-lock"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-lock"></i></div>
           <h3>Secure Payments</h3>
           <p>All payments flow through Stripe. We never store card details. Hosts receive payouts automatically within 24 hours of check-in.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-star"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-star"></i></div>
           <h3>Two-Way Reviews</h3>
           <p>Hosts and guests review each other after every stay. Consistent bad actors are removed from the platform.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-headset"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-headset"></i></div>
           <h3>24/7 Support</h3>
           <p>Our trust & safety team is available around the clock. Disputes are reviewed within 24 hours.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-camera"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-camera"></i></div>
           <h3>Photo Documentation</h3>
           <p>Hosts are encouraged to photograph their space before and after each booking to support any claims.</p>
         </div>
-        <div class="icon-card">
-          <div class="icon-card-icon blue"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="icon-card reveal">
+          <div class="icon-card-icon green"><i class="fa-solid fa-triangle-exclamation"></i></div>
           <h3>Dispute Resolution</h3>
           <p>Something went wrong? File a dispute in your dashboard and our team will mediate fairly, typically within 24–48 hours.</p>
         </div>
@@ -6330,17 +6347,17 @@ async function adminRejectListing(id) {
       <div class="page-section-label">Safety Tips</div>
       <h2>Best Practices</h2>
       <div class="icon-grid">
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-user-check"></i></div>
           <h3>For Hosts</h3>
           <p>Always check guest profiles and reviews before accepting bookings. Use our messaging system — never share personal contact details outside the app. Document your space with photos before each stay.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-car"></i></div>
           <h3>For Guests</h3>
           <p>Only park during your reserved time window. Respect the host's rules. If you have trouble accessing the space, contact the host through the app or reach our support team.</p>
         </div>
-        <div class="icon-card">
+        <div class="icon-card reveal">
           <div class="icon-card-icon green"><i class="fa-solid fa-phone"></i></div>
           <h3>Emergency Contact</h3>
           <p>For urgent safety concerns during a booking, contact local emergency services first, then reach our 24/7 trust & safety line at <strong>drivewayhost@pm.me</strong>.</p>
