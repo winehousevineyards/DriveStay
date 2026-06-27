@@ -1084,13 +1084,14 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .page-hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:600;margin-bottom:16px}
 .page-wrap{max-width:1100px;margin:0 auto;padding:56px 24px}
 .page-section{margin-bottom:60px}
-.page-section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:8px}
-.page-section h2{font-size:2rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em}
+.page-section-label{display:inline-block;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#15803d;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:24px;padding:4px 14px;margin-bottom:14px}
+.page-section h2{font-size:2rem;font-weight:900;margin-bottom:10px;letter-spacing:-.03em;font-family:var(--font-display)}
 .page-section-sub{font-size:.95rem;color:var(--muted);margin-bottom:36px;line-height:1.65;max-width:560px}
 /* icon-grid shared */
 .icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-.icon-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:26px;transition:.18s}
-.icon-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:var(--shadow)}
+.icon-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:26px;transition:.22s cubic-bezier(.22,.68,0,1.2)}
+.icon-card:hover{border-color:var(--green);transform:translateY(-5px);box-shadow:0 16px 40px rgba(22,163,74,.1)}
+.icon-card h3{font-family:var(--font-display)}
 .icon-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px}
 .icon-card-icon.green{background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:var(--green)}
 .icon-card-icon.blue{background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#2563eb}
@@ -1101,10 +1102,12 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .icon-card p{font-size:.83rem;color:var(--muted);line-height:1.65}
 /* events */
 .event-cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
-.event-cat-card{border:1.5px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:.18s;background:#fff}
-.event-cat-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:var(--shadow)}
-.event-cat-card .ecc-icon{font-size:2.2rem;margin-bottom:10px}
-.event-cat-card h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.event-cat-card{border:1.5px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:.22s cubic-bezier(.22,.68,0,1.2);background:#fff;position:relative;overflow:hidden}
+.event-cat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),#4ade80);opacity:0;transition:opacity .2s}
+.event-cat-card:hover{border-color:var(--green);transform:translateY(-5px);box-shadow:0 12px 32px rgba(22,163,74,.12)}
+.event-cat-card:hover::after{opacity:1}
+.event-cat-card .ecc-icon{font-size:2.4rem;margin-bottom:12px;display:block;line-height:1}
+.event-cat-card h3{font-size:.9rem;font-weight:800;margin-bottom:4px;font-family:var(--font-display)}
 .event-cat-card p{font-size:.75rem;color:var(--muted)}
 .event-cta{background:linear-gradient(135deg,#14532d,#166534);border-radius:24px;padding:48px 36px;text-align:center;color:#fff;margin-top:48px}
 .event-cta h2{font-size:1.8rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em}
@@ -1151,9 +1154,11 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .blog-cat-chip:hover{border-color:var(--green);color:var(--green)}
 .blog-cat-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
 .blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
-.blog-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;background:#fff;cursor:pointer;transition:.2s}
-.blog-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.blog-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
+.blog-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;background:#fff;cursor:pointer;transition:.24s cubic-bezier(.22,.68,0,1.2)}
+.blog-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.1);border-color:rgba(22,163,74,.3)}
+.blog-thumb{height:180px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;overflow:hidden}
+.blog-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.06) 100%)}
+.blog-card:hover .blog-thumb{filter:brightness(1.04)}
 .blog-body{padding:20px}
 .blog-tag{display:inline-block;padding:3px 10px;background:var(--gray2);border-radius:20px;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
 .blog-tag.hosting{background:#f0fdf4;color:#166534}
@@ -1224,6 +1229,11 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
 .protection-grid .reveal.vis:nth-child(4) { animation-delay:.21s; }
 .protection-grid .reveal.vis:nth-child(5) { animation-delay:.28s; }
 .protection-grid .reveal.vis:nth-child(6) { animation-delay:.35s; }
+.blog-grid .reveal.vis:nth-child(2),.event-cat-grid .reveal.vis:nth-child(2),.icon-grid .reveal.vis:nth-child(2) { animation-delay:.07s; }
+.blog-grid .reveal.vis:nth-child(3),.event-cat-grid .reveal.vis:nth-child(3),.icon-grid .reveal.vis:nth-child(3) { animation-delay:.14s; }
+.blog-grid .reveal.vis:nth-child(4),.event-cat-grid .reveal.vis:nth-child(4),.icon-grid .reveal.vis:nth-child(4) { animation-delay:.21s; }
+.blog-grid .reveal.vis:nth-child(5),.event-cat-grid .reveal.vis:nth-child(5) { animation-delay:.28s; }
+.blog-grid .reveal.vis:nth-child(6),.event-cat-grid .reveal.vis:nth-child(6) { animation-delay:.35s; }
 
 /* ─── Hero enhancements ───────────────────────────────────────── */
 .hero {
@@ -4827,7 +4837,9 @@ function renderRecentlyViewed() {
     const rv = JSON.parse(localStorage.getItem(_RV_KEY) || '[]');
     if (!rv.length) { section.style.display = 'none'; return; }
     section.style.display = 'block';
-    grid.innerHTML = rv.map(l => `
+    // Enrich stored data with current listing (picks up photos added after save)
+    const enriched = rv.map(stored => allListings.find(l => l.id === stored.id) || stored);
+    grid.innerHTML = enriched.map(l => `
       <div class="rv-card" onclick="openDetail('${l.id}')">
         <div class="rv-card-img">
           ${l.photos?.length
@@ -6067,32 +6079,32 @@ async function adminRejectListing(id) {
       <h2>What Kind of Event?</h2>
       <p class="page-section-sub">Driveway Host has parking for every occasion — just tell us where you're headed.</p>
       <div class="event-cat-grid">
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">🏟️</div>
           <h3>Sports Games</h3>
           <p>NFL, NBA, MLB, NHL, MLS & college sports</p>
         </div>
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">🎵</div>
           <h3>Concerts</h3>
           <p>Amphitheaters, arenas, outdoor festivals</p>
         </div>
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">🎪</div>
           <h3>Festivals</h3>
           <p>Food, art, culture, and music festivals</p>
         </div>
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">💍</div>
           <h3>Weddings</h3>
           <p>Overflow parking near venues & chapels</p>
         </div>
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">🎓</div>
           <h3>Graduations</h3>
           <p>Campus parking near auditoriums</p>
         </div>
-        <div class="event-cat-card" onclick="showPage('browse')">
+        <div class="event-cat-card reveal" onclick="showPage('browse')">
           <div class="ecc-icon">🏢</div>
           <h3>Conferences</h3>
           <p>Convention centers & business events</p>
@@ -6605,7 +6617,7 @@ async function adminRejectListing(id) {
       <button class="blog-cat-chip" onclick="filterBlog('tips',this)">Guest Tips</button>
     </div>
     <div class="blog-grid" id="blogGrid">
-      <div class="blog-card" data-category="hosting" onclick="openBlogPost('maximize-driveway')">
+      <div class="blog-card reveal" data-category="hosting" onclick="openBlogPost('maximize-driveway')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">💰</div>
         <div class="blog-body">
           <div class="blog-tag hosting">Hosting Tips</div>
@@ -6614,7 +6626,7 @@ async function adminRejectListing(id) {
           <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 18, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 6 min read</span></div>
         </div>
       </div>
-      <div class="blog-card" data-category="guide" onclick="openBlogPost('event-parking-guide')">
+      <div class="blog-card reveal" data-category="guide" onclick="openBlogPost('event-parking-guide')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">🏟️</div>
         <div class="blog-body">
           <div class="blog-tag guide">Guide</div>
@@ -6623,7 +6635,7 @@ async function adminRejectListing(id) {
           <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 10, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 8 min read</span></div>
         </div>
       </div>
-      <div class="blog-card" data-category="news" onclick="openBlogPost('bigrigs-launch')">
+      <div class="blog-card reveal" data-category="news" onclick="openBlogPost('bigrigs-launch')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#1e293b,#334155)">🚚</div>
         <div class="blog-body">
           <div class="blog-tag news">News</div>
@@ -6632,7 +6644,7 @@ async function adminRejectListing(id) {
           <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> Jun 5, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 3 min read</span></div>
         </div>
       </div>
-      <div class="blog-card" data-category="hosting" onclick="openBlogPost('host-photography')">
+      <div class="blog-card reveal" data-category="hosting" onclick="openBlogPost('host-photography')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#faf5ff,#ede9fe)">📸</div>
         <div class="blog-body">
           <div class="blog-tag hosting">Hosting Tips</div>
@@ -6641,7 +6653,7 @@ async function adminRejectListing(id) {
           <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> May 28, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 4 min read</span></div>
         </div>
       </div>
-      <div class="blog-card" data-category="tips" onclick="openBlogPost('best-price-tips')">
+      <div class="blog-card reveal" data-category="tips" onclick="openBlogPost('best-price-tips')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">💡</div>
         <div class="blog-body">
           <div class="blog-tag tips">Guest Tips</div>
@@ -6650,7 +6662,7 @@ async function adminRejectListing(id) {
           <div class="blog-meta"><span><i class="fa-regular fa-calendar" style="margin-right:3px"></i> May 20, 2026</span><span><i class="fa-regular fa-clock" style="margin-right:3px"></i> 5 min read</span></div>
         </div>
       </div>
-      <div class="blog-card" data-category="guide" onclick="openBlogPost('rv-parking-guide')">
+      <div class="blog-card reveal" data-category="guide" onclick="openBlogPost('rv-parking-guide')">
         <div class="blog-thumb" style="background:linear-gradient(135deg,#f0fdf4,#bbf7d0)">🚐</div>
         <div class="blog-body">
           <div class="blog-tag guide">Guide</div>
