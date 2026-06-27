@@ -168,14 +168,14 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
   display:flex;gap:14px;transition:.2s ease;background:#fff}
 .listing-card:hover{background:#f7fdf7;box-shadow:inset 3px 0 0 var(--green)}
 .listing-card.map-active{background:#f0fdf4;border-left:3px solid var(--green)}
-.listing-emoji{width:84px;height:72px;border-radius:12px;background:var(--gray2);
+.listing-emoji{width:96px;height:88px;border-radius:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);
   display:flex;align-items:center;justify-content:center;font-size:1.6rem;
-  flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+  flex-shrink:0;overflow:hidden;border:1.5px solid #d1fae5}
 .listing-emoji img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
 .listing-card:hover .listing-emoji img{transform:scale(1.05)}
 .listing-info{flex:1;min-width:0}
-.listing-title{font-weight:700;font-size:.88rem;margin-bottom:3px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;color:var(--text)}
+.listing-title{font-weight:800;font-size:.92rem;margin-bottom:4px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;letter-spacing:-.02em;color:var(--text);font-family:var(--font-display)}
 .listing-loc{font-size:.77rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .listing-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
 .tag{padding:2px 8px;background:var(--gray2);border-radius:20px;font-size:.68rem;
@@ -2959,8 +2959,8 @@ function setFilter(f, el) {
 function buildListingCard(l) {
   const faved = _favIds.has(l.id);
   const photoHtml = l.photos?.length
-    ? `<img src="${l.photos[0]}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0" alt="${escapeHtml(l.title)} parking"/>`
-    : '<i class="fa-solid fa-car" style="font-size:1.6rem;color:var(--muted)"></i>';
+    ? `<img src="${l.photos[0]}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${escapeHtml(l.title)} parking"/>`
+    : '<i class="fa-solid fa-car" style="font-size:1.8rem;color:#16a34a;opacity:.6"></i>';
   return `<div class="listing-card" data-id="${l.id}" onclick="openDetail('${l.id}')" style="position:relative">
     ${l.verified ? '<span class="card-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>' : ''}
     <button class="fav-btn ${faved?'faved':''}" data-lid="${l.id}" onclick="toggleFav('${l.id}',event)" title="${faved?'Remove from saved':'Save'}"><i class="fa-${faved?'solid':'regular'} fa-heart"></i></button>
