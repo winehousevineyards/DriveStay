@@ -647,6 +647,31 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 @media(max-width:860px){.cities-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.cities-grid{grid-template-columns:1fr}}
 [data-theme="dark"] .cities-section{background:#0f172a}
+
+/* FEATURED LISTINGS (HOME) */
+.fl-section{padding:64px 24px 72px;background:#f8fdf8;text-align:center}
+.fl-section h2{font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;letter-spacing:-.03em;margin-bottom:10px}
+.fl-section .section-sub{color:var(--muted);max-width:520px;margin:0 auto 40px;font-size:1rem}
+.fl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1100px;margin:0 auto 32px}
+.fl-card{background:#fff;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.07);transition:transform .22s,box-shadow .22s;text-align:left;border:1.5px solid rgba(22,163,74,.08)}
+.fl-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.13)}
+.fl-card-img{position:relative;height:178px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);overflow:hidden}
+.fl-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.fl-card:hover .fl-card-img img{transform:scale(1.05)}
+.fl-city-badge{position:absolute;top:11px;left:11px;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
+.fl-ib-badge{position:absolute;top:11px;right:11px;background:var(--green);color:#fff;font-size:.63rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.02em}
+.fl-card-body{padding:13px 15px 15px}
+.fl-card-title{font-size:.88rem;font-weight:800;letter-spacing:-.02em;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-display);color:var(--text)}
+.fl-card-meta{display:flex;justify-content:space-between;align-items:center}
+.fl-card-rating{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:3px}
+.fl-card-rating i{color:#f59e0b;font-size:.7rem}
+.fl-card-price{font-size:.88rem;font-weight:800;color:var(--green-dk)}
+.fl-browse-cta{display:inline-flex;align-items:center;gap:7px;font-size:.92rem;font-weight:700;color:var(--green-dk);text-decoration:none;border:2px solid var(--green);padding:11px 28px;border-radius:30px;transition:all .2s;cursor:pointer}
+.fl-browse-cta:hover{background:var(--green);color:#fff}
+@media(max-width:900px){.fl-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.fl-grid{grid-template-columns:1fr}}
+[data-theme="dark"] .fl-section{background:#0a1a0a}
+[data-theme="dark"] .fl-card{background:#1e293b;border-color:rgba(22,163,74,.15)}
 .fee-section{padding:64px 24px;background:#fff;text-align:center}
 .fee-section h2{font-size:1.8rem;font-weight:800;margin-bottom:8px}
 .fee-section .section-sub{color:var(--muted);margin-bottom:40px;font-size:1rem;max-width:480px;margin-left:auto;margin-right:auto}
@@ -1667,7 +1692,18 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
     <p style="margin-top:28px;font-size:.85rem;color:var(--muted)">Don't see your city? <a onclick="showPage('browse')" style="color:var(--green);cursor:pointer;font-weight:600;text-decoration:none">Browse all spaces →</a></p>
   </div>
 
-  <div aria-hidden="true" style="background:#fff;line-height:0;overflow:hidden">
+  <!-- FEATURED LISTINGS -->
+  <div class="fl-section reveal">
+    <div class="section-eyebrow" style="margin:0 auto 16px">Available now</div>
+    <h2>Spaces You'll Love</h2>
+    <p class="section-sub">Real driveways from real hosts — from $28/night. No subscription, no membership fee.</p>
+    <div class="fl-grid" id="featuredListingsGrid">
+      <!-- Populated by renderFeaturedListings() -->
+    </div>
+    <span class="fl-browse-cta" onclick="showPage('browse')">Browse All 2,400+ Spaces <i class="fa-solid fa-arrow-right"></i></span>
+  </div>
+
+  <div aria-hidden="true" style="background:#f8fdf8;line-height:0;overflow:hidden">
     <svg viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:56px"><path d="M0,56 C360,0 1080,56 1440,0 L1440,56 L0,56 Z" fill="#0f172a"/></svg>
   </div>
   <!-- BOOKING PROTECTION SECTION -->
@@ -2698,7 +2734,7 @@ function showPage(name, opts) {
   if (name === 'browse') { setTimeout(() => { if (!mbMap) initMap(); else mbMap.resize(); }, 150); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
   const _rvs = document.getElementById('recentlyViewedSection');
-  if (name === 'home') { renderRecentlyViewed(); }
+  if (name === 'home') { renderRecentlyViewed(); renderFeaturedListings(); }
   else if (_rvs) _rvs.style.display = 'none';
   if (name === 'host') setTimeout(initHostFormAutosave, 100);
   // Update nav active state
@@ -4973,6 +5009,34 @@ function renderRecentlyViewed() {
 }
 // Render on page load if on home
 renderRecentlyViewed();
+
+// ============================================================
+// FEATURED LISTINGS (HOME PAGE PREVIEW)
+// ============================================================
+function renderFeaturedListings() {
+  const grid = document.getElementById('featuredListingsGrid');
+  if (!grid) return;
+  const src = allListings.length ? allListings : SAMPLE_LISTINGS;
+  // Pick 4 diverse listings: first 4 with photos
+  const items = src.filter(l => l.photos?.length).slice(0, 4);
+  if (!items.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = items.map(l => `
+    <div class="fl-card reveal" onclick="openDetail('${l.id}')">
+      <div class="fl-card-img">
+        <img src="${l.photos[0]}" alt="${escapeHtml(l.title)}" loading="lazy">
+        <span class="fl-city-badge">${escapeHtml(l.city)}</span>
+        ${l.instant_book ? '<span class="fl-ib-badge"><i class="fa-solid fa-bolt" style="font-size:.58rem;margin-right:2px"></i> Instant Book</span>' : ''}
+      </div>
+      <div class="fl-card-body">
+        <div class="fl-card-title">${escapeHtml(l.title)}</div>
+        <div class="fl-card-meta">
+          <span class="fl-card-rating"><i class="fa-solid fa-star"></i> ${l.rating||'4.7'} <span style="opacity:.6">(${l.review_count||0})</span></span>
+          <span class="fl-card-price">$${l.price_nightly}<span style="font-weight:400;font-size:.75rem;color:var(--muted)">/night</span></span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+renderFeaturedListings();
 
 // ─── Hero live-activity badge ────────────────────────────────
 (function(){
