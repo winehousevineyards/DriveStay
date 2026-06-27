@@ -151,7 +151,7 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .cta-section button:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.2)}
 
 /* BROWSE */
-.browse-layout{display:flex;height:calc(100vh - 60px)}
+.browse-layout{display:flex;height:calc(100vh - 64px)}
 .browse-sidebar{width:380px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--border)}
 .browse-filters{padding:12px 16px;border-bottom:1px solid var(--border);
   display:flex;gap:6px;overflow-x:auto;white-space:nowrap;
@@ -631,6 +631,22 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .trust-badge i{color:var(--green);font-size:.8rem}
 
 /* FEE SECTION */
+/* POPULAR CITIES */
+.cities-section{padding:64px 24px 72px;background:#fff;text-align:center}
+.cities-section h2{font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;letter-spacing:-.03em;margin-bottom:10px}
+.cities-section .section-sub{color:var(--muted);max-width:480px;margin:0 auto 40px;font-size:1rem}
+.cities-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1000px;margin:0 auto}
+.city-card{border-radius:20px;overflow:hidden;cursor:pointer;position:relative;height:172px;display:flex;align-items:flex-end;padding:18px 20px;transition:transform .22s,box-shadow .22s;text-decoration:none}
+.city-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,rgba(0,0,0,.1) 55%,transparent 100%);pointer-events:none}
+.city-card:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,.22)}
+.city-card-emoji{position:absolute;top:14px;right:18px;font-size:2rem;opacity:.35;line-height:1}
+.city-card-body{position:relative;z-index:2;color:#fff;text-align:left}
+.city-name-big{font-size:1.25rem;font-weight:900;letter-spacing:-.025em;line-height:1.15}
+.city-state{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;opacity:.72;margin-top:3px}
+.city-spaces-pill{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;background:rgba(255,255,255,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:20px;padding:3px 10px;margin-top:9px}
+@media(max-width:860px){.cities-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.cities-grid{grid-template-columns:1fr}}
+[data-theme="dark"] .cities-section{background:#0f172a}
 .fee-section{padding:64px 24px;background:#fff;text-align:center}
 .fee-section h2{font-size:1.8rem;font-weight:800;margin-bottom:8px}
 .fee-section .section-sub{color:var(--muted);margin-bottom:40px;font-size:1rem;max-width:480px;margin-left:auto;margin-right:auto}
@@ -1575,6 +1591,80 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
       </div>
     </div>
     <p style="font-size:.78rem;color:var(--muted);margin-top:16px">*Fees based on published platform rates as of 2026. Driveway Host fees include mandatory host &amp; guest protection insurance on every booking.</p>
+  </div>
+
+  <!-- POPULAR CITIES SECTION -->
+  <div class="cities-section">
+    <div class="section-eyebrow" style="margin:0 auto 16px">Park anywhere</div>
+    <h2>Popular Cities</h2>
+    <p class="section-sub">Private driveways and garages in cities across the US — no meters, no lots.</p>
+    <div class="cities-grid">
+      <div class="city-card reveal" onclick="showCityPage('Los Angeles')" style="background:linear-gradient(140deg,#f59e0b,#b45309)">
+        <div class="city-card-emoji">🌴</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Los Angeles</div>
+          <div class="city-state">California</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 180+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Chicago')" style="background:linear-gradient(140deg,#0369a1,#0284c7)">
+        <div class="city-card-emoji">⚾</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Chicago</div>
+          <div class="city-state">Illinois</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 220+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Nashville')" style="background:linear-gradient(140deg,#7c3aed,#9333ea)">
+        <div class="city-card-emoji">🎸</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Nashville</div>
+          <div class="city-state">Tennessee</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 95+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('New York')" style="background:linear-gradient(140deg,#1e3a5f,#1e40af)">
+        <div class="city-card-emoji">🗽</div>
+        <div class="city-card-body">
+          <div class="city-name-big">New York</div>
+          <div class="city-state">New York</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 310+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Austin')" style="background:linear-gradient(140deg,#166534,#15803d)">
+        <div class="city-card-emoji">🤠</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Austin</div>
+          <div class="city-state">Texas</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 140+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Denver')" style="background:linear-gradient(140deg,#0f766e,#0369a1)">
+        <div class="city-card-emoji">🏔️</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Denver</div>
+          <div class="city-state">Colorado</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 88+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Miami')" style="background:linear-gradient(140deg,#be185d,#e11d48)">
+        <div class="city-card-emoji">🌊</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Miami</div>
+          <div class="city-state">Florida</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 115+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Seattle')" style="background:linear-gradient(140deg,#134e4a,#065f46)">
+        <div class="city-card-emoji">☕</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Seattle</div>
+          <div class="city-state">Washington</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 72+ spaces</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:28px;font-size:.85rem;color:var(--muted)">Don't see your city? <a onclick="showPage('browse')" style="color:var(--green);cursor:pointer;font-weight:600;text-decoration:none">Browse all spaces →</a></p>
   </div>
 
   <div aria-hidden="true" style="background:#fff;line-height:0;overflow:hidden">
@@ -2616,6 +2706,8 @@ function showPage(name, opts) {
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('nav-active'));
   if (navMap[name]) { const nb = document.getElementById(navMap[name]); if (nb) nb.classList.add('nav-active'); }
   window.scrollTo(0, 0);
+  // Lock body scroll on browse (desktop split-panel), restore on all other pages
+  document.body.style.overflow = (name === 'browse' && window.innerWidth > 767) ? 'hidden' : '';
   // Update URL hash
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
@@ -6012,6 +6104,14 @@ async function adminRejectListing(id) {
   showToast('Listing rejected.', 'info');
   loadAdminPanel();
 }
+
+// Restore body scroll on resize to mobile while on browse
+window.addEventListener('resize', () => {
+  const activePage = document.querySelector('.page.active');
+  if (!activePage) return;
+  const onBrowse = activePage.id === 'page-browse';
+  document.body.style.overflow = (onBrowse && window.innerWidth > 767) ? 'hidden' : '';
+});
 
 // ============================================================
 // SCROLL REVEAL OBSERVER
