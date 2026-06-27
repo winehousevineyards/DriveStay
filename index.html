@@ -1245,6 +1245,23 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
 .venue-ticker span{font-size:.78rem;font-weight:700;color:#15803d;display:inline-flex;align-items:center;gap:5px}
 .venue-ticker span::before{content:'·';color:#86efac;font-size:1.1rem;line-height:1}
 @keyframes venueTicker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* ── Testimonials ──────────────────────────────────────────── */
+.testimonials-section{background:#f8fafc;padding:72px 24px;text-align:center}
+.testimonials-section h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:900;letter-spacing:-.035em;margin-bottom:8px;font-family:var(--font-display)}
+.testimonials-section .section-eyebrow{margin-bottom:12px}
+.testimonials-section .testi-sub{color:var(--muted);font-size:.95rem;margin-bottom:48px;line-height:1.6}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1060px;margin:0 auto}
+.testi-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:28px 26px;text-align:left;position:relative;transition:box-shadow .25s,transform .25s}
+.testi-card:hover{box-shadow:0 12px 36px rgba(22,163,74,.1);transform:translateY(-3px)}
+.testi-card::before{content:'\201C';font-size:4.5rem;line-height:1;color:#d1fae5;position:absolute;top:14px;left:22px;font-family:Georgia,serif;pointer-events:none}
+.testi-stars{display:flex;gap:2px;margin-bottom:14px}
+.testi-stars i{color:#f59e0b;font-size:.85rem}
+.testi-quote{font-size:.93rem;line-height:1.7;color:#374151;margin-bottom:20px;position:relative;z-index:1}
+.testi-person{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:16px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.testi-name{font-weight:700;font-size:.875rem;color:#111}
+.testi-role{font-size:.78rem;color:var(--muted);margin-top:1px}
+@media(max-width:767px){.testi-grid{grid-template-columns:1fr}}
 
 /* ─── Hero enhancements ───────────────────────────────────────── */
 .hero {
@@ -1632,6 +1649,39 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
           <div style="font-size:.75rem;opacity:.85">estimated / month</div>
         </div>
         <div class="est-label">After Driveway Host's<br>10% service fee</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials-section">
+    <div class="section-eyebrow"><i class="fa-solid fa-star" style="color:#f59e0b;margin-right:5px"></i> Real Reviews</div>
+    <h2>Hosts &amp; guests love it</h2>
+    <p class="testi-sub">From driveways to event lots — here's what people are saying.</p>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <p class="testi-quote">We were driving to a Dodgers game and snagged a driveway spot for $22. Walked to the stadium in 8 minutes. Never going back to the $45 lots.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">🧢</div>
+          <div><div class="testi-name">Marcus T.</div><div class="testi-role">Guest · Los Angeles, CA</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <p class="testi-quote">I listed my driveway on a whim before the Rose Bowl game. Made $180 in a single weekend. Setup took maybe 10 minutes. I wish I'd done this years ago.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">🏡</div>
+          <div><div class="testi-name">Priya M.</div><div class="testi-role">Host · Pasadena, CA</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <p class="testi-quote">Monthly parking near my office was $400. I found a host's driveway two blocks away for $190/month. The host is super friendly and the spot is always available.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">💼</div>
+          <div><div class="testi-name">Jordan K.</div><div class="testi-role">Guest · Austin, TX</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2415,7 +2465,7 @@ const SAMPLE_LISTINGS = [
     lat:34.1122, lng:-118.3392, price_nightly:45, price_monthly:720, wifi:false, covered:false, electric:false, dump:false, water:false, pets:true,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.9, review_count:23, status:'active',
     verified:true,
-    photos:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&q=80'],
+    photos:['https://images.unsplash.com/photo-1580587771525-4ae13dbfb1cf?w=400&h=300&fit=crop&q=80'],
     rules:['No overnight parties','No commercial vehicles'] },
   { id:'s2', emoji:'🅿️', title:'Covered Garage Spot – Downtown Austin',
     description:'Single covered garage spot. EV charger available. Minutes from 6th Street.',
@@ -2423,7 +2473,7 @@ const SAMPLE_LISTINGS = [
     lat:30.2672, lng:-97.7431, price_nightly:28, price_monthly:480, wifi:true, covered:true, electric:true, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV','Motorcycle'], rating:4.7, review_count:11, status:'active',
     verified:true,
-    photos:['https://images.unsplash.com/photo-1506521781263-d8422e82e27a?w=400&h=300&fit=crop&q=80'],
+    photos:['https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&h=300&fit=crop&q=80'],
     rules:['EV charger: $5/night extra'] },
   { id:'s3', emoji:'🌳', title:'Shaded Lot – Near Wrigley Field',
     description:'Large shaded lot, fits up to 3 vehicles. Close to Wrigley Field — perfect for Cubs games.',
@@ -2451,7 +2501,7 @@ const SAMPLE_LISTINGS = [
     address:'2001 Blake St', city:'Denver', state:'CO',
     lat:39.7563, lng:-104.9942, price_nightly:32, price_monthly:520, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, vehicles:['Sedan','SUV'], rating:4.4, review_count:6, status:'active',
-    photos:['https://images.unsplash.com/photo-1561747420-e60571fc7f87?w=400&h=300&fit=crop&q=80'],
+    photos:['https://images.unsplash.com/photo-1472396961119-f83e1ee29c70?w=400&h=300&fit=crop&q=80'],
     rules:['No commercial vehicles'] },
   { id:'s7', emoji:'🚛', title:'Commercial Pull-Through Lot – Dallas',
     description:'Gravel surface pull-through lot, 80ft+ length clearance. 50A electric hookup, freshwater fill, dump station. Ideal for semi-trucks and big rigs. Secure fence, camera monitored.',
@@ -2466,7 +2516,7 @@ const SAMPLE_LISTINGS = [
     lat:33.9536, lng:-118.3390, price_nightly:65, price_monthly:0, wifi:false, covered:false, electric:false, dump:false, water:false, pets:false,
     instant_book:true, rv_friendly:false, event_parking:true, attendant:true, vehicles:['Sedan','SUV','Truck'], rating:4.9, review_count:47, status:'active',
     verified:true,
-    photos:['https://images.unsplash.com/photo-1568605117036-5c9ce8a98bcc?w=400&h=300&fit=crop&q=80'],
+    photos:['https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop&q=80'],
     rules:['Game day only — no daily parking','Arrive 2hrs before kickoff'] },
   { id:'s9', emoji:'🏟️', title:'Concert Venue Parking – Near Hollywood Bowl',
     description:'Wide concrete driveway 3 blocks from Hollywood Bowl. Hosted by local family for 10+ years. Attended by a parking host during events — they\'ll guide you in.',
@@ -2602,7 +2652,9 @@ function showPage(name, opts) {
   setTimeout(refreshReveal, 60);
   if (name === 'browse') { setTimeout(() => { if (!mbMap) initMap(); else mbMap.resize(); }, 150); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
-  if (name === 'home') renderRecentlyViewed();
+  const _rvs = document.getElementById('recentlyViewedSection');
+  if (name === 'home') { renderRecentlyViewed(); }
+  else if (_rvs) _rvs.style.display = 'none';
   if (name === 'host') setTimeout(initHostFormAutosave, 100);
   // Update nav active state
   const navMap = { browse: 'btnBrowse', legal: 'btnHowItWorks' };
