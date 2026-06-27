@@ -1266,6 +1266,12 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
   margin-bottom:22px;
 }
 .hero p { font-size:clamp(1rem,1.8vw,1.22rem); }
+/* floating live badge */
+.hero-live-badge{position:absolute;top:24px;right:28px;background:rgba(255,255,255,.13);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:8px 18px;display:flex;align-items:center;gap:9px;font-size:.76rem;font-weight:600;color:#fff;animation:fadeInDown .7s ease .6s both;white-space:nowrap;letter-spacing:.01em}
+.hero-live-badge-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:livePulse 2s ease infinite;flex-shrink:0}
+@keyframes livePulse{0%,100%{box-shadow:0 0 4px #4ade80}50%{box-shadow:0 0 10px #4ade80,0 0 20px rgba(74,222,128,.4)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:640px){.hero-live-badge{display:none}}
 
 /* ─── Stats bar → dark redesign ──────────────────────────────── */
 .stats {
@@ -1448,6 +1454,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
 <!-- ===== HOME ===== -->
 <div class="page active" id="page-home">
   <div class="hero">
+    <div class="hero-live-badge" aria-live="polite"><div class="hero-live-badge-dot"></div><span id="heroLiveText">Just booked near Hollywood Bowl</span></div>
     <h1>Driveway Rental &amp; Parking Spaces —<br><span>Park Anywhere.</span></h1>
     <p>Driveway Host connects you with real homeowners renting their driveways — cheaper, safer, and more flexible than parking lots.<br><span style="opacity:.7;font-size:1rem">Or earn $320+/month listing your own space.</span></p>
     <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap">
@@ -4867,6 +4874,20 @@ function renderRecentlyViewed() {
 }
 // Render on page load if on home
 renderRecentlyViewed();
+
+// ─── Hero live-activity badge ────────────────────────────────
+(function(){
+  const msgs=['Just booked near Hollywood Bowl','New host joined in Austin, TX','17 spaces near SoFi Stadium','Sarah M. parked in Chicago','Instant Book in Nashville, TN','New listing: Rose Bowl area','$38 avg — cheaper than lots','Marcus saved $24 vs. a garage'];
+  let i=0;
+  const el=document.getElementById('heroLiveText');
+  if(!el) return;
+  setInterval(()=>{
+    i=(i+1)%msgs.length;
+    el.style.transition='opacity .22s';
+    el.style.opacity='0';
+    setTimeout(()=>{ el.textContent=msgs[i]; el.style.opacity='1'; },230);
+  },3600);
+})();
 
 // ============================================================
 // USER LOCATION STATE
