@@ -318,6 +318,18 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 /* HOST PAGE */
 .host-wrap{max-width:700px;margin:0 auto;padding:40px 24px}
 .host-wrap h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+/* Host requirements box */
+.host-reqs{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:16px;padding:24px 28px;margin-bottom:28px}
+.host-reqs-title{font-size:1rem;font-weight:900;color:#166534;margin-bottom:4px;font-family:var(--font-display);display:flex;align-items:center;gap:8px}
+.host-reqs-sub{font-size:.8rem;color:#15803d;margin-bottom:18px;line-height:1.55}
+.host-req-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:.86rem;color:var(--text);line-height:1.6}
+.host-req-item:last-child{margin-bottom:0}
+.host-req-item input[type="checkbox"]{width:17px;height:17px;accent-color:var(--green);flex-shrink:0;margin-top:2px;cursor:pointer}
+.host-req-item label{cursor:pointer}
+.host-req-item label strong{color:#166534}
+.host-restroom-alert{background:#fefce8;border:2px solid #fde68a;border-radius:12px;padding:14px 18px;margin-top:14px;display:none}
+.host-restroom-alert-title{font-weight:800;color:#92400e;font-size:.88rem;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.host-restroom-alert p{font-size:.82rem;color:#78350f;line-height:1.6;margin:0}
 .host-wrap .subtitle{color:var(--muted);margin-bottom:32px}
 .form-section{margin-bottom:32px}
 .form-section h2{font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--green)}
@@ -2164,6 +2176,41 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
     <h1><i class="fa-solid fa-house-chimney" style="color:var(--green);margin-right:8px"></i> List Your Space</h1>
     <p class="subtitle">Turn your idle driveway into extra income. Setup takes about 5 minutes.</p>
     <p style="font-size:.75rem;color:var(--muted);margin-bottom:24px"><span style="color:var(--red)">*</span> Required fields</p>
+    <!-- HOST REQUIREMENTS CHECKLIST -->
+    <div class="host-reqs">
+      <div class="host-reqs-title"><i class="fa-solid fa-clipboard-list"></i> Host Requirements</div>
+      <p class="host-reqs-sub">All hosts must confirm they meet these requirements before listing. These protect your guests and your neighborhood.</p>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqOffStreet"/>
+        <label for="reqOffStreet"><strong>Off-street space only.</strong> My space is a private driveway, parking pad, or private lot — not on a public street or sidewalk.</label>
+      </div>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqSecure"/>
+        <label for="reqSecure"><strong>Safe and secure for guests.</strong> The space is well-lit for nighttime stays, clearly accessible, free of hazards, and guests can park and stay without risk to themselves or their vehicle.</label>
+      </div>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqPlacard"/>
+        <label for="reqPlacard"><strong>Window Placard provided to overnight guests.</strong> Each booking generates a printable placard (included in the guest’s confirmation email). I will ensure overnight guests know to display it. Physical placards and window shades are available in the <span style="color:var(--green);text-decoration:underline;cursor:pointer" onclick="showPage('merch')">DH Store</span>.</label>
+      </div>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqAmenities"/>
+        <label for="reqAmenities"><strong>At least basic amenities provided.</strong> I will provide clear access instructions, adequate lighting, and a clean and usable parking surface. Any listed amenities (EV charging, water, WiFi, etc.) will be operational at the time of each stay.</label>
+      </div>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqRules"/>
+        <label for="reqRules"><strong>I will respect quiet hours (10 PM – 7 AM)</strong> and ensure my hosting activity does not disturb neighbors or violate local ordinances.</label>
+      </div>
+      <div class="host-req-item">
+        <input type="checkbox" id="reqRestroom"/>
+        <label for="reqRestroom"><strong>Restroom requirement (5+ vehicle spaces).</strong> If my listing can accommodate 5 or more vehicles at once, I will provide access to an indoor restroom or a serviced portable restroom on-site. <span style="color:var(--green);font-weight:700;cursor:pointer;text-decoration:underline" onclick="document.getElementById('portableRestroomInfo').style.display='block'">Portable restroom service is available to DH members →</span></label>
+      </div>
+      <div id="portableRestroomInfo" style="display:none;background:#fff;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-top:10px;font-size:.82rem;color:var(--text);line-height:1.7">
+        <div style="font-weight:800;color:#166534;margin-bottom:6px"><i class="fa-solid fa-toilet" style="margin-right:6px"></i>Member Portable Restroom Service</div>
+        <p style="margin:0 0 8px">As a Driveway Host member you have access to our partner network of portable restroom rental and service providers. Delivery, setup, weekly servicing, and pickup are all handled — you just confirm the dates.</p>
+        <p style="margin:0 0 8px"><strong>Starting from $85/week</strong> for a standard unit, serviced and fully stocked. Available in most markets across the US.</p>
+        <button type="button" onclick="showToast('Portable restroom service — email us with your city and dates to get a quote!','info',6000)" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-weight:700;font-size:.82rem;cursor:pointer"><i class="fa-solid fa-envelope" style="margin-right:5px"></i>Request a Quote</button>
+      </div>
+    </div>
     <form id="hostForm" onsubmit="submitListing(event)">
       <div class="form-section">
         <h2><i class="fa-solid fa-location-dot"></i> Location &amp; Basic Info</h2>
@@ -2276,10 +2323,29 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
       <div class="form-section">
         <h2><i class="fa-solid fa-ruler-combined" style="color:var(--blue)"></i> Space Dimensions</h2>
         <div class="form-row">
+          <div class="form-group">
+            <label>Max Vehicles <span style="color:var(--red)">*</span></label>
+            <select id="lMaxVehicles" required onchange="checkRestroomRequirement(this.value)">
+              <option value="">Select capacity</option>
+              <option value="1">1 vehicle</option>
+              <option value="2">2 vehicles</option>
+              <option value="3">3 vehicles</option>
+              <option value="4">4 vehicles</option>
+              <option value="5">5 vehicles</option>
+              <option value="6">6 vehicles</option>
+              <option value="8">8 vehicles</option>
+              <option value="10">10 vehicles</option>
+              <option value="15">15+ vehicles</option>
+            </select>
+          </div>
           <div class="form-group"><label>Length (ft)</label><input type="number" id="lLen" placeholder="e.g. 25"/></div>
-          <div class="form-group"><label>Width (ft)</label><input type="number" id="lWid" placeholder="e.g. 12"/></div>
         </div>
-        <div class="form-row">
+        <div class="host-restroom-alert" id="restroomAlert">
+          <div class="host-restroom-alert-title"><i class="fa-solid fa-triangle-exclamation"></i> Restroom Required for 5+ Vehicle Spaces</div>
+          <p>Driveway Host requires hosts with 5 or more vehicle spaces to provide restroom access — either an indoor bathroom or a serviced portable restroom on-site. This is non-negotiable and is part of the Host Requirements above.<br><br><strong>Need a portable restroom?</strong> DH members get access to our partner network. Units start at <strong>$85/week</strong>, fully serviced. <span style="color:#92400e;font-weight:700;text-decoration:underline;cursor:pointer" onclick="document.getElementById('portableRestroomInfo').scrollIntoView({behavior:'smooth'});document.getElementById('portableRestroomInfo').style.display='block'">See member pricing →</span></p>
+        </div>
+        <div class="form-row" style="margin-top:14px">
+          <div class="form-group"><label>Width (ft)</label><input type="number" id="lWid" placeholder="e.g. 12"/></div>
           <div class="form-group"><label>Height Clearance (ft)</label><input type="number" id="lHgt" placeholder="Leave blank if open air"/></div>
           <div class="form-group"><label>Surface Type</label>
             <select id="lSurface"><option value="">Unknown</option><option>Concrete</option><option>Asphalt</option><option>Gravel</option><option>Dirt</option><option>Grass</option><option>Pavers</option></select>
@@ -3858,11 +3924,39 @@ function closePaymentModal() {
 }
 
 // ============================================================
+// HOST REQUIREMENTS HELPERS
+// ============================================================
+function checkRestroomRequirement(val) {
+  const alertEl = document.getElementById('restroomAlert');
+  if (!alertEl) return;
+  const n = parseInt(val, 10);
+  alertEl.style.display = (n >= 5) ? 'block' : 'none';
+  if (n >= 5) {
+    setTimeout(() => {
+      const cb = document.getElementById('reqRestroom');
+      if (cb) cb.closest('.host-req-item')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+  }
+}
+
+// ============================================================
 // HOST FORM
 // ============================================================
 async function submitListing(e) {
   e.preventDefault();
   if (!currentUser) { requireAuth('host'); return; }
+
+  // Validate host requirements checklist
+  const reqs = ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
+  const maxVeh = parseInt(document.getElementById('lMaxVehicles')?.value || '0', 10);
+  const reqsToCheck = maxVeh >= 5 ? reqs : reqs.filter(r => r !== 'reqRestroom');
+  const unchecked = reqsToCheck.filter(id => !document.getElementById(id)?.checked);
+  if (unchecked.length) {
+    showToast('Please confirm all Host Requirements before submitting.', 'error', 4000);
+    document.getElementById(unchecked[0])?.closest('.host-req-item')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   const vehicles = Array.from(document.getElementById('lVehicles').selectedOptions).map(o => o.value);
   const rules = document.getElementById('lRules').value.split('\n').filter(r => r.trim());
   const listing = {
