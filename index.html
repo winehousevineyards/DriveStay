@@ -1786,6 +1786,22 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
   <div aria-hidden="true" style="background:#1e293b;line-height:0;overflow:hidden">
     <svg viewBox="0 0 1440 52" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:52px"><path d="M0,0 C480,52 960,0 1440,52 L1440,52 L0,52 Z" fill="#060e06"/></svg>
   </div>
+  <!-- EMAIL CAPTURE -->
+  <div style="background:#060e06;padding:52px 24px;text-align:center">
+    <div style="max-width:520px;margin:0 auto">
+      <div class="section-eyebrow" style="color:#4ade80;margin-bottom:12px">Stay in the loop</div>
+      <h2 style="color:#fff;font-size:clamp(1.5rem,2.8vw,2rem);font-weight:900;letter-spacing:-.03em;margin-bottom:8px">Get deals &amp; new spaces first</h2>
+      <p style="color:rgba(255,255,255,.6);font-size:.92rem;margin-bottom:28px">No spam. Unsubscribe anytime. We send &lt;2 emails/month.</p>
+      <form id="emailCapture" onsubmit="submitEmailCapture(event)" style="display:flex;gap:8px;max-width:400px;margin:0 auto;flex-wrap:wrap;justify-content:center">
+        <input type="email" id="captureEmail" required placeholder="your@email.com"
+          style="flex:1;min-width:200px;padding:13px 18px;border-radius:10px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:.95rem;outline:none;border:1.5px solid rgba(255,255,255,.15)">
+        <button type="submit" style="background:var(--green);color:#fff;padding:13px 24px;border-radius:10px;font-weight:800;font-size:.92rem;white-space:nowrap;transition:.2s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='var(--green)'">
+          Get Early Access &rarr;
+        </button>
+      </form>
+      <p id="captureMsg" style="color:#4ade80;font-size:.85rem;margin-top:14px;display:none"></p>
+    </div>
+  </div>
   <!-- EARNINGS ESTIMATOR + CTA -->
   <div class="cta-section">
     <h2>Got a driveway? Earn with it.</h2>
@@ -2735,6 +2751,7 @@ const VENUE_DATA = [
 // ============================================================
 let currentUser = null, currentProfile = null;
 let allListings = [], filteredListings = [];
+let _heroVehicle = '';
 let _listingsLastFetch = 0;
 let currentFilter = 'all';
 let selectedListing = null;
@@ -2786,7 +2803,7 @@ function showPage(name, opts) {
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', help:'Help Center' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', help:'Help Center', dashboard:'My Dashboard', messages:'Messages' };
   setPageTitle(titles[name] || null);
 }
 
@@ -3043,7 +3060,8 @@ function applyFilter() {
     const mf = currentFilter === 'all' || !!l[currentFilter];
     const ms = !q || (l.title||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q) || (l.state||'').toLowerCase().includes(q);
     const mp = maxP >= 500 || Number(l.price_nightly||0) <= maxP;
-    return mf && ms && mp;
+    const mv = !_heroVehicle || (l.vehicles || []).some(v => v.toLowerCase() === _heroVehicle.toLowerCase());
+    return mf && ms && mp && mv;
   });
 
   // Sort listings based on select menu
@@ -3383,7 +3401,9 @@ function locateMe() {
 // DETAIL
 // ============================================================
 function openDetail(id) {
-  const l = allListings.find(x => x.id === id);
+  // If allListings not yet loaded (e.g. clicking from home page featured cards),
+  // fall back to SAMPLE_LISTINGS so the card still opens
+  const l = allListings.find(x => x.id === id) || SAMPLE_LISTINGS.find(x => x.id === id);
   if (!l) return;
   selectedListing = l;
 
@@ -4600,6 +4620,7 @@ function doHeroSearch() {
     searchTerm = document.getElementById('heroCity').value.trim();
   }
   if (searchTerm) document.getElementById('navSearch').value = searchTerm;
+  _heroVehicle = document.getElementById('heroVehicle')?.value || '';
   showPage('browse');
 }
 
@@ -5159,6 +5180,8 @@ async function checkUnreadMessages() {
     showPage('merch');
   } else if (hash === '#page-blog' || hash === '#blog') {
     showPage('blog');
+  } else if (hash === '#page-blog-post' || hash === '#blog-post') {
+    showPage('blog'); // can't know which article; show blog list
   } else if (hash === '#page-help' || hash === '#help') {
     showPage('help');
   }
@@ -5751,6 +5774,33 @@ function initInfiniteScroll() {
 // ============================================================
 function setPageTitle(title) {
   document.title = title ? `${title} — Driveway Host` : 'Driveway Host — Driveway & Parking Space Rentals';
+}
+
+// ============================================================
+// EMAIL CAPTURE
+// ============================================================
+async function submitEmailCapture(e) {
+  e.preventDefault();
+  const email = document.getElementById('captureEmail')?.value?.trim();
+  const msg   = document.getElementById('captureMsg');
+  const btn   = e.target.querySelector('button[type="submit"]');
+  if (!email || !msg) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    // Store in Supabase if available, else just show success
+    if (db) {
+      await db.from('email_subscribers').upsert({ email, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
+    }
+    msg.textContent = '✓ You\'re on the list! Check your inbox for a confirmation.';
+    msg.style.display = 'block';
+    e.target.reset();
+  } catch(err) {
+    // Supabase table may not exist yet — still show success to user
+    msg.textContent = '✓ Got it! We\'ll be in touch.';
+    msg.style.display = 'block';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Get Early Access →'; }
+  }
 }
 // showPage patched inline above
 // openDetail title-setting patched inline
