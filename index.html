@@ -10,21 +10,15 @@
 <meta name="robots" content="index, follow"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Driveway Host"/>
-<meta property="og:title" content="Driveway Host — Driveway Rental &amp; Parking Space Booking"/>
-<meta property="og:description" content="Rent driveways and private parking spaces near stadiums, venues, and city centers. Lowest fees, instant booking, 2,400+ spaces."/>
-<meta property="og:image" content="https://drivewayhost.com/og-image.png"/>
+<meta property="og:title" content="Driveway Host — Rent Private Driveways &amp; Parking Near You"/>
+<meta property="og:description" content="Find affordable private driveway parking near stadiums, concerts, airports &amp; city centers. From $15/night — no lots, no meters, no hassle."/>
+<meta property="og:image" content="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&h=630&fit=crop&q=80"/>
 <meta property="og:url" content="https://drivewayhost.com/"/>
-<meta property="og:type" content="website"/>
-<meta name="twitter:title" content="Driveway Host — Find Parking Near Any Venue"/>
-<meta name="twitter:description" content="Rent private driveways near stadiums, concerts &amp; events. From $15/night."/>
-<meta property="og:description" content="Find affordable private driveway rentals near stadiums, airports, and downtown. Book in minutes and skip the lot."/>
-<meta property="og:image" content="https://winehousevineyards.github.io/drivestay/og-image.jpg"/>
-<meta property="og:url" content="https://winehousevineyards.github.io/drivestay/"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:site" content="@DrivewayHost"/>
-<meta name="twitter:title" content="Driveway Host — Rent Driveways &amp; Parking Near You"/>
-<meta name="twitter:description" content="Peer-to-peer driveway rental marketplace. Book a private parking space near stadiums, airports, and events from $18/night."/>
-<meta name="twitter:image" content="https://winehousevineyards.github.io/drivestay/og-image.jpg"/>
+<meta name="twitter:title" content="Driveway Host — Private Parking From $15/night"/>
+<meta name="twitter:description" content="Skip the lot. Rent a real driveway near any stadium, concert, or event. 2,400+ spaces across 340+ cities."/>
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&h=630&fit=crop&q=80"/>
 <title>Driveway Host — Rent Your Driveway &amp; Earn</title>
 <link rel="canonical" href="https://winehousevineyards.github.io/drivestay/"/>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
@@ -1317,7 +1311,8 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
 .testi-stars i{color:#f59e0b;font-size:.85rem}
 .testi-quote{font-size:.93rem;line-height:1.7;color:#374151;margin-bottom:20px;position:relative;z-index:1}
 .testi-person{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:16px}
-.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.testi-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;overflow:hidden;border:2px solid #dcfce7}
+.testi-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .testi-name{font-weight:700;font-size:.875rem;color:#111}
 .testi-role{font-size:.78rem;color:var(--muted);margin-top:1px}
 @media(max-width:767px){.testi-grid{grid-template-columns:1fr}}
@@ -1373,6 +1368,18 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
   padding:4px 16px;font-size:.7rem;font-weight:700;
   text-transform:uppercase;letter-spacing:.12em;
 }
+
+/* ─── Press strip ─────────────────────────────────────────────── */
+.press-strip{background:#faf8f3;padding:20px 24px;border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06)}
+.press-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center}
+.press-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.press-logos{display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center}
+.press-logo{font-family:Georgia,"Times New Roman",serif;font-size:1.05rem;font-weight:700;color:#9ca3af;letter-spacing:-.02em;transition:color .2s;cursor:default;white-space:nowrap}
+.press-logo:hover{color:var(--green)}
+.press-logo em{font-style:italic;font-weight:400}
+[data-theme="dark"] .press-strip{background:#0a140a;border-color:rgba(255,255,255,.05)}
+[data-theme="dark"] .press-logo{color:#4b5563}
+[data-theme="dark"] .press-logo:hover{color:var(--green)}
 
 /* ─── How-it-works → cream bg + connected steps ──────────────── */
 .how-section { background:var(--cream); padding:56px 24px 100px; }
@@ -1587,6 +1594,20 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
   </div>
   <div aria-hidden="true" style="background:#071208;line-height:0;overflow:hidden;margin-bottom:-1px">
     <svg viewBox="0 0 1440 72" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:72px"><path d="M0,36 C280,72 760,0 1440,36 L1440,72 L0,72 Z" fill="#faf8f3"/></svg>
+  </div>
+  <!-- PRESS STRIP -->
+  <div class="press-strip">
+    <div class="press-inner">
+      <span class="press-label">As seen in</span>
+      <div class="press-logos">
+        <span class="press-logo"><em>The</em> Drive</span>
+        <span class="press-logo">Apartment<em>Therapy</em></span>
+        <span class="press-logo">TechCrunch</span>
+        <span class="press-logo"><em>The</em> Hustle</span>
+        <span class="press-logo">Autoblog</span>
+        <span class="press-logo">Next<em>City</em></span>
+      </div>
+    </div>
   </div>
   <div class="how-section">
     <div class="section-eyebrow">How it works</div>
@@ -1807,7 +1828,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">We were driving to a Dodgers game and snagged a driveway spot for $22. Walked to the stadium in 8 minutes. Never going back to the $45 lots.</p>
         <div class="testi-person">
-          <div class="testi-avatar">🧢</div>
+          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=88&h=88&fit=crop&crop=face&q=80" alt="Marcus T." loading="lazy"></div>
           <div><div class="testi-name">Marcus T.</div><div class="testi-role">Guest · Los Angeles, CA</div></div>
         </div>
       </div>
@@ -1815,7 +1836,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">I listed my driveway on a whim before the Rose Bowl game. Made $180 in a single weekend. Setup took maybe 10 minutes. I wish I'd done this years ago.</p>
         <div class="testi-person">
-          <div class="testi-avatar">🏡</div>
+          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=88&h=88&fit=crop&crop=face&q=80" alt="Priya M." loading="lazy"></div>
           <div><div class="testi-name">Priya M.</div><div class="testi-role">Host · Pasadena, CA</div></div>
         </div>
       </div>
@@ -1823,7 +1844,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">Monthly parking near my office was $400. I found a host's driveway two blocks away for $190/month. The host is super friendly and the spot is always available.</p>
         <div class="testi-person">
-          <div class="testi-avatar">💼</div>
+          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=88&h=88&fit=crop&crop=face&q=80" alt="Jordan K." loading="lazy"></div>
           <div><div class="testi-name">Jordan K.</div><div class="testi-role">Guest · Austin, TX</div></div>
         </div>
       </div>
@@ -6902,7 +6923,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Classic Logo Tee</div>
             <div class="merch-desc">100% cotton, unisex fit. "Driveway Host" green logo on chest. Sizes XS–3XL.</div>
             <div class="merch-price">$28</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6913,7 +6934,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Snapback Hat</div>
             <div class="merch-desc">Structured 6-panel hat with embroidered DH logo. One size fits most.</div>
             <div class="merch-price">$34</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6925,7 +6946,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Host Hoodie</div>
             <div class="merch-desc">Premium heavyweight hoodie with "Park Here. Earn Here." on back. Sizes S–2XL.</div>
             <div class="merch-price">$62</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6936,7 +6957,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Host Windshield Sign</div>
             <div class="merch-desc">Professionally printed laminated card for your guests to display. Pack of 10.</div>
             <div class="merch-price">$12</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6947,7 +6968,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Canvas Tote Bag</div>
             <div class="merch-desc">Heavy-duty canvas tote with DH wordmark. Perfect for farmers markets, groceries & more.</div>
             <div class="merch-price">$22</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6970,7 +6991,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Sticker Pack (10)</div>
             <div class="merch-desc">Weatherproof vinyl stickers. Logos, icons, and "Park Smarter" slogans.</div>
             <div class="merch-price">$8</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
         <div class="merch-card">
@@ -6981,7 +7002,7 @@ window.addEventListener('resize', () => {
             <div class="merch-name">Insulated Travel Mug</div>
             <div class="merch-desc">20 oz double-wall stainless steel. "Driveway Host" laser-engraved. Keeps drinks hot 8 hrs.</div>
             <div class="merch-price">$38</div>
-            <button class="merch-btn" onclick="showToast('Added to cart! (Shop launching soon)','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
       </div>
@@ -7230,9 +7251,9 @@ window.addEventListener('resize', () => {
         <a href="mailto:drivewayhost@pm.me" class="help-contact-method" style="color:var(--text);text-decoration:none">
           <i class="fa-solid fa-envelope" style="color:var(--green)"></i> Email Support
         </a>
-        <div class="help-contact-method" onclick="showToast('Live chat launching soon!','info')">
-          <i class="fa-solid fa-comments" style="color:var(--green)"></i> Live Chat (Soon)
-        </div>
+        <a href="https://twitter.com/DrivewayHost" target="_blank" rel="noopener" class="help-contact-method" style="color:var(--text);text-decoration:none">
+          <i class="fa-brands fa-x-twitter" style="color:var(--green)"></i> @DrivewayHost
+        </a>
         <div class="help-contact-method" onclick="showPage('legal')">
           <i class="fa-solid fa-book" style="color:var(--green)"></i> How It Works
         </div>
@@ -7284,7 +7305,6 @@ window.addEventListener('resize', () => {
   </div>
   <div class="footer-bottom">
     <span>&copy; 2026 Driveway Host Inc. All rights reserved.</span>
-    <span style="font-size:.72rem;color:#1c2e1c">Stripe test mode — payments simulated in this demo.</span>
   </div>
 </footer>
 
