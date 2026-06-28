@@ -2878,6 +2878,11 @@ function refreshReveal() {
 }
 
 function showPage(name, opts) {
+  // Remove guest preview banner whenever navigating away from detail
+  if (name !== 'detail') {
+    const gpb = document.getElementById('guestPreviewBanner');
+    if (gpb) gpb.remove();
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const _pg = document.getElementById('page-' + name);
   // Re-trigger entrance animation
@@ -4136,7 +4141,7 @@ async function loadMyListings() {
           </div>
           <div class="booking-row-actions">
             <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
-            <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="openDetail('${l.id}')"><i class="fa-solid fa-eye"></i> View</button>
+            <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="viewListingAsGuest('${l.id}')"><i class="fa-solid fa-eye"></i> Preview as Guest</button>
             ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
             <button class="btn-sm btn-sm-blue" onclick="editListing('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
             <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="cloneListing('${l.id}')"><i class="fa-solid fa-clone"></i> Clone</button>
@@ -4146,6 +4151,42 @@ async function loadMyListings() {
         </div>
       </div>`).join('');
   } catch(e) { loader.style.display = 'none'; list.innerHTML = '<div class="empty-state"><p>Could not load listings.</p></div>'; }
+}
+
+async function viewListingAsGuest(id) {
+  // Try the in-memory cache first (populated when browse page was visited)
+  let listing = allListings.find(x => String(x.id) === String(id));
+
+  if (!listing) {
+    // Fetch directly from Supabase so it works without visiting browse first
+    showToast('<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px"></i> Loading preview…', 'info', 1500);
+    try {
+      const { data, error } = await db.from('listings').select('*').eq('id', id).single();
+      if (error || !data) { showToast('Could not load listing', 'error'); return; }
+      listing = data;
+      // Merge into allListings so openDetail can find it
+      const idx = allListings.findIndex(x => String(x.id) === String(id));
+      if (idx === -1) allListings.push(listing); else allListings[idx] = listing;
+    } catch(e) {
+      showToast('Failed to load listing: ' + e.message, 'error'); return;
+    }
+  }
+
+  // Show a subtle "Preview mode" ribbon on the detail page so the host knows
+  // this is the exact view a guest sees, then open the standard detail page
+  openDetail(id);
+  // After openDetail fires showPage('detail'), inject the preview banner
+  setTimeout(() => {
+    const existing = document.getElementById('guestPreviewBanner');
+    if (existing) return; // already there
+    const detailPage = document.getElementById('page-detail');
+    if (!detailPage) return;
+    const banner = document.createElement('div');
+    banner.id = 'guestPreviewBanner';
+    banner.style.cssText = 'background:#1a3a1a;color:#86efac;text-align:center;padding:10px 16px;font-size:.82rem;font-weight:700;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:10px;position:sticky;top:0;z-index:50;border-bottom:2px solid #4ade80';
+    banner.innerHTML = '<i class="fa-solid fa-eye"></i> Guest Preview Mode — this is exactly what searchers see &nbsp;<button onclick="document.getElementById(\'guestPreviewBanner\').remove();showPage(\'dashboard\')" style="background:#4ade80;color:#052e16;border:none;border-radius:6px;padding:4px 12px;font-weight:800;font-size:.78rem;cursor:pointer">← Back to Dashboard</button>';
+    detailPage.prepend(banner);
+  }, 80);
 }
 
 function switchDashTab(tab, el) {
