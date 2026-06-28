@@ -1369,6 +1369,41 @@ h1,h2,h3,.stat-n,.nav-logo { font-family:var(--font-display); }
   text-transform:uppercase;letter-spacing:.12em;
 }
 
+/* ─── Community Standards page ───────────────────────────────── */
+.page-hero-teal{background:linear-gradient(160deg,#042f2e 0%,#134e4a 55%,#0d9488 100%);color:#fff}
+.std-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1080px;margin:0 auto}
+@media(max-width:760px){.std-cols{grid-template-columns:1fr}}
+.std-col{border-radius:20px;padding:32px 28px;border:2px solid transparent}
+.std-col-host{background:#f0fdf4;border-color:#bbf7d0}
+.std-col-guest{background:#eff6ff;border-color:#bfdbfe}
+[data-theme="dark"] .std-col-host{background:#052e16;border-color:#166534}
+[data-theme="dark"] .std-col-guest{background:#0c1a3a;border-color:#1d4ed8}
+.std-col-title{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:6px;font-family:var(--font-display);display:flex;align-items:center;gap:9px}
+.std-col-host .std-col-title{color:#166534}
+.std-col-guest .std-col-title{color:#1d4ed8}
+.std-col-sub{font-size:.82rem;color:var(--muted);margin-bottom:22px;line-height:1.55}
+.std-rule{display:flex;align-items:flex-start;gap:10px;margin-bottom:13px;font-size:.86rem;color:var(--text);line-height:1.6}
+.std-rule:last-child{margin-bottom:0}
+.std-rule-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;margin-top:2px;font-weight:800}
+.std-col-host .std-rule-icon{background:#dcfce7;color:#166534}
+.std-col-guest .std-rule-icon{background:#dbeafe;color:#1d4ed8}
+/* Placard mockup */
+.placard-mockup{border:3px solid #166534;border-radius:16px;padding:22px 24px;background:#fff;max-width:360px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.12);font-family:var(--font-display)}
+[data-theme="dark"] .placard-mockup{background:#0a180a;border-color:#4ade80}
+.placard-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #166534;padding-bottom:12px;margin-bottom:14px}
+.placard-brand{font-size:1rem;font-weight:900;color:#166534;letter-spacing:-.02em}
+.placard-badge{background:#166534;color:#fff;border-radius:20px;font-size:.62rem;font-weight:700;padding:3px 10px;letter-spacing:.04em;text-transform:uppercase}
+.placard-body{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px}
+.placard-qr{width:64px;height:64px;border-radius:8px;background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 0 0/8px 8px;flex-shrink:0;border:1.5px solid #ddd}
+.placard-info{flex:1}
+.placard-info-row{font-size:.73rem;color:var(--text);margin-bottom:5px;line-height:1.4}
+.placard-info-row strong{color:#166534}
+.placard-rules{background:#f0fdf4;border-radius:8px;padding:10px 12px}
+.placard-rules-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#166534;margin-bottom:6px}
+.placard-rule-item{font-size:.72rem;color:#374151;display:flex;gap:6px;margin-bottom:4px;line-height:1.4}
+.placard-rule-item:last-child{margin-bottom:0}
+.placard-rule-item i{color:#22c55e;font-size:.6rem;margin-top:3px;flex-shrink:0}
+.placard-footer{text-align:center;font-size:.65rem;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
 /* ─── Safe-Stay Legal Guide page ─────────────────────────────── */
 .page-hero-purple{background:linear-gradient(160deg,#1a0533 0%,#3b0764 50%,#5b21b6 100%);color:#fff}
 .sl-disclaimer{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 20px;font-size:.82rem;color:rgba(255,255,255,.7);max-width:680px;margin:0 auto;line-height:1.65}
@@ -2868,7 +2903,7 @@ function showPage(name, opts) {
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages' };
   setPageTitle(titles[name] || null);
 }
 
@@ -4101,10 +4136,12 @@ async function loadMyListings() {
           </div>
           <div class="booking-row-actions">
             <span class="status-badge status-${l.status||'pending'}">${l.status||'pending'}</span>
+            <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="openDetail('${l.id}')"><i class="fa-solid fa-eye"></i> View</button>
             ${l.status!=='active'?`<button class="btn-sm btn-sm-green" onclick="toggleListingStatus('${l.id}','active')">Activate</button>`:`<button class="btn-sm btn-sm-red" onclick="toggleListingStatus('${l.id}','inactive')">Deactivate</button>`}
             <button class="btn-sm btn-sm-blue" onclick="editListing('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
             <button class="btn-sm" style="background:var(--gray2);border:1px solid var(--border)" onclick="cloneListing('${l.id}')"><i class="fa-solid fa-clone"></i> Clone</button>
             <button class="btn-sm ${l.featured?'btn-sm-yellow':''}" onclick="toggleFeatured('${l.id}',${!!l.featured})" style="${l.featured?'background:#fef3c7;border-color:#f59e0b;color:#92400e':'background:var(--gray2);border:1px solid var(--border)'}"><i class="fa-solid fa-star"></i> ${l.featured?'Featured':'Feature'}</button>
+            <button class="btn-sm" style="background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c" onclick="deleteListing('${l.id}','${escapeHtml(l.title).replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i> Delete</button>
           </div>
         </div>
       </div>`).join('');
@@ -5247,6 +5284,8 @@ async function checkUnreadMessages() {
     showPage('blog');
   } else if (hash === '#page-blog-post' || hash === '#blog-post') {
     showPage('blog'); // can't know which article; show blog list
+  } else if (hash === '#page-standards' || hash === '#standards') {
+    showPage('standards');
   } else if (hash === '#page-safe-stay' || hash === '#safe-stay') {
     showPage('safe-stay');
   } else if (hash === '#page-help' || hash === '#help') {
@@ -6350,6 +6389,28 @@ async function cloneListing(listingId) {
 }
 
 // ============================================================
+// DELETE LISTING
+// ============================================================
+async function deleteListing(listingId, title) {
+  const confirmed = confirm(`Delete "${title}"?\n\nThis will permanently remove the listing and all its data. Active bookings will not be affected. This cannot be undone.`);
+  if (!confirmed) return;
+  // Second confirmation for active listings
+  try {
+    const { data: l } = await db.from('listings').select('status').eq('id', listingId).single();
+    if (l?.status === 'active') {
+      const again = confirm(`This listing is currently ACTIVE.\n\nAre you absolutely sure you want to delete it? Guests may have bookings against it.`);
+      if (!again) return;
+    }
+    const { error } = await db.from('listings').delete().eq('id', listingId).eq('host_id', currentUser.id);
+    if (error) throw error;
+    showToast('<i class="fa-solid fa-trash" style="margin-right:4px"></i> Listing deleted.', 'info');
+    loadMyListings();
+  } catch(e) {
+    showToast('Delete failed: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
 // FEATURED LISTING TOGGLE
 // ============================================================
 async function toggleFeatured(listingId, isFeatured) {
@@ -7154,14 +7215,26 @@ window.addEventListener('resize', () => {
             <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
+        <div class="merch-card" style="border-color:#bbf7d0;border-width:2px">
+          <div class="merch-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+            <span>🪟</span>
+            <span class="merch-badge">Required</span>
+          </div>
+          <div class="merch-body">
+            <div class="merch-name">Guest Window Shade</div>
+            <div class="merch-desc">Foldable accordion sun visor with built-in placard pocket + QR code holder. Fills the full windshield. Standard &amp; large sizes. Required for overnight stays.</div>
+            <div class="merch-price">$24</div>
+            <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
+          </div>
+        </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
             <span>🪪</span>
           </div>
           <div class="merch-body">
-            <div class="merch-name">Host Windshield Sign</div>
-            <div class="merch-desc">Professionally printed laminated card for your guests to display. Pack of 10.</div>
-            <div class="merch-price">$12</div>
+            <div class="merch-name">Host Placard Pack (10)</div>
+            <div class="merch-desc">Pre-printed laminated guest window placards with QR code area, quiet hours rules, and Driveway Host branding. Hand to guests at check-in.</div>
+            <div class="merch-price">$14</div>
             <button class="merch-btn" onclick="showToast('Added! Full checkout coming soon — email drivewayhost@pm.me to order now.','info')"><i class="fa-solid fa-cart-plus" style="margin-right:5px"></i> Add to Cart</button>
           </div>
         </div>
@@ -7480,6 +7553,139 @@ window.addEventListener('resize', () => {
   </div>
 </div>
 
+<!-- ===== COMMUNITY STANDARDS PAGE ===== -->
+<div class="page" id="page-standards">
+
+  <!-- Hero -->
+  <div class="page-hero page-hero-teal">
+    <div class="page-hero-badge"><i class="fa-solid fa-handshake"></i> Community Standards</div>
+    <h1>Be a Good Host.<br>Be a Good Guest.</h1>
+    <p>Driveway Host works because hosts and guests treat each other — and the neighborhood — with respect. These aren't suggestions. They're requirements for every booking.</p>
+  </div>
+
+  <!-- Host & Guest Standards -->
+  <div style="padding:56px 24px">
+    <div style="max-width:1080px;margin:0 auto 40px;text-align:center">
+      <h2 style="font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:8px;font-family:var(--font-display)">Standards for Every Booking</h2>
+      <p style="color:var(--muted);font-size:.9rem;max-width:520px;margin:0 auto">Violations of these standards may result in booking cancellation, account suspension, and forfeiture of payout or refund.</p>
+    </div>
+    <div class="std-cols">
+      <!-- HOST -->
+      <div class="std-col std-col-host">
+        <div class="std-col-title"><i class="fa-solid fa-house"></i> Host Responsibilities</div>
+        <p class="std-col-sub">You're inviting a guest onto your property and into your neighborhood. These standards apply to every listing, every booking.</p>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Provide a clean, safe space.</strong> The driveway must be free of debris, oil spills, trip hazards, and unmarked obstacles. What your listing shows is what the guest arrives to find.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Ensure adequate lighting for nighttime stays.</strong> A motion light or driveway light must be operational for any booking that includes overnight hours.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Respond within 2 hours of a booking request.</strong> Instant Book hosts are exempt, but all other hosts must confirm or decline promptly.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Respect quiet hours: 10 PM – 7 AM.</strong> Do not contact guests, operate noisy equipment, or create disturbances during these hours.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Be a good neighbor.</strong> If neighbors have raised concerns about your hosting activity, address them proactively. Your neighbors' comfort protects your listing.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Provide the Window Placard to overnight guests.</strong> Each booking generates a printable Window Placard. Ensure guests know to display it. Physical placards and window shades are available in the <span style="color:var(--green);font-weight:700;cursor:pointer" onclick="showPage('merch')">DH Store</span>.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Honor confirmed bookings.</strong> Same-day cancellations without emergency documentation result in host penalties and a full guest refund.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Keep the space accurately listed.</strong> If your space changes (construction, new obstacle, temporarily unavailable), update or pause your listing immediately — don't wait for a guest to arrive and find a problem.</div></div>
+      </div>
+      <!-- GUEST -->
+      <div class="std-col std-col-guest">
+        <div class="std-col-title"><i class="fa-solid fa-car"></i> Guest Responsibilities</div>
+        <p class="std-col-sub">You're a visitor on someone's private property in their neighborhood. These standards are the minimum expected of every Driveway Host guest.</p>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Display the Window Placard.</strong> The DH Window Placard or Window Shade must be visible in your windshield for any overnight or extended stay. It identifies you as a verified, booked guest — not an abandoned or trespassing vehicle.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Arrive and leave within your booked window.</strong> Do not arrive early or overstay without explicit host approval. Early arrivals block the space for the previous guest or host use.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Leave the space cleaner than you found it.</strong> Remove all trash, food containers, wrappers, cigarette butts, and debris. Do not leave anything on the host's property.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Observe quiet hours: 10 PM – 7 AM.</strong> No music audible outside the vehicle, no engine idling, no loud conversations, no doors slamming repeatedly.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Park only in your designated space.</strong> Do not overflow onto the lawn, neighboring property, sidewalk, or street. Stay within the boundaries shown in the listing photos.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Do not use host utilities without permission.</strong> Electricity, water, trash bins, and any other amenities are only available if explicitly listed. When in doubt, ask first.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>No unauthorized visitors.</strong> The booking is for your vehicle only. Additional vehicles or people at the space require host approval.</div></div>
+        <div class="std-rule"><div class="std-rule-icon"><i class="fa-solid fa-check"></i></div><div><strong>Report incidents immediately.</strong> Any damage, safety concerns, or problems — to your vehicle or the property — must be reported to Driveway Host support within 24 hours.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiet Hours callout -->
+  <div style="background:#fefce8;border-top:2px solid #fde68a;border-bottom:2px solid #fde68a;padding:28px 24px;text-align:center">
+    <div style="max-width:640px;margin:0 auto">
+      <div style="font-size:1.5rem;margin-bottom:8px">🌙</div>
+      <div style="font-weight:900;font-size:1.05rem;color:#92400e;margin-bottom:6px;font-family:var(--font-display)">Quiet Hours: 10 PM – 7 AM — No Exceptions</div>
+      <p style="font-size:.88rem;color:#92400e;opacity:.85;margin:0;line-height:1.6">This applies to both hosts and guests. No engine idling, no music audible outside the vehicle, no raised voices, no doors slamming. Neighborhoods trust Driveway Host because our community respects this rule. Violations can result in immediate booking cancellation without refund.</p>
+    </div>
+  </div>
+
+  <!-- Window Placard Section -->
+  <div style="padding:56px 24px">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+        <div>
+          <div class="section-eyebrow" style="text-align:left;margin-bottom:12px">Required for All Overnight Stays</div>
+          <h2 style="font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;font-family:var(--font-display)">The Window Placard</h2>
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.75;margin-bottom:16px">Every Driveway Host booking generates a printable <strong>Window Placard</strong> in your confirmation email. It must be displayed in your windshield during any overnight stay.</p>
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.75;margin-bottom:24px">The placard serves three purposes: it identifies your vehicle as a verified, booked guest (protecting you from neighbor complaints and police check-ins), it communicates the booking rules to anyone who needs to know, and it helps hosts verify guests at a glance.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+            <div style="display:flex;gap:10px;font-size:.86rem"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-top:2px;flex-shrink:0"></i><span><strong>QR code</strong> linked to your live booking verification page — anyone can scan it to confirm the stay is legitimate</span></div>
+            <div style="display:flex;gap:10px;font-size:.86rem"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-top:2px;flex-shrink:0"></i><span><strong>Booking details</strong> — dates, times, and the space address visible at a glance</span></div>
+            <div style="display:flex;gap:10px;font-size:.86rem"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-top:2px;flex-shrink:0"></i><span><strong>Guest rules summary</strong> — quiet hours, parking boundaries, and contact information</span></div>
+            <div style="display:flex;gap:10px;font-size:.86rem"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-top:2px;flex-shrink:0"></i><span><strong>DH branding</strong> — recognized by hosts, neighbors, and local authorities as a legitimate private parking arrangement</span></div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="showPage('merch')" style="font-size:.9rem;padding:11px 24px"><i class="fa-solid fa-bag-shopping" style="margin-right:6px"></i> Get Window Shades in the Store</button>
+            <button style="padding:11px 22px;border:2px solid var(--border);border-radius:10px;font-weight:700;font-size:.9rem;background:none;color:var(--text);cursor:pointer" onclick="showToast('Your placard is included in your booking confirmation email.','info')"><i class="fa-solid fa-download" style="margin-right:6px"></i> Print My Placard</button>
+          </div>
+        </div>
+        <!-- Placard mockup -->
+        <div style="display:flex;justify-content:center">
+          <div class="placard-mockup">
+            <div class="placard-header">
+              <div class="placard-brand"><i class="fa-solid fa-car-side" style="margin-right:6px"></i>DRIVEWAY HOST</div>
+              <div class="placard-badge">Verified Guest</div>
+            </div>
+            <div class="placard-body">
+              <div class="placard-qr"></div>
+              <div class="placard-info">
+                <div class="placard-info-row"><strong>Booking #</strong> DH-2026-48291</div>
+                <div class="placard-info-row"><strong>Check In</strong> Jun 28 · 10:00 PM</div>
+                <div class="placard-info-row"><strong>Check Out</strong> Jun 29 · 8:00 AM</div>
+                <div class="placard-info-row" style="margin-top:6px;font-size:.69rem;color:var(--muted)">Scan QR to verify this booking</div>
+              </div>
+            </div>
+            <div class="placard-rules">
+              <div class="placard-rules-title">Guest Rules</div>
+              <div class="placard-rule-item"><i class="fa-solid fa-check"></i> Quiet hours 10 PM – 7 AM</div>
+              <div class="placard-rule-item"><i class="fa-solid fa-check"></i> No engine idling overnight</div>
+              <div class="placard-rule-item"><i class="fa-solid fa-check"></i> Park within designated space</div>
+              <div class="placard-rule-item"><i class="fa-solid fa-check"></i> Remove all trash on departure</div>
+            </div>
+            <div class="placard-footer">drivewayhost.com &nbsp;·&nbsp; drivewayhost@pm.me &nbsp;·&nbsp; Scan QR for help</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Window Shade merch callout -->
+  <div style="background:linear-gradient(135deg,#052e16,#14532d);padding:40px 24px;text-align:center">
+    <div style="max-width:600px;margin:0 auto;color:#fff">
+      <div style="font-size:2rem;margin-bottom:10px">🪟</div>
+      <h3 style="font-size:1.2rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em;font-family:var(--font-display)">Window Shade — The Professional Option</h3>
+      <p style="opacity:.8;font-size:.9rem;line-height:1.7;margin-bottom:20px">The Driveway Host Window Shade is a foldable accordion sun visor with a built-in placard pocket. It fills the full windshield, displays your booking placard prominently, and doubles as a sun shade while you sleep. Available in the DH Store in standard and large vehicle sizes.</p>
+      <button style="background:#fff;color:#166534;padding:12px 28px;border-radius:10px;font-weight:800;font-size:.9rem;cursor:pointer;transition:.2s" onclick="showPage('merch')" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='#fff'"><i class="fa-solid fa-bag-shopping" style="margin-right:6px"></i> Shop Window Shades →</button>
+    </div>
+  </div>
+
+  <!-- Consequences section -->
+  <div style="padding:48px 24px;max-width:860px;margin:0 auto">
+    <h2 style="font-size:1.2rem;font-weight:900;letter-spacing:-.02em;margin-bottom:20px;font-family:var(--font-display)">What Happens When Standards Aren't Met</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="padding:18px;background:#fff1f2;border:1.5px solid #fecdd3;border-radius:14px;font-size:.84rem;line-height:1.65">
+        <div style="font-weight:800;color:#9f1239;margin-bottom:8px">Guest Violations</div>
+        <div style="color:var(--text)">Noise complaints, property damage, or overstaying may result in: immediate booking cancellation without refund, account suspension, and/or charges for cleaning or repairs assessed against the payment method on file.</div>
+      </div>
+      <div style="padding:18px;background:#fff1f2;border:1.5px solid #fecdd3;border-radius:14px;font-size:.84rem;line-height:1.65">
+        <div style="font-weight:800;color:#9f1239;margin-bottom:8px">Host Violations</div>
+        <div style="color:var(--text)">Unsafe spaces, same-day cancellations, or misrepresented listings may result in: full guest refund, payout forfeiture for that booking, listing suspension, and account review for repeated issues.</div>
+      </div>
+    </div>
+    <p style="font-size:.82rem;color:var(--muted);margin-top:20px;line-height:1.65">To report a standards violation, go to Help → Contact Us, or file a dispute from your booking dashboard. Our team reviews all reports within 24 hours.</p>
+  </div>
+
+</div>
+
 <!-- ===== SAFE-STAY LEGAL GUIDE PAGE ===== -->
 <div class="page" id="page-safe-stay">
 
@@ -7703,6 +7909,7 @@ window.addEventListener('resize', () => {
       <a onclick="showPage('home')">Home</a>
       <a onclick="showPage('legal')">How It Works</a>
       <a onclick="showPage('security')">Safety &amp; Security</a>
+      <a onclick="showPage('standards')">Community Standards</a>
       <a onclick="showPage('blog')">Blog</a>
       <a href="mailto:drivewayhost@pm.me">Partnerships</a>
     </div>
