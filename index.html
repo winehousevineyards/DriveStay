@@ -901,6 +901,17 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 #eventsDropdown:focus{border-color:var(--green)}
 [data-theme="dark"] #eventsDropdown{background:#1e293b;color:var(--text);border-color:#334155}
 
+/* ===== EXTRA SERVICES ===== */
+.es-preset-row{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.es-preset-row:last-child{border-bottom:none}
+.es-preset-label{font-size:.84rem;color:var(--text);display:flex;align-items:center;gap:8px}
+.es-price-input{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.84rem;color:var(--text);background:var(--card);width:100%;text-align:right}
+.es-price-input:focus{border-color:var(--green);outline:none}
+.es-check-row{display:flex;align-items:center;justify-content:space-between;padding:6px 2px;font-size:.84rem}
+.es-check-row label{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1}
+.es-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:pointer}
+#bkExtraServicesSection .price-row{border:none;padding:5px 0}
+
 /* ===== RECENTLY VIEWED ===== */
 .recently-viewed{padding:48px 24px;max-width:1100px;margin:0 auto}
 .recently-viewed h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
@@ -2329,6 +2340,10 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
             <div class="price-row hidden" id="bkFeeWeekendRow"><span><i class="fa-solid fa-moon" style="color:var(--muted);margin-right:4px"></i>Weekend surcharge</span><span id="bkFeeWeekend">$0</span></div>
             <div class="price-row hidden" id="bkFeeEventRow"><span><i class="fa-solid fa-calendar-star" style="color:var(--muted);margin-right:4px"></i>Event surcharge</span><span id="bkFeeEvent">$0</span></div>
             <div class="price-row hidden" id="bkFeeExtraVehicleRow"><span><i class="fa-solid fa-car-side" style="color:var(--muted);margin-right:4px"></i>Extra vehicle fee</span><span id="bkFeeExtraVehicle">$0</span></div>
+            <div id="bkExtraServicesSection" class="hidden" style="border-top:1px dashed var(--border);margin-top:6px;padding-top:6px">
+              <div class="price-row" style="padding-bottom:2px"><span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green)"><i class="fa-solid fa-circle-plus"></i> Optional Add-ons</span></div>
+              <div id="bkExtraSvcList"></div>
+            </div>
             <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
             <div style="margin-top:8px;padding:8px 10px;background:#f0fdf4;border-radius:8px;font-size:.75rem;color:#166534;display:flex;align-items:center;gap:6px">
               <i class="fa-solid fa-shield-halved"></i>
@@ -2492,6 +2507,24 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="form-row">
           <div class="form-group"><label>Event Surcharge ($/night)</label><input type="number" id="lFeeEvent" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Extra during local events</small></div>
           <div class="form-group"><label>Extra Vehicle Fee ($)</label><input type="number" id="lFeeExtraVehicle" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Per extra vehicle beyond 1st</small></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h2><i class="fa-solid fa-star" style="color:var(--green)"></i> Extra Services <span style="font-weight:400;font-size:.8rem;color:var(--muted)">— guests add at checkout</span></h2>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">Set a price for services you offer. Leave blank or 0 to hide from guests.</p>
+        <div style="margin-bottom:16px">
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> EV Charging</div><input type="number" id="esSvcEV" class="es-price-input" min="0" step="1" placeholder="$/session"/></div>
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-user-shield" style="color:var(--green)"></i> Attendant On-Duty</div><input type="number" id="esSvcAttendant" class="es-price-input" min="0" step="1" placeholder="$/day"/></div>
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-car-burst" style="color:#3b82f6"></i> Car Wash</div><input type="number" id="esSvcCarWash" class="es-price-input" min="0" step="1" placeholder="$/wash"/></div>
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-restroom" style="color:#8b5cf6"></i> Restroom Access</div><input type="number" id="esSvcRestroom" class="es-price-input" min="0" step="1" placeholder="$/stay"/></div>
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-camera" style="color:#6b7280"></i> Security Monitoring</div><input type="number" id="esSvcSecurity" class="es-price-input" min="0" step="1" placeholder="$/stay"/></div>
+          <div class="es-preset-row"><div class="es-preset-label"><i class="fa-solid fa-boxes-stacked" style="color:#78716c"></i> Luggage/Gear Storage</div><input type="number" id="esSvcStorage" class="es-price-input" min="0" step="1" placeholder="$/day"/></div>
+        </div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Custom Services (up to 3)</div>
+        <div id="esSvcCustom">
+          <div class="form-row"><div class="form-group" style="flex:2"><label>Service Name</label><input type="text" class="es-custom-name" placeholder="e.g. Airport Shuttle"/></div><div class="form-group" style="flex:1"><label>Price ($)</label><input type="number" class="es-custom-price" min="0" step="1" placeholder="0"/></div></div>
+          <div class="form-row"><div class="form-group" style="flex:2"><label>Service Name</label><input type="text" class="es-custom-name" placeholder="e.g. Bike Storage"/></div><div class="form-group" style="flex:1"><label>Price ($)</label><input type="number" class="es-custom-price" min="0" step="1" placeholder="0"/></div></div>
+          <div class="form-row"><div class="form-group" style="flex:2"><label>Service Name</label><input type="text" class="es-custom-name" placeholder="e.g. Overnight Permit"/></div><div class="form-group" style="flex:1"><label>Price ($)</label><input type="number" class="es-custom-price" min="0" step="1" placeholder="0"/></div></div>
         </div>
       </div>
       <div class="form-section">
@@ -3996,7 +4029,21 @@ function calcBooking() {
   const feeWeekend      = Math.round(l.fee_weekend || 0);
   const feeEvent        = Math.round(l.fee_event || 0);
   const feeExtraVehicle = Math.round(l.fee_extra_vehicle || 0);
-  const total     = afterPromo + broker + guestProt + hostProt + feeClean + feePet + feeDeposit;
+        // Extra services: populate checkboxes when listing changes
+        (function(){
+          var svcs=(l.extra_services||[]).filter(function(s){return s.name&&s.price>0;});
+          var sec=document.getElementById('bkExtraServicesSection');
+          var lst=document.getElementById('bkExtraSvcList');
+          if(sec&&lst&&lst.dataset.lid!==String(l.id)){
+            lst.dataset.lid=String(l.id);
+            if(svcs.length>0){
+              sec.classList.remove('hidden');
+              lst.innerHTML=svcs.map(function(s){return '<div class="es-check-row"><label><input type="checkbox" class="es-check" data-price="'+s.price+'" onchange="updateBookingCalc()"> '+s.name+'</label><span>+$'+s.price+'</span></div>';}).join('');
+            }else{sec.classList.add('hidden');lst.innerHTML='';}
+          }
+        })();
+        const esTotal=Array.from(document.querySelectorAll('#bkExtraSvcList .es-check:checked')).reduce(function(sum,cb){return sum+parseFloat(cb.dataset.price||0);},0);
+  const total     = afterPromo + broker + guestProt + hostProt + feeClean + feePet + feeDeposit + esTotal;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -4233,6 +4280,20 @@ async function submitListing(e) {
     fee_weekend: parseFloat(document.getElementById('lFeeWeekend')?.value || '0') || 0,
     fee_event: parseFloat(document.getElementById('lFeeEvent')?.value || '0') || 0,
     fee_extra_vehicle: parseFloat(document.getElementById('lFeeExtraVehicle')?.value || '0') || 0,
+        extra_services: (function(){
+          var svcs=[];
+          [['esSvcEV','EV Charging'],['esSvcAttendant','Attendant On-Duty'],['esSvcCarWash','Car Wash'],['esSvcRestroom','Restroom Access'],['esSvcSecurity','Security Monitoring'],['esSvcStorage','Luggage/Gear Storage']].forEach(function(p){
+            var pr=parseFloat(document.getElementById(p[0])?.value||'0')||0;
+            if(pr>0)svcs.push({name:p[1],price:pr});
+          });
+          var names=document.querySelectorAll('.es-custom-name');
+          var prices=document.querySelectorAll('.es-custom-price');
+          names.forEach(function(n,i){
+            var nm=n.value.trim(),pr=parseFloat(prices[i]?.value||'0')||0;
+            if(nm&&pr>0)svcs.push({name:nm,price:pr});
+          });
+          return svcs;
+        })(),
     wifi: document.getElementById('lWifi').checked,
     dump: document.getElementById('lDump').checked,
     water: document.getElementById('lWater').checked,
@@ -6728,7 +6789,7 @@ function _endTour() {
 // ============================================================
 const _DRAFT_KEY = 'ds_host_draft';
 let _autosaveTimer = null;
-const _HOST_FIELDS = ['lTitle','lAddress','lCity','lState','lDesc','lPriceNight','lPriceWeek','lPriceMonth','lSurfaceType','lLenFt','lWidFt','lMaxVehicles','lMinNights','lMaxNights','lCancelPolicy','lFeeClean','lFeeDeposit','lFeePet','lFeeWeekend','lFeeEvent','lFeeExtraVehicle'];
+const _HOST_FIELDS = ['lTitle','lAddress','lCity','lState','lDesc','lPriceNight','lPriceWeek','lPriceMonth','lSurfaceType','lLenFt','lWidFt','lMaxVehicles','lMinNights','lMaxNights','lCancelPolicy','lFeeClean','lFeeDeposit','lFeePet','lFeeWeekend','lFeeEvent','lFeeExtraVehicle','esSvcEV','esSvcAttendant','esSvcCarWash','esSvcRestroom','esSvcSecurity','esSvcStorage'];
 function initHostFormAutosave() {
   // Restore draft
   try {
