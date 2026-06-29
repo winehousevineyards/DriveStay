@@ -2418,11 +2418,11 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <h2><i class="fa-solid fa-location-dot"></i> Location &amp; Basic Info</h2>
         <div class="form-row single"><div class="form-group"><label>Space Title <span style="color:var(--red)">*</span></label><input type="text" id="lTitle" placeholder="e.g. Quiet driveway near downtown" required/></div></div>
         <div class="form-row single"><div class="form-group"><label>Description</label><textarea id="lDesc" placeholder="Describe access, nearby landmarks, any restrictions..."></textarea></div></div>
-        <div class="form-row single"><div class="form-group"><label>Street Address <span style="color:var(--red)">*</span></label><input type="text" id="lAddress" placeholder="123 Main St" required/></div></div>
+        <div class="form-row single"><div class="form-group"><label>Street Address <span style="color:var(--red)">*</span></label><input type="text" id="lAddress" placeholder="123 Main St" required onblur="geocodeListingAddress()"/></div></div>
         <div class="form-row">
           <div class="form-group"><label>City <span style="color:var(--red)">*</span></label><input type="text" id="lCity" required/></div>
           <div class="form-group"><label>State</label>
-            <select id="lState"><option value="">Select state</option>
+            <select id="lState" onchange="geocodeListingAddress()"><option value="">Select state</option>
               <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
               <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
               <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
@@ -4260,6 +4260,21 @@ function checkRestroomRequirement(val) {
 // ============================================================
 // HOST FORM
 // ============================================================
+async function geocodeListingAddress() {
+  const addr = (document.getElementById('lAddress')?.value || '').trim();
+  const city = (document.getElementById('lCity')?.value || '').trim();
+  const state = (document.getElementById('lState')?.value || '').trim();
+  if (!addr && !city) return;
+  const q = encodeURIComponent([addr, city, state, 'USA'].filter(Boolean).join(', '));
+  const latEl = document.getElementById('lLat'), lngEl = document.getElementById('lLng');
+  if (!latEl || !lngEl) return;
+  try {
+    const r = await fetch('https://api.mapbox.com/geocoding/v5/mapbox.places/' + q + '.json?access_token=pk.eyJ1IjoiZHJpdmV3YXlqb3N0IiwiYSI6ImNtcXZibXB4NTAwbGQzeXB4azdwcjI5aDkifQ.Mno11i9S3YPK8oSKA7bA3A&limit=1&country=US&types=address,place,postcode');
+    const d = await r.json();
+    const coords = d.features?.[0]?.geometry?.coordinates;
+    if (coords) { lngEl.value = coords[0]; latEl.value = coords[1]; showToast('📍 Location detected', 'success'); }
+  } catch(e) {}
+}
 async function submitListing(e) {
   e.preventDefault();
   if (!currentUser) { requireAuth('host'); return; }
@@ -4780,6 +4795,7 @@ async function editListing(listingId) {
     window._editListingId = listingId;
     document.querySelector('.submit-host-btn').textContent = 'Save Changes →';
     showPage('host');
+    if (!l.lat) setTimeout(geocodeListingAddress, 400);
     showToast('Editing listing — make your changes and save.', 'info');
   } catch(e) { showToast('Could not load listing for editing.', 'error'); }
 }
