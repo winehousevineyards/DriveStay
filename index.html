@@ -2147,6 +2147,12 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
             <div class="price-row"><span>Service fee (10%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— lowest in market</span></span><span id="bkBroker">$0</span></div>
             <div class="price-row"><span><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:4px"></i>Guest protection (4%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— trip &amp; liability</span></span><span id="bkGuestProt">$0</span></div>
             <div class="price-row"><span><i class="fa-solid fa-house-chimney-crack" style="color:var(--green);margin-right:4px"></i>Host protection (3%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— property damage</span></span><span id="bkHostProt">$0</span></div>
+            <div class="price-row hidden" id="bkFeeCleanRow"><span><i class="fa-solid fa-broom" style="color:var(--muted);margin-right:4px"></i>Cleaning fee</span><span id="bkFeeClean">$0</span></div>
+            <div class="price-row hidden" id="bkFeeDepositRow"><span><i class="fa-solid fa-shield" style="color:var(--muted);margin-right:4px"></i>Security deposit <span style="font-size:.7rem;color:var(--muted)">(refundable)</span></span><span id="bkFeeDeposit">$0</span></div>
+            <div class="price-row hidden" id="bkFeePetRow"><span><i class="fa-solid fa-paw" style="color:var(--muted);margin-right:4px"></i>Pet fee</span><span id="bkFeePet">$0</span></div>
+            <div class="price-row hidden" id="bkFeeWeekendRow"><span><i class="fa-solid fa-moon" style="color:var(--muted);margin-right:4px"></i>Weekend surcharge</span><span id="bkFeeWeekend">$0</span></div>
+            <div class="price-row hidden" id="bkFeeEventRow"><span><i class="fa-solid fa-calendar-star" style="color:var(--muted);margin-right:4px"></i>Event surcharge</span><span id="bkFeeEvent">$0</span></div>
+            <div class="price-row hidden" id="bkFeeExtraVehicleRow"><span><i class="fa-solid fa-car-side" style="color:var(--muted);margin-right:4px"></i>Extra vehicle fee</span><span id="bkFeeExtraVehicle">$0</span></div>
             <div class="price-row total"><span>Total</span><span id="bkTotal">$0</span></div>
             <div style="margin-top:8px;padding:8px 10px;background:#f0fdf4;border-radius:8px;font-size:.75rem;color:#166534;display:flex;align-items:center;gap:6px">
               <i class="fa-solid fa-shield-halved"></i>
@@ -2294,6 +2300,22 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
               <option value="strict">Strict — 50% refund up to 1 week before check-in</option>
             </select>
           </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h2><i class="fa-solid fa-dollar-sign" style="color:var(--green)"></i> Additional Fees <span style="font-weight:400;font-size:.8rem;color:var(--muted)">— optional</span></h2>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:18px">Shown transparently to guests before booking. Leave blank or 0 if not applicable.</p>
+        <div class="form-row">
+          <div class="form-group"><label>Cleaning Fee ($)</label><input type="number" id="lFeeClean" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">One-time per booking</small></div>
+          <div class="form-group"><label>Security Deposit ($)</label><input type="number" id="lFeeDeposit" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Refundable after stay</small></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Pet Fee ($)</label><input type="number" id="lFeePet" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Per booking if pets allowed</small></div>
+          <div class="form-group"><label>Weekend Surcharge ($/night)</label><input type="number" id="lFeeWeekend" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Extra Fri &amp; Sat nights</small></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Event Surcharge ($/night)</label><input type="number" id="lFeeEvent" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Extra during local events</small></div>
+          <div class="form-group"><label>Extra Vehicle Fee ($)</label><input type="number" id="lFeeExtraVehicle" min="0" step="1" placeholder="0"/><small style="color:var(--muted);font-size:.76rem">Per extra vehicle beyond 1st</small></div>
         </div>
       </div>
       <div class="form-section">
@@ -3752,7 +3774,13 @@ function calcBooking() {
   const guestProt = Math.round(afterPromo * 0.04);  // guest trip + liability coverage
   const hostProt  = Math.round(afterPromo * 0.03);  // host property damage coverage
   const ins       = guestProt + hostProt;            // total insurance (for DB compat)
-  const total     = afterPromo + broker + guestProt + hostProt;
+  const feeClean        = Math.round(l.fee_cleaning || 0);
+  const feeDeposit      = Math.round(l.fee_deposit || 0);
+  const feePet          = Math.round(l.fee_pet || 0);
+  const feeWeekend      = Math.round(l.fee_weekend || 0);
+  const feeEvent        = Math.round(l.fee_event || 0);
+  const feeExtraVehicle = Math.round(l.fee_extra_vehicle || 0);
+  const total     = afterPromo + broker + guestProt + hostProt + feeClean + feePet + feeDeposit;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -3766,6 +3794,13 @@ function calcBooking() {
   document.getElementById('bkBroker').textContent = '$' + broker;
   document.getElementById('bkGuestProt').textContent = '$' + guestProt;
   document.getElementById('bkHostProt').textContent = '$' + hostProt;
+  const _sfr = (rId, aId, v) => { const row = document.getElementById(rId); if (row) { row.classList.toggle('hidden', !v); if (v) { const el = document.getElementById(aId); if (el) el.textContent = '$' + v; } } };
+  _sfr('bkFeeCleanRow','bkFeeClean', feeClean);
+  _sfr('bkFeeDepositRow','bkFeeDeposit', feeDeposit);
+  _sfr('bkFeePetRow','bkFeePet', feePet);
+  _sfr('bkFeeWeekendRow','bkFeeWeekend', feeWeekend);
+  _sfr('bkFeeEventRow','bkFeeEvent', feeEvent);
+  _sfr('bkFeeExtraVehicleRow','bkFeeExtraVehicle', feeExtraVehicle);
   document.getElementById('bkTotal').textContent = '$' + total;
   // Show promo row
   const promoRow = document.getElementById('bkPromoRow');
@@ -3976,6 +4011,12 @@ async function submitListing(e) {
     event_multiplier: parseFloat(document.getElementById('lEventMultiplier')?.value || 1) || 1,
     event_date_range: document.getElementById('lEventRange')?.value.trim() || null,
     cancel_policy: document.getElementById('lCancelPolicy')?.value || 'flexible',
+    fee_cleaning: parseFloat(document.getElementById('lFeeClean')?.value || '0') || 0,
+    fee_deposit: parseFloat(document.getElementById('lFeeDeposit')?.value || '0') || 0,
+    fee_pet: parseFloat(document.getElementById('lFeePet')?.value || '0') || 0,
+    fee_weekend: parseFloat(document.getElementById('lFeeWeekend')?.value || '0') || 0,
+    fee_event: parseFloat(document.getElementById('lFeeEvent')?.value || '0') || 0,
+    fee_extra_vehicle: parseFloat(document.getElementById('lFeeExtraVehicle')?.value || '0') || 0,
     wifi: document.getElementById('lWifi').checked,
     dump: document.getElementById('lDump').checked,
     water: document.getElementById('lWater').checked,
@@ -4414,6 +4455,12 @@ async function editListing(listingId) {
     if (document.getElementById('lEventMultiplier')) document.getElementById('lEventMultiplier').value = l.event_multiplier || '1';
     if (document.getElementById('lEventRange')) document.getElementById('lEventRange').value = l.event_date_range || '';
     if (document.getElementById('lCancelPolicy')) document.getElementById('lCancelPolicy').value = l.cancel_policy || 'flexible';
+    if (document.getElementById('lFeeClean')) document.getElementById('lFeeClean').value = l.fee_cleaning || '';
+    if (document.getElementById('lFeeDeposit')) document.getElementById('lFeeDeposit').value = l.fee_deposit || '';
+    if (document.getElementById('lFeePet')) document.getElementById('lFeePet').value = l.fee_pet || '';
+    if (document.getElementById('lFeeWeekend')) document.getElementById('lFeeWeekend').value = l.fee_weekend || '';
+    if (document.getElementById('lFeeEvent')) document.getElementById('lFeeEvent').value = l.fee_event || '';
+    if (document.getElementById('lFeeExtraVehicle')) document.getElementById('lFeeExtraVehicle').value = l.fee_extra_vehicle || '';
     document.getElementById('lLen').value = l.length_ft || '';
     document.getElementById('lWid').value = l.width_ft || '';
     document.getElementById('lHgt').value = l.height_ft || '';
@@ -6434,7 +6481,7 @@ function _endTour() {
 // ============================================================
 const _DRAFT_KEY = 'ds_host_draft';
 let _autosaveTimer = null;
-const _HOST_FIELDS = ['lTitle','lAddress','lCity','lState','lDesc','lPriceNight','lPriceWeek','lPriceMonth','lSurfaceType','lLenFt','lWidFt','lMaxVehicles','lMinNights','lMaxNights','lCancelPolicy'];
+const _HOST_FIELDS = ['lTitle','lAddress','lCity','lState','lDesc','lPriceNight','lPriceWeek','lPriceMonth','lSurfaceType','lLenFt','lWidFt','lMaxVehicles','lMinNights','lMaxNights','lCancelPolicy','lFeeClean','lFeeDeposit','lFeePet','lFeeWeekend','lFeeEvent','lFeeExtraVehicle'];
 function initHostFormAutosave() {
   // Restore draft
   try {
