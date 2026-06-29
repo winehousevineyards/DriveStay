@@ -894,6 +894,13 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 [data-theme="dark"] .notif-dot{border-color:#1e293b}
 #btnUser{position:relative}
 
+/* ===== EVENTS FILTER ===== */
+.events-filter-wrap{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--gray)}
+.events-filter-label{font-size:.72rem;font-weight:700;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.05em}
+#eventsDropdown{width:100%;font-size:.82rem;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:var(--text);cursor:pointer;outline:none}
+#eventsDropdown:focus{border-color:var(--green)}
+[data-theme="dark"] #eventsDropdown{background:#1e293b;color:var(--text);border-color:#334155}
+
 /* ===== RECENTLY VIEWED ===== */
 .recently-viewed{padding:48px 24px;max-width:1100px;margin:0 auto}
 .recently-viewed h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
@@ -1867,6 +1874,38 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
           <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 72+ spaces</div>
         </div>
       </div>
+      <div class="city-card reveal" onclick="showCityPage('Toronto')" style="background:linear-gradient(140deg,#c2122b,#9b0f23)">
+        <div class="city-card-emoji">🍁</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Toronto</div>
+          <div class="city-state">Canada</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 75+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('Mexico City')" style="background:linear-gradient(140deg,#006847,#ce1126)">
+        <div class="city-card-emoji">🇲🇽</div>
+        <div class="city-card-body">
+          <div class="city-name-big">Mexico City</div>
+          <div class="city-state">Mexico</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 50+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('London')" style="background:linear-gradient(140deg,#012169,#c8102e)">
+        <div class="city-card-emoji">🎡</div>
+        <div class="city-card-body">
+          <div class="city-name-big">London</div>
+          <div class="city-state">United Kingdom</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 90+ spaces</div>
+        </div>
+      </div>
+      <div class="city-card reveal" onclick="showCityPage('San Jose Costa Rica')" style="background:linear-gradient(140deg,#002B7F,#CE1126)">
+        <div class="city-card-emoji">🌴</div>
+        <div class="city-card-body">
+          <div class="city-name-big">San José</div>
+          <div class="city-state">Costa Rica</div>
+          <div class="city-spaces-pill"><i class="fa-solid fa-car"></i> 30+ spaces</div>
+        </div>
+      </div>
     </div>
     <p style="margin-top:28px;font-size:.85rem;color:var(--muted)">Don't see your city? <a onclick="showPage('browse')" style="color:var(--green);cursor:pointer;font-weight:600;text-decoration:none">Browse all spaces →</a></p>
   </div>
@@ -2142,7 +2181,62 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
     <button class="venue-chip" onclick="searchNearVenue('Ryman Auditorium')"><i class="fa-solid fa-guitar"></i> Ryman</button>
     <button class="venue-chip" onclick="searchNearVenue('Yankee Stadium')"><i class="fa-solid fa-baseball"></i> Yankee Stadium</button>
     <button class="venue-chip" onclick="searchNearVenue('SoFi Stadium')"><i class="fa-solid fa-football"></i> SoFi</button>
+    <button class="venue-chip" onclick="searchNearVenue('Rose Bowl')"><i class="fa-solid fa-football"></i> Rose Bowl</button>
+    <button class="venue-chip" onclick="searchNearVenue('LA Memorial Coliseum')"><i class="fa-solid fa-football"></i> Coliseum</button>
+    <button class="venue-chip" onclick="searchNearVenue('Madison Square Garden')"><i class="fa-solid fa-basketball"></i> MSG</button>
+    <button class="venue-chip" onclick="searchNearVenue('Fenway Park')"><i class="fa-solid fa-baseball"></i> Fenway</button>
+    <button class="venue-chip" onclick="searchNearVenue('Lambeau Field')"><i class="fa-solid fa-football"></i> Lambeau</button>
+    <button class="venue-chip" onclick="searchNearVenue('Coachella Valley')"><i class="fa-solid fa-music"></i> Coachella</button>
+    <button class="venue-chip" onclick="searchNearVenue('Bonnaroo')"><i class="fa-solid fa-music"></i> Bonnaroo</button>
+    <button class="venue-chip" onclick="searchNearVenue('Wembley Stadium')"><i class="fa-solid fa-futbol"></i> Wembley</button>
+    <button class="venue-chip" onclick="searchNearVenue('Estadio Azteca')"><i class="fa-solid fa-futbol"></i> Azteca</button>
   </div>
+      <!-- UPCOMING EVENTS FILTER -->
+      <div class="events-filter-wrap" id="eventsFilterWrap">
+        <div class="events-filter-label"><i class="fa-solid fa-calendar-star"></i> Find Parking Near an Upcoming Event</div>
+        <select id="eventsDropdown" onchange="jumpToEvent(this.value)">
+          <option value="">Browse by event / venue...</option>
+          <optgroup label="🎵 Festivals">
+            <option value="33.6812,-116.2378,12">Coachella — Indio, CA</option>
+            <option value="35.4830,-86.0881,12">Bonnaroo — Manchester, TN</option>
+            <option value="41.8789,-87.6235,12">Lollapalooza — Chicago, IL</option>
+            <option value="40.7864,-119.2065,11">Burning Man — Black Rock City, NV</option>
+            <option value="30.2850,-97.7341,13">ACL Festival — Austin, TX</option>
+            <option value="43.6614,-85.8528,12">Electric Forest — Rothbury, MI</option>
+            <option value="26.1004,-80.1392,12">Ultra Music Festival — Miami, FL</option>
+          </optgroup>
+          <optgroup label="🏈 Sporting Events">
+            <option value="34.1613,-118.1676,14">Rose Bowl — Pasadena, CA</option>
+            <option value="34.0141,-118.2879,14">LA Memorial Coliseum — Los Angeles, CA</option>
+            <option value="40.7505,-73.9934,14">Madison Square Garden — New York, NY</option>
+            <option value="32.7473,-97.0946,13">AT&amp;T Stadium — Arlington, TX</option>
+            <option value="39.0490,-94.4839,13">Arrowhead Stadium — Kansas City, MO</option>
+            <option value="44.5013,-88.0622,13">Lambeau Field — Green Bay, WI</option>
+            <option value="42.3467,-71.0972,14">Fenway Park — Boston, MA</option>
+            <option value="41.8623,-87.6167,14">Soldier Field — Chicago, IL</option>
+            <option value="36.1660,-115.1461,13">Allegiant Stadium — Las Vegas, NV</option>
+            <option value="29.9511,-90.0812,13">Caesars Superdome — New Orleans, LA</option>
+          </optgroup>
+          <optgroup label="🎤 Concerts">
+            <option value="34.0980,-118.3267,14">Hollywood Bowl — Los Angeles, CA</option>
+            <option value="36.1627,-86.7816,14">Ryman Auditorium — Nashville, TN</option>
+            <option value="40.7505,-73.9934,14">Madison Square Garden — New York, NY</option>
+          </optgroup>
+          <optgroup label="🏕️ Camping &amp; Outdoor">
+            <option value="40.7864,-119.2065,11">Burning Man — Nevada Desert</option>
+            <option value="43.6614,-85.8528,12">Electric Forest — Michigan</option>
+            <option value="37.8651,-119.5383,11">Yosemite Valley — CA</option>
+          </optgroup>
+          <optgroup label="🌍 International">
+            <option value="51.5560,-0.2796,14">Wembley Stadium — London, UK</option>
+            <option value="48.9244,2.3601,13">Stade de France — Paris</option>
+            <option value="19.3029,-99.1507,13">Estadio Azteca — Mexico City</option>
+            <option value="43.6414,-79.3894,13">Rogers Centre — Toronto, Canada</option>
+            <option value="9.9319,-84.0634,13">Estadio Nacional — San José, Costa Rica</option>
+            <option value="41.3809,2.1228,13">Camp Nou — Barcelona, Spain</option>
+          </optgroup>
+        </select>
+      </div>
       <div class="browse-count-row" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:6px">
           <div id="browseCount" style="font-size:.85rem;color:var(--muted)">Loading...</div>
@@ -3014,6 +3108,46 @@ const VENUE_DATA = [
   { type:'airport', lat:25.7959, lng:-80.2870, name:'Miami International ✈️', city:'Miami, FL' },
   { type:'airport', lat:42.3656, lng:-71.0096, name:'Boston Logan ✈️', city:'Boston, MA' },
   { type:'airport', lat:38.9531, lng:-77.4565, name:'Dulles Airport ✈️', city:'Washington, DC' },
+  { type:'airport', lat:26.0742, lng:-80.1506, name:'Fort Lauderdale Airport ✈️', city:'Fort Lauderdale, FL' },
+  { type:'airport', lat:30.1975, lng:-97.6664, name:'Austin-Bergstrom Airport ✈️', city:'Austin, TX' },
+  { type:'airport', lat:43.6777, lng:-79.6248, name:'Toronto Pearson Airport ✈️', city:'Toronto, Canada' },
+  { type:'airport', lat:19.4363, lng:-99.0721, name:'Mexico City Airport ✈️', city:'Mexico City, Mexico' },
+  { type:'airport', lat:51.4775, lng:-0.4614, name:'London Heathrow ✈️', city:'London, UK' },
+  { type:'stadium', lat:34.1613, lng:-118.1676, name:'Rose Bowl 🌹', city:'Pasadena, CA' },
+  { type:'stadium', lat:34.0141, lng:-118.2879, name:'LA Memorial Coliseum 🏟️', city:'Los Angeles, CA' },
+  { type:'stadium', lat:40.7505, lng:-73.9934, name:'Madison Square Garden 🏀', city:'New York, NY' },
+  { type:'stadium', lat:32.7473, lng:-97.0946, name:'AT&T Stadium 🏈', city:'Arlington, TX' },
+  { type:'stadium', lat:39.0490, lng:-94.4839, name:'Arrowhead Stadium 🏈', city:'Kansas City, MO' },
+  { type:'stadium', lat:44.5013, lng:-88.0622, name:'Lambeau Field 🏈', city:'Green Bay, WI' },
+  { type:'stadium', lat:42.3467, lng:-71.0972, name:'Fenway Park ⚾', city:'Boston, MA' },
+  { type:'stadium', lat:41.8623, lng:-87.6167, name:'Soldier Field 🏈', city:'Chicago, IL' },
+  { type:'stadium', lat:47.9101, lng:-122.2015, name:'Lumen Field 🏈', city:'Seattle, WA' },
+  { type:'stadium', lat:29.6847, lng:-95.4107, name:'NRG Stadium 🏈', city:'Houston, TX' },
+  { type:'stadium', lat:33.8003, lng:-84.4004, name:'Mercedes-Benz Stadium 🏈', city:'Atlanta, GA' },
+  { type:'stadium', lat:36.1660, lng:-115.1461, name:'Allegiant Stadium 🏈', city:'Las Vegas, NV' },
+  { type:'stadium', lat:44.9795, lng:-93.2762, name:'US Bank Stadium 🏈', city:'Minneapolis, MN' },
+  { type:'stadium', lat:29.9511, lng:-90.0812, name:'Caesars Superdome 🏈', city:'New Orleans, LA' },
+  { type:'festival', lat:33.6812, lng:-116.2378, name:'Coachella Valley 🎵', city:'Indio, CA' },
+  { type:'festival', lat:35.4830, lng:-86.0881, name:'Bonnaroo 🎵', city:'Manchester, TN' },
+  { type:'festival', lat:41.8789, lng:-87.6235, name:'Lollapalooza 🎵', city:'Chicago, IL' },
+  { type:'festival', lat:40.7864, lng:-119.2065, name:'Burning Man 🔥', city:'Black Rock City, NV' },
+  { type:'festival', lat:30.2850, lng:-97.7341, name:'ACL Festival 🎵', city:'Austin, TX' },
+  { type:'festival', lat:43.6614, lng:-85.8528, name:'Electric Forest 🌲', city:'Rothbury, MI' },
+  { type:'festival', lat:26.1004, lng:-80.1392, name:'Ultra Music Festival 🎧', city:'Miami, FL' },
+  { type:'camping', lat:37.8651, lng:-119.5383, name:'Yosemite Valley 🏕️', city:'Yosemite, CA' },
+  { type:'camping', lat:38.7311, lng:-104.7850, name:'Garden of the Gods 🏕️', city:'Colorado Springs, CO' },
+  { type:'stadium', lat:51.5560, lng:-0.2796, name:'Wembley Stadium 🏟️', city:'London, UK' },
+  { type:'stadium', lat:48.9244, lng:2.3601, name:'Stade de France 🏟️', city:'Paris, France' },
+  { type:'stadium', lat:41.3809, lng:2.1228, name:'Camp Nou ⚽', city:'Barcelona, Spain' },
+  { type:'stadium', lat:19.3029, lng:-99.1507, name:'Estadio Azteca 🏟️', city:'Mexico City, Mexico' },
+  { type:'stadium', lat:9.9319, lng:-84.0634, name:'Estadio Nacional 🏟️', city:'San José, Costa Rica' },
+  { type:'stadium', lat:43.6414, lng:-79.3894, name:'Rogers Centre 🏟️', city:'Toronto, Canada' },
+  { type:'stadium', lat:45.4967, lng:-73.5694, name:'Bell Centre 🏒', city:'Montreal, Canada' },
+  { type:'poi', lat:43.6532, lng:-79.3832, name:'Downtown Toronto', city:'Toronto, Canada' },
+  { type:'poi', lat:19.4326, lng:-99.1332, name:'Mexico City Centro', city:'Mexico City, Mexico' },
+  { type:'poi', lat:51.5074, lng:-0.1278, name:'Central London', city:'London, UK' },
+  { type:'poi', lat:48.8566, lng:2.3522, name:'Paris City Centre', city:'Paris, France' },
+  { type:'poi', lat:9.7489, lng:-83.7534, name:'San José Centro', city:'San José, Costa Rica' },
 ];
 
 // ============================================================
@@ -3026,8 +3160,8 @@ let _listingsLastFetch = 0;
 let currentFilter = 'all';
 let selectedListing = null;
 let mbMap = null, _mbMarkers = [], _userMarker = null;
-let venueMarkers = { concert:[], stadium:[], arena:[], poi:[], park:[], airport:[] };
-let venueVisible  = { concert:true, stadium:true, arena:true, poi:true, park:true, airport:true };
+let venueMarkers = { concert:[], stadium:[], arena:[], poi:[], park:[], airport:[], festival:[], camping:[] };
+let venueVisible  = { concert:true, stadium:true, arena:true, poi:true, park:true, airport:true, festival:true, camping:true };
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZHJpdmV3YXlqb3N0IiwiYSI6ImNtcXZibXB4NTAwbGQzeXB4azdwcjI5aDkifQ.Mno11i9S3YPK8oSKA7bA3A';
 const MB_STYLES = { streets:'mapbox://styles/mapbox/streets-v12', satellite:'mapbox://styles/mapbox/satellite-streets-v12', dark:'mapbox://styles/mapbox/dark-v11' };
 const CLUSTER_ZOOM = 11;
@@ -6441,13 +6575,44 @@ async function showGuestProfile(userId) {
 // ============================================================
 // CITY LANDING PAGES (hash: #city-austin)
 // ============================================================
+function jumpToEvent(val) {
+  if (!val) return;
+  const parts = val.split(',');
+  const lat = parseFloat(parts[0]), lng = parseFloat(parts[1]), zoom = parseInt(parts[2]) || 13;
+  if (isNaN(lat) || isNaN(lng)) return;
+  showPage('browse');
+  setTimeout(function() {
+    if (typeof mbMap !== 'undefined' && mbMap) {
+      mbMap.flyTo({ center: [lng, lat], zoom: zoom, duration: 1400, essential: true });
+    }
+    var dd = document.getElementById('eventsDropdown');
+    if (dd) setTimeout(function(){ dd.value = ''; }, 1500);
+  }, 200);
+}
+
+const _CITY_COORDS = {
+  'Los Angeles':[-118.2437,34.0522],'Chicago':[-87.6298,41.8781],'Nashville':[-86.7816,36.1627],
+  'New York':[-74.0060,40.7128],'Austin':[-97.7431,30.2672],'Denver':[-104.9903,39.7392],
+  'Miami':[-80.1918,25.7617],'Seattle':[-122.3321,47.6062],'Boston':[-71.0589,42.3601],
+  'Atlanta':[-84.3880,33.7490],'Las Vegas':[-115.1398,36.1699],'Houston':[-95.3698,29.7604],
+  'Dallas':[-96.7970,32.7767],'San Francisco':[-122.4194,37.7749],'Toronto':[-79.3832,43.6532],
+  'Montreal':[-73.5673,45.5017],'Vancouver':[-123.1207,49.2827],'Mexico City':[-99.1332,19.4326],
+  'San Jose Costa Rica':[-84.0907,9.9281],'London':[-0.1278,51.5074],'Paris':[2.3522,48.8566],
+  'Barcelona':[2.1734,41.3851],'Buenos Aires':[-58.3816,-34.6037],'Tokyo':[139.6917,35.6895]
+};
 function showCityPage(city) {
-  // Filter browse to city and navigate
-  const cityField = document.getElementById('heroCity');
+  var cityField = document.getElementById('heroCity');
   if (cityField) cityField.value = city;
   _cityFilter = city;
   showPage('browse');
-  setTimeout(() => { applyFilter(); setPageTitle(`Parking in ${city} — Driveway Host`); }, 100);
+  setTimeout(function() {
+    applyFilter();
+    setPageTitle('Parking in ' + city + ' — Driveway Host');
+    var coords = _CITY_COORDS[city];
+    if (coords && typeof mbMap !== 'undefined' && mbMap) {
+      mbMap.flyTo({ center: coords, zoom: 12, duration: 1400, essential: true });
+    }
+  }, 200);
 }
 // Extend hash routing to support #city-* and #guest-*
 const _origHashRoute = window._hashRoute;
