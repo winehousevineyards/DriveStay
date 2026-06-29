@@ -912,6 +912,11 @@ input[type=range].price-slider{width:100%;accent-color:var(--green);cursor:point
 .es-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:pointer}
 #bkExtraServicesSection .price-row{border:none;padding:5px 0}
 
+/* ===== BLOCKED DATES =====
+.block-dates-section{margin-top:22px;border-top:1px solid var(--border);padding-top:18px}
+.blocked-date-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.84rem;color:var(--text)}
+.blocked-date-row:last-child{border-bottom:none}
+/* ============================= */
 /* ===== RECENTLY VIEWED ===== */
 .recently-viewed{padding:48px 24px;max-width:1100px;margin:0 auto}
 .recently-viewed h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
@@ -4134,7 +4139,7 @@ async function bookNow() {
         broker_fee:    ctx.broker*100, insurance_fee: ctx.ins*100,
         total_amount:  ctx.totalCents, status: 'pending'
       }).select('id').single();
-      if (bk?.id) bookingId = bk.id;
+      if (bk?.id) { bookingId = bk.id; try { db.functions.invoke('send-booking-email',{body:{booking_id:bk.id,event:'pending'}}).catch(()=>{}); } catch(_e2) {} }
     } catch(e) {}
 
     let clientSecret = null;
