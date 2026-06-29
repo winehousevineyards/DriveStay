@@ -343,6 +343,12 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.95);
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
 .form-group textarea{min-height:80px;resize:vertical}
 .check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.amenity-fee-grid{display:flex;flex-direction:column;gap:6px}
+.amenity-fee-row{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border)}
+.amenity-fee-row .check-item{flex:1;margin:0;font-size:.88rem}
+.amenity-fee-input{display:flex;align-items:center;gap:4px;color:var(--muted)}
+.amenity-fee-input input{width:60px;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.83rem;text-align:center}
+.amenity-fee-input span{font-size:.78rem}
 .check-item{display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer}
 .check-item input[type=checkbox]{accent-color:var(--green);width:16px;height:16px}
 .submit-host-btn{width:100%;padding:14px;background:var(--green);color:#fff;
@@ -1973,8 +1979,8 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
       </div>
       <div class="protection-card reveal">
         <div class="protection-icon"><i class="fa-solid fa-shield"></i></div>
-        <div class="protection-title">Host Insurance Required</div>
-        <div class="protection-desc">Every host must carry short-term rental insurance (via Thimble or equivalent) before their listing goes live.</div>
+        <div class="protection-title">Simple 10% Platform Fee</div>
+        <div class="protection-desc">We charge hosts 10% of each booking — no monthly fees, no listing fees. You only pay when you earn.</div>
       </div>
     </div>
   </div>
@@ -2345,6 +2351,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
             <div class="price-row hidden" id="bkFeeWeekendRow"><span><i class="fa-solid fa-moon" style="color:var(--muted);margin-right:4px"></i>Weekend surcharge</span><span id="bkFeeWeekend">$0</span></div>
             <div class="price-row hidden" id="bkFeeEventRow"><span><i class="fa-solid fa-calendar-star" style="color:var(--muted);margin-right:4px"></i>Event surcharge</span><span id="bkFeeEvent">$0</span></div>
             <div class="price-row hidden" id="bkFeeExtraVehicleRow"><span><i class="fa-solid fa-car-side" style="color:var(--muted);margin-right:4px"></i>Extra vehicle fee</span><span id="bkFeeExtraVehicle">$0</span></div>
+          <div class="price-row hidden" id="bkFeeAmenityRow"><span><i class="fa-solid fa-circle-check" style="color:var(--green);margin-right:4px"></i>Amenity fees</span><span id="bkFeeAmenity">$0</span></div>
             <div id="bkExtraServicesSection" class="hidden" style="border-top:1px dashed var(--border);margin-top:6px;padding-top:6px">
               <div class="price-row" style="padding-bottom:2px"><span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green)"><i class="fa-solid fa-circle-plus"></i> Optional Add-ons</span></div>
               <div id="bkExtraSvcList"></div>
@@ -2534,21 +2541,22 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
       </div>
       <div class="form-section">
         <h2><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Amenities</h2>
-        <div class="check-grid">
-          <label class="check-item"><input type="checkbox" id="lWifi"/> WiFi Access</label>
-          <label class="check-item"><input type="checkbox" id="lDump"/> Dump Station</label>
-          <label class="check-item"><input type="checkbox" id="lWater"/> Water Hook-up</label>
-          <label class="check-item"><input type="checkbox" id="lElec"/> Electric / EV</label>
-          <label class="check-item"><input type="checkbox" id="lCovered"/> Covered / Garage</label>
-          <label class="check-item"><input type="checkbox" id="lPets"/> Pets Allowed</label>
-          <label class="check-item"><input type="checkbox" id="lRvFriendly"/> <i class="fa-solid fa-van-shuttle"></i> RV Friendly</label>
-          <label class="check-item"><input type="checkbox" id="lCamera"/> <i class="fa-solid fa-camera"></i> Security Camera</label>
-          <label class="check-item"><input type="checkbox" id="lPool"/> <i class="fa-solid fa-person-swimming"></i> Pool</label>
-          <label class="check-item"><input type="checkbox" id="lSpa"/> <i class="fa-solid fa-hot-tub-person"></i> Spa</label>
-          <label class="check-item"><input type="checkbox" id="lSauna"/> <i class="fa-solid fa-fire"></i> Sauna</label>
-          <label class="check-item"><input type="checkbox" id="lLaundry"/> <i class="fa-solid fa-shirt"></i> Laundry</label>
-          <label class="check-item"><input type="checkbox" id="lOutdoorShower"/> <i class="fa-solid fa-shower"></i> Outdoor Shower</label>
-          <label class="check-item"><input type="checkbox" id="lBathroom"/> <i class="fa-solid fa-toilet"></i> Bathroom</label>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">Check amenities at your space. Add a per-night fee for any amenity (leave blank for free).</p>
+        <div class="amenity-fee-grid">
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lWifi"/> WiFi Access</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lWifiFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lElec"/> Electric / EV</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lElecFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lWater"/> Water Hook-up</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lWaterFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lDump"/> Dump Station</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lDumpFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lPool"/> <i class="fa-solid fa-person-swimming"></i> Pool</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lPoolFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lSpa"/> <i class="fa-solid fa-hot-tub-person"></i> Spa</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lSpaFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lSauna"/> <i class="fa-solid fa-fire"></i> Sauna</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lSaunaFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lLaundry"/> <i class="fa-solid fa-shirt"></i> Laundry</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lLaundryFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lBathroom"/> <i class="fa-solid fa-toilet"></i> Bathroom</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lBathroomFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lOutdoorShower"/> <i class="fa-solid fa-shower"></i> Outdoor Shower</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lOutdoorShowerFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lCovered"/> Covered / Garage</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lCoveredFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lRvFriendly"/> <i class="fa-solid fa-van-shuttle"></i> RV Friendly</label><div class="amenity-fee-input"><span>$</span><input type="number" id="lRvFriendlyFee" min="0" step="0.5" placeholder="0"/><span>/night</span></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lCamera"/> <i class="fa-solid fa-camera"></i> Security Camera</label><div class="amenity-fee-input"></div></div>
+          <div class="amenity-fee-row"><label class="check-item"><input type="checkbox" id="lPets"/> Pets Allowed</label><div class="amenity-fee-input"></div></div>
         </div>
       </div>
       <div class="form-section">
@@ -2598,13 +2606,22 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         </div></div>
       </div>
       <div class="form-section">
-        <h2><i class="fa-solid fa-shield-halved" style="color:var(--blue)"></i> Host Insurance (Required)</h2>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Hosts must carry short-term rental insurance via <a href="https://www.thimble.com" target="_blank" style="color:var(--green)">Thimble.com</a> or equivalent.</p>
-        <div class="form-row">
-          <div class="form-group"><label>Insurance Provider</label><input type="text" id="lInsProvider" placeholder="e.g. Thimble"/></div>
-          <div class="form-group"><label>Policy Number</label><input type="text" id="lInsPolicy" placeholder="Policy #"/></div>
+        <h2><i class="fa-solid fa-percent" style="color:var(--green)"></i> What You'll Be Charged</h2>
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div style="text-align:center;padding:16px;background:rgba(74,222,128,.08);border-radius:8px">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green)">10%</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:4px">Host service fee<br>per booking</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:rgba(59,130,246,.08);border-radius:8px">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--blue)">5%</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:4px">Guest booking fee<br>(paid by guest)</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:rgba(245,158,11,.08);border-radius:8px">
+            <div style="font-size:1.8rem;font-weight:900;color:#f59e0b">$0</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:4px">Monthly or listing<br>fees — ever</div>
+          </div>
         </div>
-        <div class="form-row single"><div class="form-group"><label>Policy Expiry Date</label><input type="date" id="lInsExpiry"/></div></div>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:12px"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-right:5px"></i>You keep 90% of every booking. Payouts sent within 24 hours of guest check-in.</p>
       </div>
       <div class="form-section">
         <h2><i class="fa-solid fa-list-check" style="color:var(--muted)"></i> House Rules</h2>
@@ -3464,7 +3481,6 @@ async function submitVerification() {
       vin: document.getElementById('vinNum').value.trim(),
       plate_number: document.getElementById('platNum').value.trim(),
       plate_state: document.getElementById('platState').value.trim().toUpperCase(),
-      ins_provider: provider, ins_policy: policy, ins_expiry: expiry, verified: true
     };
     if (dlPath) {
       updates.dl_photo_path = dlPath;
@@ -4046,6 +4062,7 @@ function calcBooking() {
   const feeWeekend      = Math.round(l.fee_weekend || 0);
   const feeEvent        = Math.round(l.fee_event || 0);
   const feeExtraVehicle = Math.round(l.fee_extra_vehicle || 0);
+    const feeAmenity = Math.round(nights * Object.values(l.amenity_fees||{}).reduce((s,v)=>s+(+v||0),0));
         // Extra services: populate checkboxes when listing changes
         (function(){
           var svcs=(l.extra_services||[]).filter(function(s){return s.name&&s.price>0;});
@@ -4060,7 +4077,7 @@ function calcBooking() {
           }
         })();
         const esTotal=Array.from(document.querySelectorAll('#bkExtraSvcList .es-check:checked')).reduce(function(sum,cb){return sum+parseFloat(cb.dataset.price||0);},0);
-  const total     = afterPromo + broker + guestProt + hostProt + feeClean + feePet + feeDeposit + esTotal;
+  const total     = afterPromo + broker + guestProt + hostProt + feeClean + feePet + feeDeposit + esTotal + feeAmenity;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -4081,6 +4098,7 @@ function calcBooking() {
   _sfr('bkFeeWeekendRow','bkFeeWeekend', feeWeekend);
   _sfr('bkFeeEventRow','bkFeeEvent', feeEvent);
   _sfr('bkFeeExtraVehicleRow','bkFeeExtraVehicle', feeExtraVehicle);
+    _sfr('bkFeeAmenityRow','bkFeeAmenity', feeAmenity);
   document.getElementById('bkTotal').textContent = '$' + total;
   // Show promo row
   const promoRow = document.getElementById('bkPromoRow');
@@ -4343,6 +4361,7 @@ async function submitListing(e) {
     laundry: document.getElementById('lLaundry').checked,
     outdoor_shower: document.getElementById('lOutdoorShower').checked,
     bathroom: document.getElementById('lBathroom').checked,
+        amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})()
     instant_book: document.getElementById('lInstantBook').checked,
     min_nights: parseInt(document.getElementById('lMinNights')?.value) || 1,
     max_nights: parseInt(document.getElementById('lMaxNights')?.value) || null,
@@ -4354,7 +4373,6 @@ async function submitListing(e) {
     vehicles, rules,
     ins_provider: document.getElementById('lInsProvider').value.trim() || null,
     ins_policy: document.getElementById('lInsPolicy').value.trim() || null,
-    ins_expiry: document.getElementById('lInsExpiry').value || null,
   };
   const btn = document.querySelector('.submit-host-btn');
   btn.disabled = true; btn.textContent = 'Submitting...';
@@ -4786,6 +4804,8 @@ async function editListing(listingId) {
      ['lPool','pool'],['lSpa','spa'],['lSauna','sauna'],['lLaundry','laundry'],
      ['lOutdoorShower','outdoor_shower'],['lBathroom','bathroom'],['lInstantBook','instant_book']]
       .forEach(([id, f]) => { const el = document.getElementById(id); if (el) el.checked = !!l[f]; });
+    const _af = l.amenity_fees || {};
+    [['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.value=_af[k]||'';});
     // Set multi-select vehicles
     const vehiclesSel = document.getElementById('lVehicles');
     if (vehiclesSel && l.vehicles) {
