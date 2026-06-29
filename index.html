@@ -2706,6 +2706,18 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
       <button class="export-csv-btn" id="exportCsvBtn" onclick="exportBookingsCSV()" style="display:none"><i class="fa-solid fa-file-csv"></i> Export Bookings CSV</button>
       <div class="loader" id="hostingLoader">Loading guest bookings...</div>
       <div id="hostingList"></div>
+      <div class="block-dates-section">
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--text)"><i class="fa-solid fa-calendar-xmark" style="color:#ef4444;margin-right:7px"></i>Block Availability</h3>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px">Prevent new bookings on specific dates (maintenance, personal use, etc).</p>
+        <select id="blockListingSelect" class="form-input" style="margin-bottom:10px" onchange="renderHostBlockedDates()"><option value="">Choose a listing...</option></select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <input type="date" id="blockStartDate" class="form-input" style="font-size:.85rem"/>
+          <input type="date" id="blockEndDate" class="form-input" style="font-size:.85rem"/>
+        </div>
+        <input type="text" id="blockNote" class="form-input" placeholder="Reason (optional)" style="margin-bottom:10px;font-size:.85rem"/>
+        <button class="btn-primary" onclick="submitBlockDates()" style="padding:9px 20px;border-radius:8px;font-size:.875rem;width:100%"><i class="fa-solid fa-ban" style="margin-right:6px"></i>Block These Dates</button>
+        <div id="blockedDatesList" style="margin-top:14px"></div>
+      </div>
     </div>
     <div class="dash-panel" id="dashSaved"><div id="savedListEl"></div></div>
     <div class="dash-panel" id="dashAdmin">
@@ -4087,6 +4099,9 @@ function calcBooking() {
   });
 }
 
+// Wrapper so extra-service checkboxes retrigger price calc
+function updateBookingCalc() { calcBooking(); }
+
 // ============================================================
 // BOOK NOW
 // ============================================================
@@ -4607,7 +4622,7 @@ function switchDashTab(tab, el) {
   document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('dash' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
   if (tab === 'messages' && currentUser && !_messagesLoaded) { _messagesLoaded = true; loadMessagesTab(); }
-  if (tab === 'hosting' && currentUser) loadHostBookings();
+  if (tab === 'hosting' && currentUser) { loadHostBookings(); loadBlockedDatesPanel(); }
   if (tab === 'saved') renderSavedListings();
   if (tab === 'admin') loadAdminPanel();
 }
@@ -4841,6 +4856,8 @@ async function hostUpdateBooking(bookingId, status, btn) {
     const labels = { confirmed: 'Booking accepted!', cancelled: 'Booking declined.', completed: 'Marked complete.' };
     showToast(labels[status] || 'Updated.', status === 'cancelled' ? 'info' : 'success');
     loadHostBookings();
+    // Fire-and-forget email notification
+    try { db.functions.invoke('send-booking-email',{body:{booking_id:bookingId,event:status}}).catch(()=>{}); } catch(e) {}
   } catch(e) { showToast('Failed: ' + e.message, 'error'); if (btn) btn.disabled = false; }
 }
 
@@ -6140,7 +6157,7 @@ async function loadAvailCalendar(listingId) {
   try {
     const { data } = await db.from('bookings').select('check_in,check_out')
       .eq('listing_id', listingId).in('status', ['confirmed','pending']);
-    _bookedDates = data || [];
+    _bookedDates = [...(data||[])];try{const{data:bd}=await db.from('blocked_dates').select('start_date,end_date').eq('listing_id',listingId);(bd||[]).forEach(r=>_bookedDates.push({check_in:r.start_date,check_out:r.end_date}));}catch(e){}
   } catch(e) { _bookedDates = []; }
   renderAvailCalendar();
 }
@@ -6192,6 +6209,63 @@ function shiftCalMonth(dir) {
   if (_calMonth > 11) { _calMonth = 0; _calYear++; }
   if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
   renderAvailCalendar();
+}
+
+// ============================================================
+// HOST BLOCKED DATES
+// ============================================================
+let _blockedDates = [];
+
+async function loadBlockedDatesPanel() {
+  const sel = document.getElementById('blockListingSelect');
+  if (!sel || !currentUser) return;
+  try {
+    const { data } = await db.from('listings').select('id,title').eq('host_id', currentUser.id).order('created_at',{ascending:false});
+    sel.innerHTML = '<option value="">Choose a listing...</option>' + (data||[]).map(l => '<option value="'+l.id+'">'+escapeHtml(l.title)+'</option>').join('');
+  } catch(e) {}
+  renderHostBlockedDates();
+}
+
+async function renderHostBlockedDates() {
+  const sel = document.getElementById('blockListingSelect');
+  const list = document.getElementById('blockedDatesList');
+  if (!list) return;
+  const lid = sel && sel.value;
+  if (!lid) { list.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Select a listing to manage its availability.</p>'; return; }
+  list.innerHTML = '<div class="loader" style="padding:8px 0">Loading...</div>';
+  try {
+    const { data } = await db.from('blocked_dates').select('*').eq('listing_id', lid).order('start_date');
+    _blockedDates = data || [];
+    if (!_blockedDates.length) { list.innerHTML = '<p style="color:var(--muted);font-size:.84rem;padding:6px 0">No blocked dates — all dates available.</p>'; return; }
+    list.innerHTML = _blockedDates.map(r => '<div class="blocked-date-row"><span><i class="fa-solid fa-calendar-xmark" style="color:#ef4444;margin-right:6px"></i>' + r.start_date + ' → ' + r.end_date + (r.note ? ' <em style="color:var(--muted);font-size:.8rem">(' + escapeHtml(r.note) + ')</em>' : '') + '</span><button class="btn-sm btn-sm-red" style="padding:3px 10px;font-size:.75rem" onclick="unblockDate(\'' + r.id + '\',\'' + lid + '\')"><i class="fa-solid fa-trash"></i></button></div>').join('');
+  } catch(e) { list.innerHTML = '<p style="color:var(--muted)">Could not load blocked dates.</p>'; }
+}
+
+async function submitBlockDates() {
+  const sel = document.getElementById('blockListingSelect');
+  const start = document.getElementById('blockStartDate') && document.getElementById('blockStartDate').value;
+  const end = document.getElementById('blockEndDate') && document.getElementById('blockEndDate').value;
+  const note = (document.getElementById('blockNote') && document.getElementById('blockNote').value.trim()) || '';
+  if (!sel || !sel.value) { showToast('Select a listing first', 'error'); return; }
+  if (!start || !end || end < start) { showToast('Select valid start and end dates', 'error'); return; }
+  try {
+    const { error } = await db.from('blocked_dates').insert({ listing_id: sel.value, start_date: start, end_date: end, note: note || null, host_id: currentUser.id });
+    if (error) throw error;
+    showToast('Dates blocked!', 'success');
+    document.getElementById('blockStartDate').value = '';
+    document.getElementById('blockEndDate').value = '';
+    if (document.getElementById('blockNote')) document.getElementById('blockNote').value = '';
+    renderHostBlockedDates();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
+}
+
+async function unblockDate(id, listingId) {
+  try {
+    const { error } = await db.from('blocked_dates').delete().eq('id', id);
+    if (error) throw error;
+    showToast('Dates unblocked', 'success');
+    renderHostBlockedDates();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
 }
 
 // ============================================================
