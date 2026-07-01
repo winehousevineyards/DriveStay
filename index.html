@@ -4361,7 +4361,7 @@ async function submitListing(e) {
     laundry: document.getElementById('lLaundry').checked,
     outdoor_shower: document.getElementById('lOutdoorShower').checked,
     bathroom: document.getElementById('lBathroom').checked,
-        amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})(),,
+        amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})(),
     instant_book: document.getElementById('lInstantBook').checked,
     min_nights: parseInt(document.getElementById('lMinNights')?.value) || 1,
     max_nights: parseInt(document.getElementById('lMaxNights')?.value) || null,
