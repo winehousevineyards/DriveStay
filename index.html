@@ -3275,6 +3275,7 @@ function showPage(name, opts) {
   window.scrollTo(0, 0);
   // Lock body scroll on browse (desktop split-panel), restore on all other pages
   document.body.style.overflow = (name === 'browse' && window.innerWidth > 767) ? 'hidden' : '';
+      [document.querySelector('.why-ds-section'),document.querySelector('footer'),document.getElementById('adSlotHome')].forEach(el=>{if(el)el.style.display=name==='home'?'':'none';});
   // Update URL hash
   if (name !== 'home') history.replaceState(null,'','#page-'+name);
   else history.replaceState(null,'',location.pathname);
