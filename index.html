@@ -1643,6 +1643,34 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
 .nav-dropdown a:hover{background:var(--gray);color:var(--green)}
 .nav-dropdown-divider{height:1px;background:var(--border);margin:4px 0}
 
+
+/* ===== MOBILE RESPONSIVE FIXES ===== */
+html,body{overflow-x:hidden}
+@media(max-width:780px){
+  .nav-links{display:none!important}
+  .hamburger{display:flex!important}
+}
+@media(max-width:640px){
+  .hero h1{font-size:2.4rem}
+  .hero p{font-size:1.05rem;margin-bottom:28px}
+  .hero{padding:80px 20px 48px}
+  .hero-search{padding:18px 18px;gap:10px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:1.9rem;letter-spacing:-.02em}
+  .hero p{font-size:.95rem;margin-bottom:20px}
+  .hero-search{padding:14px 14px;gap:8px;border-radius:14px}
+  .hero-field{min-width:100%}
+  .hero-search button,.hero-search .btn-primary{width:100%;justify-content:center}
+  .trust-bar{flex-wrap:wrap;gap:8px;padding:12px 16px}
+  .trust-bar .trust-item{font-size:.78rem}
+  .page{padding-left:12px;padding-right:12px}
+}
+@media(max-width:380px){
+  .hero h1{font-size:1.6rem}
+  .hero-search{padding:12px 12px}
+}
+/* ===================================== */
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
