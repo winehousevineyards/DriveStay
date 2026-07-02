@@ -5784,7 +5784,7 @@ async function checkUnreadMessages() {
 // ============================================================
 // HASH ROUTING (on load, open correct page or listing)
 // ============================================================
-(function handleHashOnLoad() {
+function handleHashOnLoad() {
   const hash = window.location.hash;
   if (!hash) return;
   if (hash.startsWith('#listing-')) {
@@ -5826,7 +5826,12 @@ async function checkUnreadMessages() {
   } else if (hash === '#page-help' || hash === '#help') {
     showPage('help');
   }
-})();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleHashOnLoad);
+} else {
+  handleHashOnLoad();
+}
 
 // ============================================================
 // NEW SECTION HELPERS
