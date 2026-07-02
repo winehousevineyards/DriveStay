@@ -38,6 +38,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet"/>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js">
+// Patch: prevent null crash when guestPreviewBanner is absent
+(function(){
+  var _origGetEl = document.getElementById.bind(document);
+  document.getElementById = function(id) {
+    var el = _origGetEl(id);
+    if (!el && id === 'guestPreviewBanner') {
+      el = document.createElement('div');
+      el.id = 'guestPreviewBanner';
+      el.style.display = 'none';
+    }
+    return el;
+  };
+})();
+
 document.addEventListener("error",function(e){if(e.target.tagName==="IMG"&&!e.target.dataset.fbk){e.target.dataset.fbk="1";var seed=encodeURIComponent(e.target.alt||"space");e.target.src="https://picsum.photos/seed/"+seed+"/400/280";}},true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
