@@ -7206,7 +7206,7 @@ function openConvo(bookingId) {
 // ADMIN PANEL
 // ============================================================
 var ADMIN_EMAILS = ['winehousevineyards@gmail.com', 'drivewayjost@pm.me', 'pdgd5gwf2x@privaterelay.appleid.com'];
-function isAdminUser() { return !!(currentUser && ADMIN_EMAILS.includes(currentUser.email)); }
+function isAdminUser() { return !!(currentUser && (ADMIN_EMAILS||[]).includes(currentUser.email)); }
 
 async function loadAdminPanel() {
   const list = document.getElementById('adminPendingList');
