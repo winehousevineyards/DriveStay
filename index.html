@@ -37,7 +37,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet"/>
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js">
+document.addEventListener("error",function(e){if(e.target.tagName==="IMG"&&!e.target.dataset.fbk){e.target.dataset.fbk="1";var seed=encodeURIComponent(e.target.alt||"space");e.target.src="https://picsum.photos/seed/"+seed+"/400/280";}},true);
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script type="application/ld+json">
@@ -2046,7 +2048,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">We were driving to a Dodgers game and snagged a driveway spot for $22. Walked to the stadium in 8 minutes. Never going back to the $45 lots.</p>
         <div class="testi-person">
-          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=88&h=88&fit=crop&crop=face&q=80" alt="Marcus T." loading="lazy"></div>
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/driveway1/400/280" alt="Marcus T." loading="lazy"></div>
           <div><div class="testi-name">Marcus T.</div><div class="testi-role">Guest · Los Angeles, CA</div></div>
         </div>
       </div>
@@ -2054,7 +2056,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">I listed my driveway on a whim before the Rose Bowl game. Made $180 in a single weekend. Setup took maybe 10 minutes. I wish I'd done this years ago.</p>
         <div class="testi-person">
-          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=88&h=88&fit=crop&crop=face&q=80" alt="Priya M." loading="lazy"></div>
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/garage2/400/280" alt="Priya M." loading="lazy"></div>
           <div><div class="testi-name">Priya M.</div><div class="testi-role">Host · Pasadena, CA</div></div>
         </div>
       </div>
@@ -2062,7 +2064,7 @@ footer { background:#060e06 !important; padding:0 !important; text-align:left !i
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p class="testi-quote">Monthly parking near my office was $400. I found a host's driveway two blocks away for $190/month. The host is super friendly and the spot is always available.</p>
         <div class="testi-person">
-          <div class="testi-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=88&h=88&fit=crop&crop=face&q=80" alt="Jordan K." loading="lazy"></div>
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/parking3/400/280" alt="Jordan K." loading="lazy"></div>
           <div><div class="testi-name">Jordan K.</div><div class="testi-role">Guest · Austin, TX</div></div>
         </div>
       </div>
@@ -7188,7 +7190,7 @@ function openConvo(bookingId) {
 // ============================================================
 // ADMIN PANEL
 // ============================================================
-const ADMIN_EMAILS = ['winehousevineyards@gmail.com', 'drivewayjost@pm.me', 'pdgd5gwf2x@privaterelay.appleid.com'];
+var ADMIN_EMAILS = ['winehousevineyards@gmail.com', 'drivewayjost@pm.me', 'pdgd5gwf2x@privaterelay.appleid.com'];
 function isAdminUser() { return !!(currentUser && ADMIN_EMAILS.includes(currentUser.email)); }
 
 async function loadAdminPanel() {
