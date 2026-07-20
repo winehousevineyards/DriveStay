@@ -8421,6 +8421,12 @@ handleStripeConnectCallback();
 
 <!-- ===== SAFE-STAY LEGAL GUIDE PAGE ===== -->
 <div class="page" id="page-safe-stay">
+<div style="max-width:900px;margin:30px auto;background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:16px;padding:26px 30px;">
+  <h2 style="font-family:var(--font-display);margin:0 0 10px;">&#127966;&#65039; An invitation to parks &amp; public lands</h2>
+  <p style="margin:0 0 10px;color:var(--muted);line-height:1.7;">We're inviting county, state, and federal parks and beaches to open <strong>permitted overnight parking</strong> through Driveway Host &mdash; issued exactly like our driveway bookings: dated pass, license plate on the placard, clear rules. Travelers get a safe, legal place to sleep. Streets stay clearer at night. Parks earn new permit revenue with zero new infrastructure.</p>
+  <p style="margin:0;color:var(--muted);">Park administrator or ranger district? <a onclick="showPage('help')" style="color:var(--green);font-weight:700;cursor:pointer;">Get in touch</a>.</p>
+</div>
+
 
   <!-- Hero -->
   <div class="page-hero page-hero-purple">
@@ -8678,12 +8684,7 @@ handleStripeConnectCallback();
       <button class="btn-primary" style="flex:1;padding:10px;background:#ef4444" onclick="submitDispute()"><i class="fa-solid fa-paper-plane" style="margin-right:6px"></i> Submit Dispute</button>
       <button class="btn-ghost" onclick="document.getElementById('disputeModal').classList.add('hidden')" style="padding:10px 16px">Cancel</button>
     </div>
-  <div style="max-width:900px;margin:30px auto;background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:16px;padding:26px 30px;">
-  <h2 style="font-family:var(--font-display);margin:0 0 10px;">&#127966;&#65039; An invitation to parks &amp; public lands</h2>
-  <p style="margin:0 0 10px;color:var(--muted);line-height:1.7;">We're inviting county, state, and federal parks and beaches to open <strong>permitted overnight parking</strong> through Driveway Host &mdash; issued exactly like our driveway bookings: dated pass, license plate on the placard, clear rules. Travelers get a safe, legal place to sleep. Streets stay clearer at night. Parks earn new permit revenue with zero new infrastructure.</p>
-  <p style="margin:0;color:var(--muted);">Park administrator or ranger district? <a onclick="showPage('help')" style="color:var(--green);font-weight:700;cursor:pointer;">Get in touch</a>.</p>
-</div>
-</div>
+  </div>
 </div>
 
 <div id="attendantAppModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;overflow-y:auto;"><div style="background:#fff;max-width:520px;margin:40px auto;border-radius:12px;padding:32px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h2 style="margin:0;font-size:1.4rem;">Apply to Be an Attendant</h2><button onclick="document.getElementById(&quot;attendantAppModal&quot;).style.display=&quot;none&quot;" style="background:none;border:none;font-size:28px;cursor:pointer;">&times;</button></div><div style="display:flex;flex-direction:column;gap:14px;"><input id="app-name" type="text" placeholder="Full Name *" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><input id="app-email" type="email" placeholder="Email Address *" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><input id="app-phone" type="tel" placeholder="Phone Number" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><select id="app-experience" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;"><option value="">Experience Level *</option><option value="None / Entry Level">None / Entry Level</option><option value="1-2 years">1-2 Years</option><option value="3-5 years">3-5 Years</option><option value="5+ years">5+ Years</option></select><select id="app-availability" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;"><option value="">Availability *</option><option value="Weekends only">Weekends Only</option><option value="Weekdays only">Weekdays Only</option><option value="Evenings and weekends">Evenings and Weekends</option><option value="Flexible">Flexible</option></select><textarea id="app-about" rows="4" placeholder="Tell us about yourself and any relevant experience." style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;resize:vertical;"></textarea><button onclick="submitAttendantApplication()" style="background:#2563eb;color:#fff;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Submit Application</button></div></div></div>
