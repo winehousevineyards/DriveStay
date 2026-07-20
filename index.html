@@ -2201,7 +2201,7 @@ html,body{overflow-x:hidden}
         <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
         <button class="filter-chip" onclick="setFilter('instant_book',this)"><i class="fa-solid fa-bolt"></i> Instant Book</button>
         <button class="filter-chip" onclick="setFilter('wifi',this)"><i class="fa-solid fa-wifi"></i> WiFi</button>
-        <button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('commuter',this)"><i class="fa-solid fa-briefcase"></i> 9–5 Commuter</button>
+        <button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('cat:overnight',this)">&#127769; Overnight</button><button class="filter-chip" onclick="setFilter('cat:daytime',this)"><i class="fa-solid fa-briefcase"></i> Daytime 9&ndash;5</button><button class="filter-chip" onclick="setFilter('cat:publicland',this)">&#127966;&#65039; Public Lands</button><button class="filter-chip" onclick="setFilter('cat:lot',this)">&#127981; Lots &amp; Industrial</button>
         <button class="filter-chip" onclick="setFilter('electric',this)"><i class="fa-solid fa-charging-station"></i> EV Charging</button>
         <button class="filter-chip" onclick="setFilter('pets',this)"><i class="fa-solid fa-paw"></i> Pet OK</button>
         <button class="filter-chip" onclick="setFilter('dump',this)"><i class="fa-solid fa-recycle"></i> Dump Station</button>
@@ -2588,8 +2588,22 @@ html,body{overflow-x:hidden}
         <h2><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Instant Book</h2>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">With Instant Book enabled, guests can reserve immediately without needing your approval. Listings with Instant Book get priority placement in search results.</p>
         <label class="check-item" style="font-size:.9rem"><input type="checkbox" id="lInstantBook"/> Enable Instant Book for this listing</label>
-      <label class="check-item" style="font-size:.9rem"><input type="checkbox" id="lCommuter"/> Offer weekday 9–5 commuter parking — business-day parking for people who work near you</label>
-      <div style="margin:6px 0 0 26px"><input type="number" id="lPriceCommuter" min="0" placeholder="Day rate 9AM–5PM ($)" style="max-width:220px"/></div>
+      <div style="margin:12px 0">
+        <label style="font-weight:700;font-size:.9rem;display:block;margin-bottom:4px">Listing category</label>
+        <select id="lCategory" onchange="var r=document.getElementById('dayHoursRow'); if(r) r.style.display=this.value==='daytime'?'flex':'none';" style="max-width:360px">
+          <option value="overnight">Overnight driveway / space</option>
+          <option value="daytime">Daytime commuter parking (you set the hours)</option>
+          <option value="publicland">Public land — park / beach / agency lot</option>
+          <option value="lot">Large lot / vacant industrial property</option>
+        </select>
+        <div id="dayHoursRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:.85rem;color:var(--muted)">Available from</span>
+          <input type="time" id="lDayStart" value="09:00"/>
+          <span style="font-size:.85rem;color:var(--muted)">to</span>
+          <input type="time" id="lDayEnd" value="17:00"/>
+          <input type="number" id="lPriceCommuter" min="0" placeholder="Day rate ($)" style="max-width:130px"/>
+        </div>
+      </div>
       </div>
       <div class="form-section">
         <h2><i class="fa-solid fa-ruler-combined" style="color:var(--blue)"></i> Space Dimensions</h2>
@@ -3593,7 +3607,7 @@ function applyFilter() {
   const q = (document.getElementById('navSearch')?.value || '').toLowerCase();
   const maxP = Number(document.getElementById('priceSlider')?.value || 500);
   filteredListings = allListings.filter(l => {
-    const mf = currentFilter === 'all' || !!l[currentFilter];
+    const mf = currentFilter === 'all' || (currentFilter.indexOf('cat:') === 0 ? (l.category || 'overnight') === currentFilter.slice(4) : !!l[currentFilter]);
     const ms = !q || (l.title||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q) || (l.state||'').toLowerCase().includes(q);
     const mp = maxP >= 500 || Number(l.price_nightly||0) <= maxP;
     const mv = !_heroVehicle || (l.vehicles || []).some(v => v.toLowerCase() === _heroVehicle.toLowerCase());
@@ -3662,7 +3676,7 @@ function buildListingCard(l) {
         ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
         ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
         ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${l.commuter?`<span class="instant-badge" style="background:#0284c7"><i class="fa-solid fa-briefcase"></i> 9–5</span>`:''}
+        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="background:#7c3aed">&#127981; Lot</span>`:''}
       </div>
     </div>
   </div>`;
@@ -4421,7 +4435,10 @@ async function submitListing(e) {
     bathroom: document.getElementById('lBathroom').checked,
         amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})(),
     instant_book: document.getElementById('lInstantBook').checked,
-      commuter: !!(document.getElementById('lCommuter')||{}).checked,
+      category: (document.getElementById('lCategory')||{}).value || 'overnight',
+      commuter: ((document.getElementById('lCategory')||{}).value === 'daytime'),
+      day_start: (document.getElementById('lDayStart')||{}).value || null,
+      day_end: (document.getElementById('lDayEnd')||{}).value || null,
       price_commuter: parseInt((document.getElementById('lPriceCommuter')||{}).value) || null,
     min_nights: parseInt(document.getElementById('lMinNights')?.value) || 1,
     max_nights: parseInt(document.getElementById('lMaxNights')?.value) || null,
@@ -7410,6 +7427,16 @@ function openAttendantApplicationModal(){var m=document.getElementById("attendan
 function submitAttendantApplication(){var name=(document.getElementById("app-name")||{value:""}).value;var email=(document.getElementById("app-email")||{value:""}).value;var phone=(document.getElementById("app-phone")||{value:""}).value;var experience=(document.getElementById("app-experience")||{value:""}).value;var availability=(document.getElementById("app-availability")||{value:""}).value;var about=(document.getElementById("app-about")||{value:""}).value;if(!name.trim()||!email.trim()||!experience||!availability){showToast("Please fill in all required fields.","error");return;}fetch("https://uvhhhwfhrdywczlhxvaa.supabase.co/functions/v1/send-attendant-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"application",name:name,email:email,phone:phone,experience:experience,availability:availability,about:about})}).then(function(r){return r.json();}).then(function(){showToast("Application submitted! We will be in touch within 3 business days.","success");document.getElementById("attendantAppModal").style.display="none";}).catch(function(e){showToast("Failed to submit. Please try again.","error");console.error(e);})}
 
 
+
+function browseCat(c) {
+  showPage('browse');
+  setTimeout(function(){
+    var chips = document.querySelectorAll('.filter-chip');
+    for (var i = 0; i < chips.length; i++) {
+      if ((chips[i].getAttribute('onclick')||'').indexOf("cat:" + c) !== -1) { chips[i].click(); return; }
+    }
+  }, 450);
+}
 // ===== GUEST RATINGS (host rates guest) =====
 window.__grMap = {};
 function grBadge(gid) {
@@ -7648,7 +7675,7 @@ handleStripeConnectCallback();
       <h1 style="font-family:var(--font-display);font-size:clamp(1.9rem,4vw,2.7rem);margin:8px 0;">9&ndash;5 Commuter Parking</h1>
       <p style="color:var(--muted);font-size:1.05rem;max-width:660px;margin:0 auto;">Work near a street with permit-only, 1-hour, or Monday&ndash;Saturday limited parking? Park the whole business day in a neighbor's driveway &mdash; reserved, legal, and cheaper than a garage.</p>
       <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button onclick="showPage('browse')" style="padding:12px 26px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Find a Weekday Spot</button>
+        <button onclick="browseCat('daytime')" style="padding:12px 26px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Find a Weekday Spot</button>
         <button onclick="showPage('host')" style="padding:12px 26px;border-radius:10px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-weight:800;cursor:pointer;font-size:1rem;">List Your Driveway</button>
       </div>
     </div>
