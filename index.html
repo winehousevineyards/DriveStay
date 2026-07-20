@@ -1687,6 +1687,10 @@ html,body{overflow-x:hidden}
 [data-theme="dark"] .nav-search input:focus { background:#1e293b !important; color:#f1f5f9 !important; }
 [data-theme="dark"] .nav-search input::placeholder { color:#94a3b8 !important; }
 [data-theme="dark"] .autocomplete-item { color:#f1f5f9 !important; }
+
+[data-theme="dark"] .nav-dropdown { background:#1e293b !important; border-color:#334155 !important; }
+[data-theme="dark"] .nav-dropdown a { color:#f1f5f9 !important; }
+[data-theme="dark"] .nav-dropdown a:hover { background:#334155 !important; color:#4ade80 !important; }
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
@@ -1725,6 +1729,8 @@ html,body{overflow-x:hidden}
       <div class="nav-dropdown">
         <a onclick="showPage('events')"><i class="fa-solid fa-calendar-star" style="color:var(--green)"></i> Event Parking</a>
         <a onclick="showPage('commuter')"><i class="fa-solid fa-briefcase" style="color:#0284c7"></i> 9–5 Commuter</a>
+        <a onclick="showPage('publiclands')"><i class="fa-solid fa-tree" style="color:#16a34a"></i> Public Lands Overnight</a>
+        <a onclick="showPage('advertise')"><i class="fa-solid fa-bullhorn" style="color:#f59e0b"></i> Advertise</a>
         <a onclick="showPage('bigrigs')"><i class="fa-solid fa-truck" style="color:var(--orange)"></i> Big Rigs</a>
         <a onclick="showPage('security')"><i class="fa-solid fa-shield-halved" style="color:#2563eb"></i> Safety & Security</a>
         <a onclick="showPage('attendants')"><i class="fa-solid fa-user-tie" style="color:#7c3aed"></i> Parking Attendants</a>
@@ -3331,8 +3337,8 @@ function showPage(name, opts) {
     else history.pushState(null,'',location.pathname + location.search);
   }
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
-  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', publiclands:'Overnight Parking on Public Lands', advertise:'Advertise With Us', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
+  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', publiclands:'Permitted overnight parking at city parks, state beaches, and public lands — dated pass, plate on the placard.', advertise:'Put your business in front of drivers parking nearby.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
   const metaEl = document.querySelector('meta[name="description"]');
   if (metaEl && descs[name]) metaEl.setAttribute('content', descs[name]);
   setPageTitle(titles[name] || null);
@@ -6699,47 +6705,85 @@ function showWaitlistIfNeeded(available) {
 // ============================================================
 // PRINT BOOKING CONFIRMATION
 // ============================================================
-function printBooking(b) {
+async function printBooking(b) {
   var saved = '';
   try { saved = localStorage.getItem('ds_plate') || ''; } catch(e) {}
   var plate = prompt('License plate for your parking pass:', (b.plate || saved || ''));
   if (plate === null) return;
-  plate = (plate || '').toUpperCase().trim() || '&mdash;';
+  plate = (plate || '').toUpperCase().trim() || 'N/A';
+  var g = prompt('Number of guests (including driver):', String(b.num_guests || 1));
+  if (g === null) g = '1';
+  g = parseInt(g) || 1;
   try { localStorage.setItem('ds_plate', plate); } catch(e) {}
-  try { db.from('bookings').update({ plate: plate }).eq('id', b.id).then(function(){}); } catch(e) {}
+  try { db.from('bookings').update({ plate: plate, num_guests: g }).eq('id', b.id).then(function(){}); } catch(e) {}
+  var w = window.open('', '_blank', 'width=820,height=680');
+  if (!w) { if (typeof showToast === 'function') showToast('Please allow pop-ups to print your pass', 'error'); return; }
+  w.document.write('<p style="font-family:Arial;padding:30px;color:#64748b">Generating your parking pass...</p>');
+  var L = b.listings || {};
+  var hostName = 'Property Owner', guestName = 'Guest';
+  try {
+    if (b.listing_id) {
+      var lr = await db.from('listings').select('host_id').eq('id', b.listing_id).single();
+      if (lr.data && lr.data.host_id) {
+        var pr = await db.from('profiles').select('name').eq('id', lr.data.host_id).single();
+        if (pr.data && pr.data.name) hostName = pr.data.name;
+      }
+    }
+  } catch(e) {}
+  try {
+    if (typeof currentUser !== 'undefined' && currentUser) {
+      var gp = await db.from('profiles').select('name').eq('id', currentUser.id).single();
+      if (gp.data && gp.data.name) guestName = gp.data.name;
+    }
+  } catch(e) {}
   var nights = Number(b.nights) || 1;
   var type = nights <= 1 ? 'DAILY' : nights <= 7 ? 'WEEKLY' : nights <= 14 ? 'BIWEEKLY' : 'MONTHLY';
-  var L = b.listings || {};
   var addr = [L.address, L.city, L.state].filter(Boolean).join(', ');
-  var w = window.open('', '_blank', 'width=760,height=580');
-  if (!w) { if (typeof showToast === 'function') showToast('Please allow pop-ups to print your pass', 'error'); return; }
+  var bid = String(b.id || '').slice(0,8).toUpperCase();
+  var verify = 'DRIVEWAY HOST PASS | Booking ' + bid + ' | Plate ' + plate + ' | ' + (b.check_in||'') + ' to ' + (b.check_out||'') + ' | ' + g + ' guest(s) | Guest: ' + guestName + ' | Host: ' + hostName + ' | ' + addr + ' | drivewayhost.com';
+  var qrVerify = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(verify);
+  var qrMap = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent('https://www.google.com/maps/search/' + encodeURIComponent('restaurants and restrooms near ' + (addr || 'me')));
   var html = '<!DOCTYPE html><html><head><title>Driveway Host Parking Pass</title><style>'
-    + 'body{font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:24px;background:#f1f5f9}'
-    + '.pass{width:640px;border:4px dashed #16a34a;border-radius:18px;padding:28px 32px;background:#fff;color:#0f172a}'
-    + '.top{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:14px}'
+    + 'body{font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:20px;background:#f1f5f9}'
+    + '.pass{width:700px;border:4px dashed #16a34a;border-radius:18px;padding:26px 30px;background:#fff;color:#0f172a}'
+    + '.top{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:12px}'
     + '.logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:900;color:#16a34a}'
-    + '.logo img{height:40px;border-radius:8px}'
+    + '.logo img{height:38px;border-radius:8px}'
     + '.type{background:#16a34a;color:#fff;font-weight:900;padding:8px 18px;border-radius:999px;font-size:1rem;letter-spacing:.06em}'
-    + '.plate{font-family:Courier,monospace;font-size:3.1rem;font-weight:900;text-align:center;letter-spacing:.12em;margin:18px 0 4px}'
-    + '.pl{text-align:center;color:#64748b;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase}'
-    + '.grid{display:flex;justify-content:space-between;gap:14px;margin-top:16px}'
-    + '.cell{flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px}'
-    + '.cl{font-size:.66rem;color:#64748b;text-transform:uppercase;letter-spacing:.12em}'
-    + '.cv{font-weight:800;font-size:1rem;margin-top:3px}'
-    + '.foot{margin-top:16px;font-size:.7rem;color:#94a3b8;text-align:center}'
+    + '.plate{font-family:Courier,monospace;font-size:2.9rem;font-weight:900;text-align:center;letter-spacing:.12em;margin:14px 0 2px}'
+    + '.pl{text-align:center;color:#64748b;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}'
+    + '.grid{display:flex;gap:12px;margin-top:12px}'
+    + '.cell{flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 13px}'
+    + '.cl{font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.12em}'
+    + '.cv{font-weight:800;font-size:.95rem;margin-top:2px}'
+    + '.qrrow{display:flex;gap:12px;margin-top:14px;align-items:stretch}'
+    + '.qrbox{flex:1;display:flex;gap:12px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px}'
+    + '.qrbox img{width:92px;height:92px}'
+    + '.qt{font-weight:800;font-size:.85rem}'
+    + '.qs{color:#64748b;font-size:.72rem;margin-top:2px}'
+    + '.foot{margin-top:12px;font-size:.68rem;color:#94a3b8;text-align:center}'
     + '@media print{body{background:#fff;padding:0}}'
     + '</style></head><body><div class="pass">'
-    + '<div class="top"><div class="logo"><img src="https://drivewayhost.com/logo.jpg" onerror="this.style.display=\'none\'"/> Driveway Host</div><div class="type">' + type + ' PASS</div></div>'
+    + '<div class="top"><div class="logo"><img src="https://drivewayhost.com/logo.jpg"/> Driveway Host</div><div class="type">' + type + ' PASS</div></div>'
     + '<div class="plate">' + plate + '</div><div class="pl">License Plate</div>'
     + '<div class="grid">'
     + '<div class="cell"><div class="cl">Valid From</div><div class="cv">' + (b.check_in || '') + '</div></div>'
     + '<div class="cell"><div class="cl">Valid To</div><div class="cv">' + (b.check_out || '') + '</div></div>'
+    + '<div class="cell"><div class="cl">Length of Stay</div><div class="cv">' + nights + ' night' + (nights!==1?'s':'') + '</div></div>'
+    + '<div class="cell"><div class="cl">Guests</div><div class="cv">' + g + '</div></div>'
+    + '</div>'
+    + '<div class="grid">'
+    + '<div class="cell"><div class="cl">Guest</div><div class="cv">' + guestName + '</div></div>'
+    + '<div class="cell"><div class="cl">Property Owner</div><div class="cv">' + hostName + '</div></div>'
     + '</div>'
     + '<div class="grid"><div class="cell"><div class="cl">Authorized Parking Location</div><div class="cv">' + (addr || 'See booking details') + '</div></div></div>'
-    + '<div class="foot">Booking ' + String(b.id || '').slice(0,8).toUpperCase() + ' &middot; Display on dashboard &middot; Authorized by the property owner via drivewayhost.com</div>'
-    + '</div>' + '<scr' + 'ipt>setTimeout(function(){window.print()},500)</scr' + 'ipt></body></html>';
-  w.document.write(html);
-  w.document.close();
+    + '<div class="qrrow">'
+    + '<div class="qrbox"><img src="' + qrVerify + '"/><div><div class="qt">Scan to verify pass</div><div class="qs">Booking, plate, dates, guest and owner details</div></div></div>'
+    + '<div class="qrbox"><img src="' + qrMap + '"/><div><div class="qt">Food &amp; restrooms nearby</div><div class="qs">Opens a walking map of restaurants and facilities around this address</div></div></div>'
+    + '</div>'
+    + '<div class="foot">Booking ' + bid + ' &middot; Display on dashboard &middot; Authorized by the property owner via drivewayhost.com</div>'
+    + '</div>' + '<scr' + 'ipt>setTimeout(function(){window.print()},900)</scr' + 'ipt></body></html>';
+  w.document.open(); w.document.write(html); w.document.close();
 }
 
 // ============================================================
@@ -7597,6 +7641,53 @@ handleStripeConnectCallback();
       <p style="margin:0 0 10px;"><strong style="color:var(--text,#111)">Payments run through Stripe.</strong> Hosts never chase cash. Parkers never hand money to a stranger.</p>
       <p style="margin:0 0 10px;"><strong style="color:var(--text,#111)">Hosts stay in control.</strong> Approve every request, set the rate, block dates anytime.</p>
       <p style="margin:0;"><strong style="color:var(--text,#111)">Your vehicle stays covered.</strong> Guests' vehicles remain protected by their own auto insurance while parked, same as anywhere else.</p>
+    </div>
+  </div>
+</div>
+<!-- ===== PUBLIC LANDS PAGE ===== -->
+<div class="page" id="page-publiclands">
+  <div style="max-width:960px;margin:0 auto;padding:48px 20px;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="font-size:2.6rem">&#127966;&#65039;</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(1.9rem,4vw,2.7rem);margin:8px 0;">Overnight Parking on Public Lands</h1>
+      <p style="color:var(--muted);font-size:1.05rem;max-width:680px;margin:0 auto;">City parks. State beaches. County, state, and federal properties. We're working to open <strong>permitted overnight parking</strong> on public lands &mdash; booked, paid, and passed exactly like a driveway.</p>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="showPage('browse')" style="padding:12px 26px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Browse Tonight's Driveways</button>
+        <button onclick="showPage('help')" style="padding:12px 26px;border-radius:10px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-weight:800;cursor:pointer;font-size:1rem;">For Park Agencies</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:40px;">
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#128269;</div><h3 style="margin:8px 0 6px;font-size:1rem;">Find a permitted lot</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Participating parks and beaches list their overnight-permitted lots with clear rules and hours.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#127915;</div><h3 style="margin:8px 0 6px;font-size:1rem;">Book your permit</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Nightly, weekly, or seasonal. Payment goes to the agency; your confirmation is your permit.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#128424;&#65039;</div><h3 style="margin:8px 0 6px;font-size:1rem;">Display your placard</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Dated pass with your plate and a QR rangers can scan to verify &mdash; printed or on your phone.</p></div>
+    </div>
+    <div style="background:linear-gradient(135deg,#065f46,#16a34a);color:#fff;border-radius:16px;padding:26px 30px;margin-bottom:36px;">
+      <h2 style="font-family:var(--font-display);margin:0 0 10px;">Why agencies join</h2>
+      <p style="margin:0 0 6px;opacity:.94;">&#10003; New permit revenue from lots that sit empty every night &mdash; zero new infrastructure</p>
+      <p style="margin:0 0 6px;opacity:.94;">&#10003; Fewer vehicles parked on neighborhood streets when people travel</p>
+      <p style="margin:0 0 6px;opacity:.94;">&#10003; A safe, legal, documented option for overnight travelers</p>
+      <p style="margin:0;opacity:.94;">&#10003; Every vehicle accounted for: plate, dates, and scannable pass</p>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:.92rem;max-width:640px;margin:0 auto;">No public-lands lots are live yet &mdash; we're inviting agencies now. Are you with a parks department, state beach, or ranger district? <a onclick="showPage('help')" style="color:var(--green);font-weight:700;cursor:pointer;">Get in touch</a>. Traveling tonight? <a onclick="showPage('safe-stay')" style="color:var(--green);font-weight:700;cursor:pointer;">Know your state's rules</a> or book a private driveway instead.</p>
+  </div>
+</div>
+<!-- ===== ADVERTISE PAGE ===== -->
+<div class="page" id="page-advertise">
+  <div style="max-width:900px;margin:0 auto;padding:48px 20px;">
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="font-size:2.6rem">&#128227;</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(1.9rem,4vw,2.7rem);margin:8px 0;">Advertise on Driveway Host</h1>
+      <p style="color:var(--muted);font-size:1.05rem;max-width:640px;margin:0 auto;">Your business in front of drivers the moment they park near you. Restaurants, cafes, gyms, shops &mdash; reach people who just booked a spot blocks from your door.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:36px;">
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><h3 style="margin:0 0 6px;font-size:1rem;">&#127968; Homepage placement</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Featured ad slot seen by every visitor browsing spaces in your city.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><h3 style="margin:0 0 6px;font-size:1rem;">&#9989; Booking confirmations</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Appear when a guest books parking near your business &mdash; perfect timing, walking distance.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><h3 style="margin:0 0 6px;font-size:1rem;">&#127915; Event &amp; venue pages</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Game day, concert night &mdash; reach fans looking for food and fun before the show.</p></div>
+    </div>
+    <div style="text-align:center;background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:16px;padding:26px;">
+      <h2 style="font-family:var(--font-display);margin:0 0 8px;">Founding advertiser rates</h2>
+      <p style="color:var(--muted);margin:0 0 16px;">We're launching &mdash; early local businesses lock in flat monthly pricing before rates go dynamic.</p>
+      <button onclick="showPage('help')" style="padding:12px 28px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Get in Touch &rarr;</button>
     </div>
   </div>
 </div>
@@ -8657,6 +8748,8 @@ handleStripeConnectCallback();
       <a onclick="showPage('browse')">Browse Spaces</a>
       <a onclick="showPage('events')">Event Parking</a>
       <a onclick="showPage('commuter')">9–5 Commuter Parking</a>
+          <a onclick="showPage('publiclands')">Public Lands Overnight</a>
+          <a onclick="showPage('advertise')">Advertise With Us</a>
           <a onclick="showPage('bigrigs')">Big Rigs &amp; Commercial</a>
       <a onclick="showPage('attendants')">Parking Attendants</a>
       <a onclick="requireAuth('host')">List Your Space</a>
