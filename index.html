@@ -3334,7 +3334,7 @@ function showPage(name, opts) {
   _pg.style.animation = '';
   _pg.classList.add('active');
   setTimeout(refreshReveal, 60);
-  if (name === 'browse') { setTimeout(() => { if (!mbMap) { initMap(); setTimeout(function(){ if (mbMap) mbMap.resize(); }, 600); } else mbMap.resize(); }, 150); loadListings(); }
+  if (name === 'browse') { setTimeout(() => { if (!mbMap) { initMap(); if (mbMap) { mbMap.on('load', function(){ window.dispatchEvent(new Event('resize')); }); } [900,2500].forEach(function(d){ setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, d); }); } else mbMap.resize(); }, 150); loadListings(); }
   if (name === 'dashboard' && currentUser) loadDashboard();
   const _rvs = document.getElementById('recentlyViewedSection');
   if (name === 'home') { renderRecentlyViewed(); renderFeaturedListings(); }
