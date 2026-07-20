@@ -3325,8 +3325,11 @@ function showPage(name, opts) {
   document.body.style.overflow = (name === 'browse' && window.innerWidth > 767) ? 'hidden' : '';
       [document.querySelector('.why-ds-section'),document.querySelector('footer'),document.getElementById('adSlotHome')].forEach(el=>{if(el)el.style.display=name==='home'?'':'none';});
   // Update URL hash
-  if (name !== 'home') history.replaceState(null,'','#page-'+name);
-  else history.replaceState(null,'',location.pathname);
+  var targetHash = (name !== 'home') ? '#page-'+name : '';
+  if (location.hash !== targetHash) {
+    if (name !== 'home') history.pushState(null,'','#page-'+name);
+    else history.pushState(null,'',location.pathname + location.search);
+  }
   // Page title
   const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
   const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
@@ -7369,7 +7372,7 @@ handleStripeConnectCallback();
 (function(){
   function routeFromHash(){
     var h = location.hash.replace('#page-','');
-    if (!h || h.indexOf('#')!==-1) return;
+    if (!h || h.indexOf('#')!==-1) { var eh=document.getElementById('page-home'); if (eh && eh.offsetParent===null && typeof showPage==='function') showPage('home'); return; }
     var el = document.getElementById('page-'+h);
     if (el && el.offsetParent === null && typeof showPage === 'function') showPage(h);
   }
