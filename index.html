@@ -1696,7 +1696,7 @@ html,body{overflow-x:hidden}
   <div class="nav-logo" onclick="showPage('home')"><i class="fa-solid fa-car" style="color:var(--green)"></i> Driveway Host</div>
   <div class="nav-search">
     <span class="nav-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-    <input type="search" id="navSearch" name="city-search" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <input type="text" id="navSearch" name="city-search" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off" autocorrect="off" spellcheck="false"/>
     <div class="autocomplete-dropdown hidden" id="acDrop"></div>
   </div>
   <button class="nav-hamburger" id="navBurger" onclick="toggleMobileMenu()" aria-label="Menu"><i class="fa-solid fa-bars" id="burgerIcon"></i></button>
@@ -1769,7 +1769,7 @@ html,body{overflow-x:hidden}
     <div class="hero-search">
       <div class="hero-field" id="heroLocationField">
         <label>Location</label>
-        <input type="search" name="city-search-hero" autocomplete="off" autocorrect="off" spellcheck="false" id="heroCity" placeholder="City or address"/>
+        <input type="text" name="city-search-hero" autocomplete="off" autocorrect="off" spellcheck="false" id="heroCity" placeholder="City or address"/>
       </div>
       <div class="hero-field event-field" id="heroEventField">
         <label>Event or Venue</label>
