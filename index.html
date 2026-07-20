@@ -4912,6 +4912,8 @@ async function loadHostBookings() {
     try {
       const { data: guests } = await db.from('profiles').select('id,name,email').in('id', guestIds);
       (guests || []).forEach(g => { guestMap[g.id] = g; });
+    window.__grMap = {};
+    try { const { data: __grs } = await db.from('guest_reviews').select('guest_id,rating').in('guest_id', guestIds); (__grs||[]).forEach(r => { (window.__grMap[r.guest_id] = window.__grMap[r.guest_id] || []).push(r.rating); }); } catch(e) {}
     } catch(e) {}
 
     const today = new Date().toISOString().slice(0,10);
@@ -4929,7 +4931,7 @@ async function loadHostBookings() {
         <div class="hosting-booking-header">
           <span style="font-size:1.3rem;display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--gray);border-radius:8px"><i class="fa-solid fa-car" style="color:var(--muted)"></i></span>
           <div>
-            <div class="hosting-guest-name"><i class="fa-solid fa-user" style="margin-right:4px;color:var(--muted)"></i>${escapeHtml(guest.name||guest.email||'Guest')}</div>
+            <div class="hosting-guest-name"><i class="fa-solid fa-user" style="margin-right:4px;color:var(--muted)"></i>${escapeHtml(guest.name||guest.email||'Guest')}${grBadge(b.guest_id)}</div>
             <div class="hosting-listing-name">${escapeHtml(b.listings?.title||'Listing')} · ${escapeHtml(b.listings?.city||'')}${b.listings?.state?', '+escapeHtml(b.listings.state):''}</div>
           </div>
           <div style="margin-left:auto;text-align:right">
@@ -4942,6 +4944,7 @@ async function loadHostBookings() {
           ${canAccept  ? `<button class="btn-sm btn-sm-green" onclick="hostUpdateBooking('${b.id}','confirmed',this)">✓ Accept</button>` : ''}
           ${canDecline ? `<button class="btn-sm btn-sm-red"   onclick="hostUpdateBooking('${b.id}','cancelled',this)">✕ Decline</button>` : ''}
           ${canComplete? `<button class="btn-sm btn-sm-blue"  onclick="hostUpdateBooking('${b.id}','completed',this)">Mark Complete</button>` : ''}
+            ${b.status==='completed' ? `<button class="btn-sm" style="background:#f59e0b;border:none;color:#fff" onclick="rateGuest('${b.id}','${b.guest_id}')">&#9733; Rate Guest</button>` : ''}
           ${b.status==='confirmed' ? `<button class="pre-arrival-btn" onclick="openPreArrivalModal('${b.id}')"><i class="fa-solid fa-key"></i> Check-in Info</button>` : ''}
         </div>
       </div>`;
@@ -7406,6 +7409,33 @@ function submitAttendantRequest(){var form=document.getElementById("attendantReq
 function openAttendantApplicationModal(){var m=document.getElementById("attendantAppModal");if(m)m.style.display="block";}
 function submitAttendantApplication(){var name=(document.getElementById("app-name")||{value:""}).value;var email=(document.getElementById("app-email")||{value:""}).value;var phone=(document.getElementById("app-phone")||{value:""}).value;var experience=(document.getElementById("app-experience")||{value:""}).value;var availability=(document.getElementById("app-availability")||{value:""}).value;var about=(document.getElementById("app-about")||{value:""}).value;if(!name.trim()||!email.trim()||!experience||!availability){showToast("Please fill in all required fields.","error");return;}fetch("https://uvhhhwfhrdywczlhxvaa.supabase.co/functions/v1/send-attendant-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"application",name:name,email:email,phone:phone,experience:experience,availability:availability,about:about})}).then(function(r){return r.json();}).then(function(){showToast("Application submitted! We will be in touch within 3 business days.","success");document.getElementById("attendantAppModal").style.display="none";}).catch(function(e){showToast("Failed to submit. Please try again.","error");console.error(e);})}
 
+
+// ===== GUEST RATINGS (host rates guest) =====
+window.__grMap = {};
+function grBadge(gid) {
+  var a = window.__grMap[gid];
+  if (!a || !a.length) return ' <span style="font-size:.72rem;color:var(--muted)">&middot; New guest</span>';
+  var avg = (a.reduce(function(x,y){return x+y;},0) / a.length).toFixed(1);
+  return ' <span style="font-size:.78rem;color:#f59e0b;font-weight:800">&#9733; ' + avg + '</span> <span style="font-size:.7rem;color:var(--muted)">(' + a.length + ')</span>';
+}
+async function rateGuest(bookingId, guestId) {
+  var r = prompt('Rate this guest 1-5 stars:', '5');
+  if (r === null) return;
+  r = parseInt(r);
+  if (!(r >= 1 && r <= 5)) { if (typeof showToast==='function') showToast('Rating must be 1-5', 'error'); return; }
+  var c = prompt('Optional comment about this guest:', '');
+  try {
+    var res = await db.from('guest_reviews').insert({ booking_id: bookingId, guest_id: guestId, host_id: currentUser.id, rating: r, comment: c || null });
+    if (res.error) {
+      var msg = String(res.error.message||'');
+      if (typeof showToast==='function') showToast(msg.indexOf('duplicate') !== -1 ? 'You already rated this guest for this booking' : ('Could not save: ' + msg), 'error');
+    } else {
+      if (typeof showToast==='function') showToast('Guest rated ' + r + ' stars - thank you!');
+      if (typeof loadHostBookings==='function') loadHostBookings();
+    }
+  } catch(e) { if (typeof showToast==='function') showToast('Could not save rating', 'error'); }
+}
+// ===== END GUEST RATINGS =====
 // ===== STRIPE CONNECT =====
 async function connectStripe(){var ur=await supabase.auth.getUser();var u=ur.data&&ur.data.user;if(!u){if(typeof showToast==="function")showToast("Please sign in first");return;}try{var res=await fetch(SUPABASE_URL+"/functions/v1/stripe-connect-onboard",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},body:JSON.stringify({user_id:u.id})});var d=await res.json();if(d.url)window.location.href=d.url;else if(typeof showToast==="function")showToast("Stripe error: "+(d.error||"Unknown"));}catch(e){console.error(e);}}
 async function handleStripeConnectCallback(){var p=new URLSearchParams(window.location.search);if(!p.get("stripe_return")&&!p.get("stripe_refresh"))return;var ur=await supabase.auth.getUser();var u=ur.data&&ur.data.user;if(!u)return;try{var res=await fetch(SUPABASE_URL+"/functions/v1/stripe-connect-onboard",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},body:JSON.stringify({user_id:u.id,action:"status"})});var d=await res.json();window.history.replaceState({},document.title,window.location.pathname+window.location.hash);if(d.onboarded){if(typeof showToast==="function")showToast("Stripe connected! You can now receive payouts.");}else if(typeof showToast==="function")showToast("Stripe setup not finished - click Connect with Stripe to resume.");}catch(e){console.error(e);}}
