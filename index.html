@@ -5491,6 +5491,15 @@ function onNavInput() {
 }
 function onNavKey(e) {
   const dd = document.getElementById('acDrop');
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const act = (dd && !dd.classList.contains('hidden')) ? dd.querySelector('.ac-active') : null;
+    if (act) { act.click(); return; }
+    if (dd) dd.classList.add('hidden');
+    if (typeof applyFilter === 'function') applyFilter();
+    if (!document.getElementById('page-browse')?.classList.contains('active')) showPage('browse');
+    return;
+  }
   if (!dd || dd.classList.contains('hidden')) return;
   const items = dd.querySelectorAll('.autocomplete-item');
   const active = dd.querySelector('.ac-active');
