@@ -1694,7 +1694,7 @@ html,body{overflow-x:hidden}
 <!-- NAV -->
 <nav>
   <div class="nav-logo" onclick="showPage('home')"><i class="fa-solid fa-car" style="color:var(--green)"></i> Driveway Host</div>
-  <div class="nav-search">
+  <div class="nav-search" onclick="document.getElementById('navSearch').focus()">
     <span class="nav-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
     <input type="text" id="navSearch" name="city-search" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off" autocorrect="off" spellcheck="false"/>
     <div class="autocomplete-dropdown hidden" id="acDrop"></div>
@@ -6553,7 +6553,8 @@ function animateCounter(el) {
 // ============================================================
 document.addEventListener('keydown', e => {
   // Skip if typing in an input/textarea
-  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName) || e.target.isContentEditable) return;
   // Skip if modal is open
   if (document.querySelector('.lightbox-overlay:not(.hidden)')) return;
   switch(e.key) {
