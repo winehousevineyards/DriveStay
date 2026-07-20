@@ -1786,7 +1786,7 @@ html,body{overflow-x:hidden}
     <div class="hero-search">
       <div class="hero-field" id="heroLocationField">
         <label>Location</label>
-        <input type="text" name="city-search-hero" autocomplete="off" autocorrect="off" spellcheck="false" id="heroCity" placeholder="City or address"/>
+        <input type="text" name="city-search-hero" autocomplete="off" autocorrect="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly')" onclick="this.removeAttribute('readonly')" id="heroCity" placeholder="City or address"/>
       </div>
       <div class="hero-field event-field" id="heroEventField">
         <label>Event or Venue</label>
