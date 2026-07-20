@@ -1678,6 +1678,15 @@ html,body{overflow-x:hidden}
 [data-theme="dark"] .btype-tab:hover { background:#334155 !important; color:#f1f5f9 !important; }
 [data-theme="dark"] .filter-chip:hover { background:#334155 !important; color:#f1f5f9 !important; }
 [data-theme="dark"] .nav-links a:hover, [data-theme="dark"] nav a:hover { color:#4ade80 !important; }
+
+/* search input contrast — explicit in both themes, focused or not */
+.nav-search input, .nav-search input:focus { color:#0f172a !important; }
+.nav-search input::placeholder { color:#64748b !important; }
+.autocomplete-item { color:#0f172a; }
+[data-theme="dark"] .nav-search input { background:#334155 !important; color:#f1f5f9 !important; }
+[data-theme="dark"] .nav-search input:focus { background:#1e293b !important; color:#f1f5f9 !important; }
+[data-theme="dark"] .nav-search input::placeholder { color:#94a3b8 !important; }
+[data-theme="dark"] .autocomplete-item { color:#f1f5f9 !important; }
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
