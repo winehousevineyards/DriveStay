@@ -2069,37 +2069,7 @@ html,body{overflow-x:hidden}
   </div>
 
   <!-- TESTIMONIALS -->
-  <div class="testimonials-section">
-    <div class="section-eyebrow"><i class="fa-solid fa-star" style="color:#f59e0b;margin-right:5px"></i> Real Reviews</div>
-    <h2>Hosts &amp; guests love it</h2>
-    <p class="testi-sub">From driveways to event lots — here's what people are saying.</p>
-    <div class="testi-grid">
-      <div class="testi-card reveal">
-        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-        <p class="testi-quote">We were driving to a Dodgers game and snagged a driveway spot for $22. Walked to the stadium in 8 minutes. Never going back to the $45 lots.</p>
-        <div class="testi-person">
-          <div class="testi-avatar"><img src="https://picsum.photos/seed/driveway1/400/280" alt="Marcus T." loading="lazy"></div>
-          <div><div class="testi-name">Marcus T.</div><div class="testi-role">Guest · Los Angeles, CA</div></div>
-        </div>
-      </div>
-      <div class="testi-card reveal">
-        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-        <p class="testi-quote">I listed my driveway on a whim before the Rose Bowl game. Made $180 in a single weekend. Setup took maybe 10 minutes. I wish I'd done this years ago.</p>
-        <div class="testi-person">
-          <div class="testi-avatar"><img src="https://picsum.photos/seed/garage2/400/280" alt="Priya M." loading="lazy"></div>
-          <div><div class="testi-name">Priya M.</div><div class="testi-role">Host · Pasadena, CA</div></div>
-        </div>
-      </div>
-      <div class="testi-card reveal">
-        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-        <p class="testi-quote">Monthly parking near my office was $400. I found a host's driveway two blocks away for $190/month. The host is super friendly and the spot is always available.</p>
-        <div class="testi-person">
-          <div class="testi-avatar"><img src="https://picsum.photos/seed/parking3/400/280" alt="Jordan K." loading="lazy"></div>
-          <div><div class="testi-name">Jordan K.</div><div class="testi-role">Guest · Austin, TX</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 
   <div aria-hidden="true" style="background:#060e06;line-height:0;overflow:hidden">
     <svg viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:56px"><path d="M0,56 C360,0 1080,56 1440,0 L1440,56 L0,56 Z" fill="#f8fafc"/></svg>
@@ -4116,8 +4086,8 @@ function calcBooking() {
   const promoAmt = Math.round(subtotal * promoPct);
   const afterPromo = subtotal - promoAmt;
   const broker    = Math.round(afterPromo * 0.10);
-  const guestProt = Math.round(afterPromo * 0.04);  // guest trip + liability coverage
-  const hostProt  = Math.round(afterPromo * 0.03);  // host property damage coverage
+  const guestProt = 0; // protection fee removed (no insurance program yet)
+  const hostProt = 0; // protection fee removed (no insurance program yet)
   const ins       = guestProt + hostProt;            // total insurance (for DB compat)
   const feeClean        = Math.round(l.fee_cleaning || 0);
   const feeDeposit      = Math.round(l.fee_deposit || 0);
@@ -4152,8 +4122,8 @@ function calcBooking() {
     document.getElementById('bkDiscAmt').textContent = '-$' + discount;
   } else { dRow.classList.add('hidden'); }
   document.getElementById('bkBroker').textContent = '$' + broker;
-  document.getElementById('bkGuestProt').textContent = '$' + guestProt;
-  document.getElementById('bkHostProt').textContent = '$' + hostProt;
+  (function(){var el=document.getElementById('bkGuestProt');if(el){el.textContent='$'+guestProt;var row=el.parentElement;if(row)row.style.display=guestProt>0?'':'none';}})();
+  (function(){var el=document.getElementById('bkHostProt');if(el){el.textContent='$'+hostProt;var row=el.parentElement;if(row)row.style.display=hostProt>0?'':'none';}})();
   const _sfr = (rId, aId, v) => { const row = document.getElementById(rId); if (row) { row.classList.toggle('hidden', !v); if (v) { const el = document.getElementById(aId); if (el) el.textContent = '$' + v; } } };
   _sfr('bkFeeCleanRow','bkFeeClean', feeClean);
   _sfr('bkFeeDepositRow','bkFeeDeposit', feeDeposit);
@@ -4226,7 +4196,7 @@ async function bookNow() {
     let clientSecret = null;
     try {
       const { data: pd } = await db.functions.invoke('create-payment-intent', {
-        body: { amount: ctx.totalCents, currency: 'usd', booking_id: bookingId }
+        body: { amount_cents: ctx.totalCents, currency: 'usd', booking_id: bookingId, listing_id: l.id }
       });
       if (pd?.clientSecret) clientSecret = pd.clientSecret;
     } catch(e) {}
@@ -4249,12 +4219,9 @@ function showConfirmPage(l, ctx, bookingId) {
     <div class="confirm-row"><span>Check Out</span><span>${escapeHtml(ctx.checkOut.toLocaleDateString())}</span></div>
     <div class="confirm-row"><span>${Number(ctx.nights)|0} night${(Number(ctx.nights)|0)!==1?'s':''}</span><span>$${Number(ctx.base)|0}</span></div>
     <div class="confirm-row"><span>Service fee (10%)</span><span>$${Number(ctx.broker)|0}</span></div>
-    <div class="confirm-row"><span>Guest protection (4%)</span><span>$${Number(ctx.guestProt)||0}</span></div>
-    <div class="confirm-row"><span>Host protection (3%)</span><span>$${Number(ctx.hostProt)||0}</span></div>
     <div class="confirm-row"><span><b>Total</b></span><span><b>$${Number(ctx.total)|0}</b></span></div>
     <div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:.8rem;color:#166534;text-align:center">
-      <i class="fa-solid fa-shield-halved"></i> This booking is fully insured — host &amp; guest protected
-    </div>`;
+      <i class="fa-solid fa-shield-halved"></i> Booking documented — receipt and records saved to your account</div>`;
   showPage('confirm');
 }
 
