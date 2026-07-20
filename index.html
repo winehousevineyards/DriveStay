@@ -5493,6 +5493,7 @@ function onNavKey(e) {
   const dd = document.getElementById('acDrop');
   if (e.key === 'Enter') {
     e.preventDefault();
+    clearTimeout(_acTimer);
     const act = (dd && !dd.classList.contains('hidden')) ? dd.querySelector('.ac-active') : null;
     if (act) { act.click(); return; }
     if (dd) dd.classList.add('hidden');
