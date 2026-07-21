@@ -1716,7 +1716,7 @@ html,body{overflow-x:hidden}
   <div class="nav-logo" onclick="showPage('home')"><i class="fa-solid fa-car" style="color:var(--green)"></i> Driveway Host</div>
   <div class="nav-search" onclick="document.getElementById('navSearch').focus()">
     <span class="nav-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-    <input type="text" id="navSearch" name="city-search" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <input type="text" id="navSearch" name="city-search" readonly onfocus="this.removeAttribute(&quot;readonly&quot;)" onclick="this.removeAttribute(&quot;readonly&quot;)" placeholder="Search city or address..." oninput="onNavInput()" onkeydown="onNavKey(event)" autocomplete="off" autocorrect="off" spellcheck="false"/>
     <div class="autocomplete-dropdown hidden" id="acDrop"></div>
   </div>
   <button class="nav-hamburger" id="navBurger" onclick="toggleMobileMenu()" aria-label="Menu"><i class="fa-solid fa-bars" id="burgerIcon"></i></button>
@@ -3674,7 +3674,7 @@ function buildListingCard(l) {
         ${l.pets?'<span class="tag"><i class="fa-solid fa-paw"></i> Pets OK</span>':''}
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <span class="listing-price">$${l.price_nightly}/night</span>
+        <span class="listing-price">$${l.price_nightly}/${(l.category==='daytime'||l.category==='foodtruck')?'day':'night'}</span>
         ${l.price_monthly?`<span class="monthly-price">$${l.price_monthly}/mo</span>`:''}
         ${l.rating?`<span class="listing-stars"><i class="fa-solid fa-star" style="color:#f59e0b;font-size:.7rem"></i> ${l.rating} (${l.review_count||0})</span>`:''}
         ${l.pool?'<span class="tag"><i class="fa-solid fa-person-swimming"></i> Pool</span>':''}
@@ -4682,7 +4682,7 @@ async function loadMyListings() {
         <div class="booking-row-emoji">${l.photos?.length?`<img src="${l.photos[0]}" style="width:48px;height:48px;border-radius:10px;object-fit:cover" alt="${escapeHtml(l.title)}"/>`:'<i class="fa-solid fa-car" style="color:var(--muted)"></i>'}</div>
         <div class="booking-row-info" style="flex:1">
           <div class="booking-row-title">${escapeHtml(l.title)}</div>
-          <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/night · <i class="fa-solid fa-star" style="color:#f59e0b"></i> ${l.rating||'New'} (${l.review_count||0} reviews)</div>
+          <div class="booking-row-dates">${escapeHtml(l.city)}, ${escapeHtml(l.state)} · $${l.price_nightly}/${(l.category==='daytime'||l.category==='foodtruck')?'day':'night'} · <i class="fa-solid fa-star" style="color:#f59e0b"></i> ${l.rating||'New'} (${l.review_count||0} reviews)</div>
           <div class="analytics-mini">
             <div class="analytics-mini-item"><div class="av">${getListingViews(l.id)}</div><div class="al">Views</div></div>
             <div class="analytics-mini-item"><div class="av">${getListingSaves(l.id)}</div><div class="al">Saves</div></div>
@@ -5778,7 +5778,7 @@ function renderRecentlyViewed() {
         <div class="rv-card-body">
           <div class="rv-card-title">${escapeHtml(l.title)}</div>
           <div class="rv-card-loc"><i class="fa-solid fa-location-dot" style="color:var(--green);font-size:.7rem;margin-right:3px"></i>${escapeHtml(l.city)}, ${escapeHtml(l.state||'')}</div>
-          <div class="rv-card-price">$${l.price_nightly}/night</div>
+          <div class="rv-card-price">$${l.price_nightly}/${(l.category==='daytime'||l.category==='foodtruck')?'day':'night'}</div>
         </div>
       </div>`).join('');
   } catch(e) { section.style.display = 'none'; }
@@ -7374,7 +7374,7 @@ async function loadAdminPanel() {
           <div>
             <div style="font-weight:700;font-size:1rem">${escapeHtml(l.title || 'Untitled')}</div>
             <div style="font-size:.8rem;color:var(--muted);margin-top:2px">${escapeHtml(l.address || '')}, ${escapeHtml(l.city || '')}, ${escapeHtml(l.state || '')}</div>
-            <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Host: <strong>${escapeHtml(l.profiles?.name || '?')}</strong> · $${l.price_nightly}/night · Submitted ${new Date(l.created_at).toLocaleDateString()}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Host: <strong>${escapeHtml(l.profiles?.name || '?')}</strong> · $${l.price_nightly}/${(l.category==='daytime'||l.category==='foodtruck')?'day':'night'} · Submitted ${new Date(l.created_at).toLocaleDateString()}</div>
           </div>
           <span class="status-badge status-pending">pending</span>
         </div>
