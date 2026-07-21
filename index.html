@@ -4888,21 +4888,23 @@ async function toggleListingStatus(listingId, newStatus) {
 // ============================================================
 async function editListing(listingId) {
   try {
+    var __set=function(id,v){var e=document.getElementById(id); if(e) e.value=(v===null||v===undefined)?'':v;};
+    var __setc=function(id,v){var e=document.getElementById(id); if(e) e.checked=!!v;};
     const { data: l } = await db.from('listings').select('*').eq('id', listingId).single();
     if (!l) { showToast('Listing not found', 'error'); return; }
     // Pre-fill the host form with all fields
-    document.getElementById('lTitle').value = l.title || '';
-    document.getElementById('lDesc').value = l.description || '';
-    document.getElementById('lAddress').value = l.address || '';
-    document.getElementById('lCity').value = l.city || '';
-    document.getElementById('lState').value = l.state || '';
-    document.getElementById('lPriceNight').value = l.price_nightly || '';
-    document.getElementById('lPriceWeek').value = l.price_weekly || '';
-    document.getElementById('lPriceMonth').value = l.price_monthly || '';
-    document.getElementById('lLat').value = l.lat || '';
-    document.getElementById('lLng').value = l.lng || '';
-    document.getElementById('lRules').value = (l.rules || []).join('\n');
-    document.getElementById('lEmoji').value = l.emoji || '';
+    __set('lTitle', l.title || '');
+    __set('lDesc', l.description || '');
+    __set('lAddress', l.address || '');
+    __set('lCity', l.city || '');
+    __set('lState', l.state || '');
+    __set('lPriceNight', l.price_nightly || '');
+    __set('lPriceWeek', l.price_weekly || '');
+    __set('lPriceMonth', l.price_monthly || '');
+    __set('lLat', l.lat || '');
+    __set('lLng', l.lng || '');
+    __set('lRules', (l.rules || []).join('\n'));
+    __set('lEmoji', l.emoji || '');
     if (document.getElementById('lEventMultiplier')) document.getElementById('lEventMultiplier').value = l.event_multiplier || '1';
     if (document.getElementById('lEventRange')) document.getElementById('lEventRange').value = l.event_date_range || '';
     if (document.getElementById('lCancelPolicy')) document.getElementById('lCancelPolicy').value = l.cancel_policy || 'flexible';
@@ -4912,13 +4914,13 @@ async function editListing(listingId) {
     if (document.getElementById('lFeeWeekend')) document.getElementById('lFeeWeekend').value = l.fee_weekend || '';
     if (document.getElementById('lFeeEvent')) document.getElementById('lFeeEvent').value = l.fee_event || '';
     if (document.getElementById('lFeeExtraVehicle')) document.getElementById('lFeeExtraVehicle').value = l.fee_extra_vehicle || '';
-    document.getElementById('lLen').value = l.length_ft || '';
-    document.getElementById('lWid').value = l.width_ft || '';
-    document.getElementById('lHgt').value = l.height_ft || '';
-    document.getElementById('lSurface').value = l.surface_type || '';
-    document.getElementById('lInsProvider').value = l.ins_provider || '';
-    document.getElementById('lInsPolicy').value = l.ins_policy || '';
-    document.getElementById('lInsExpiry').value = l.ins_expiry || '';
+    __set('lLen', l.length_ft || '');
+    __set('lWid', l.width_ft || '');
+    __set('lHgt', l.height_ft || '');
+    __set('lSurface', l.surface_type || '');
+    __set('lInsProvider', l.ins_provider || '');
+    __set('lInsPolicy', l.ins_policy || '');
+    __set('lInsExpiry', l.ins_expiry || '');
     // Set checkboxes using real field IDs
     [['lWifi','wifi'],['lDump','dump'],['lWater','water'],['lElec','electric'],['lCovered','covered'],['lPets','pets'],
      ['lRvFriendly','rv_friendly'],['lCamera','security_camera'],
