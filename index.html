@@ -4932,6 +4932,7 @@ async function editListing(listingId) {
     if (vehiclesSel && l.vehicles) {
       Array.from(vehiclesSel.options).forEach(opt => { opt.selected = l.vehicles.includes(opt.value); });
     }
+    ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom','reqDayHours','reqFoodTruck'].forEach(function(id){ var el=document.getElementById(id); if (el) el.checked = true; });
     // Mark as editing
     window._editListingId = listingId;
     document.querySelector('.submit-host-btn').textContent = 'Save Changes →';
