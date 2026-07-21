@@ -8926,5 +8926,33 @@ handleStripeConnectCallback();
 </div>
 
 <div id="attendantAppModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;overflow-y:auto;"><div style="background:#fff;max-width:520px;margin:40px auto;border-radius:12px;padding:32px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h2 style="margin:0;font-size:1.4rem;">Apply to Be an Attendant</h2><button onclick="document.getElementById(&quot;attendantAppModal&quot;).style.display=&quot;none&quot;" style="background:none;border:none;font-size:28px;cursor:pointer;">&times;</button></div><div style="display:flex;flex-direction:column;gap:14px;"><input id="app-name" type="text" placeholder="Full Name *" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><input id="app-email" type="email" placeholder="Email Address *" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><input id="app-phone" type="tel" placeholder="Phone Number" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;" /><select id="app-experience" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;"><option value="">Experience Level *</option><option value="None / Entry Level">None / Entry Level</option><option value="1-2 years">1-2 Years</option><option value="3-5 years">3-5 Years</option><option value="5+ years">5+ Years</option></select><select id="app-availability" style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;"><option value="">Availability *</option><option value="Weekends only">Weekends Only</option><option value="Weekdays only">Weekdays Only</option><option value="Evenings and weekends">Evenings and Weekends</option><option value="Flexible">Flexible</option></select><textarea id="app-about" rows="4" placeholder="Tell us about yourself and any relevant experience." style="padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;resize:vertical;"></textarea><button onclick="submitAttendantApplication()" style="background:#2563eb;color:#fff;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Submit Application</button></div></div></div>
+
+<script>
+/* Stripe payment return handler: marks booking confirmed after successful redirect */
+(async function handlePaymentReturn(){
+  try {
+    var qp = new URLSearchParams(location.search);
+    if (qp.get('confirmed') === '1' && qp.get('booking_id')) {
+      var bid = qp.get('booking_id');
+      var rs = qp.get('redirect_status');
+      history.replaceState({}, '', location.pathname + (location.hash||''));
+      if (rs && rs !== 'succeeded') {
+        if (typeof showToast==='function') showToast('Payment was not completed - your booking is still unpaid.', 'error');
+        return;
+      }
+      var done=false;
+      for (var i=0;i<12 && !done;i++){
+        try {
+          var res = await db.from('bookings').update({ status: 'confirmed' }).eq('id', bid).select('id');
+          if (!res.error && res.data && res.data.length) { done=true; break; }
+        } catch(e) {}
+        await new Promise(function(r){setTimeout(r,600);});
+      }
+      if (typeof showToast==='function') showToast(done ? 'Payment received - your booking is confirmed!' : 'Payment received. Check your dashboard shortly.', done?'success':'info');
+      if (typeof showPage==='function') showPage('dashboard');
+    }
+  } catch(e) { console.warn('payment-return', e); }
+})();
+</script>
 </body>
 </html>
