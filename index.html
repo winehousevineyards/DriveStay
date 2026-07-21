@@ -2436,7 +2436,7 @@ html,body{overflow-x:hidden}
         <input type="checkbox" id="reqRules"/>
         <label for="reqRules"><strong>I will respect quiet hours (10 PM – 7 AM)</strong> and ensure my hosting activity does not disturb neighbors or violate local ordinances.</label>
       </div>
-        <div class="host-req-item" id="dayReqItem" style="display:none">
+        <div class="host-req-item" id="ftReqItem" style="display:none"><label><input type="checkbox" id="reqFoodTruck"> <strong>Food-truck ground rules.</strong> Vendors must haul away all trash and grease (no dumping on site), keep open flames inside the truck only, set up tables and chairs only in the area I designate, and leave the space clean at the end of each service day. I will clearly mark the vending space and the designated seating area.</label></div><div class="host-req-item" id="dayReqItem" style="display:none">
           <input type="checkbox" id="reqDayHours"/>
           <label for="reqDayHours"><strong>Daytime turnover.</strong> Parkers must leave on or before their allotted end time &mdash; no overnight stays. I will keep the space clear and accessible for the entire daily window, and I understand overnight rules do not apply to this listing.</label>
         </div>
@@ -2923,7 +2923,7 @@ html,body{overflow-x:hidden}
 <!-- ===== PRIVACY POLICY ===== -->
 <div class="page" id="page-privacy" style="max-width:760px;margin:0 auto;padding:40px 20px">
 <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:8px">Privacy Policy</h1>
-<p style="color:var(--muted);margin-bottom:32px;font-size:.85rem">Last updated: June 2026</p>
+<p style="color:var(--muted);margin-bottom:32px;font-size:.85rem">Last updated: July 2026</p><p style="margin-bottom:18px;">Driveway Host is operated by <strong>Driveway Host LLC</strong>, a California limited liability company (&quot;Driveway Host&quot;, &quot;we&quot;, &quot;us&quot;). This policy describes how we collect, use, and protect your information.</p>
 <div style="line-height:1.8;color:var(--text)">
 <h2 style="font-size:1.1rem;font-weight:600;margin:24px 0 8px">1. Information We Collect</h2>
 <p><strong>You provide:</strong> name, email, phone, payment information, vehicle details, listing details, messages, and profile content.</p>
@@ -4378,7 +4378,7 @@ async function submitListing(e) {
 
   // Validate host requirements checklist
   const __cat = (document.getElementById('lCategory')||{}).value || 'overnight';
-    const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
+    const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : __cat === 'foodtruck' ? ['reqOffStreet','reqSecure','reqAmenities','reqFoodTruck','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
   const maxVeh = parseInt(document.getElementById('lMaxVehicles')?.value || '0', 10);
   const reqsToCheck = maxVeh >= 5 ? reqs : reqs.filter(r => r !== 'reqRestroom');
   const unchecked = reqsToCheck.filter(id => !document.getElementById(id)?.checked);
@@ -7439,7 +7439,7 @@ function submitAttendantApplication(){var name=(document.getElementById("app-nam
 
 function toggleCatReqs(v) {
   var day = v === 'daytime';
-  var hr = document.getElementById('dayHoursRow'); if (hr) hr.style.display = (day || v==='foodtruck') ? 'flex' : 'none';
+  var hr = document.getElementById('dayHoursRow'); if (hr) hr.style.display = (day || v==='foodtruck') ? 'flex' : 'none'; var __ft=document.getElementById('ftReqItem'); if (__ft) __ft.style.display = (v==='foodtruck') ? '' : 'none';
   function itemOf(id){ var e = document.getElementById(id); return e ? e.closest('.host-req-item') : null; }
   var pi = itemOf('reqPlacard'), qi = itemOf('reqRules'), di = document.getElementById('dayReqItem');
   if (pi) pi.style.display = day ? 'none' : '';
@@ -7819,7 +7819,7 @@ handleStripeConnectCallback();
         <button onclick="browseCat('foodtruck')" style="background:#16a34a;color:#fff;border:none;border-radius:10px;padding:12px 22px;font-size:1rem;font-weight:700;cursor:pointer;">Browse Spots &rarr;</button>
       </div>
     </div>
-    <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 20px;font-size:0.95rem;color:#713f12;">
+    <div style="background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);border-radius:14px;padding:22px;margin-bottom:20px;"><h3 style="margin:0 0 10px;">&#128203; Standard vendor ground rules</h3><p style="margin:0 0 8px;">Every food-truck booking comes with these baseline rules (hosts can add their own):</p><ul style="margin:0;padding-left:20px;line-height:1.8;"><li>Clean up daily &mdash; leave the space broom-clean after every service</li><li>No dumping &mdash; haul away all trash, grease, and greywater</li><li>No open flames outside the truck</li><li>Tables and chairs only in the host&#39;s designated outdoor area</li><li>Respect the listing&#39;s posted vending hours</li></ul></div><div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 20px;font-size:0.95rem;color:#713f12;">
       <strong>Know your local rules.</strong> Driveway Host provides the space booking only. Vendors are responsible for their own business licenses, health permits, fire inspections, and any insurance their city or county requires &mdash; and lot owners should confirm vending is allowed under local zoning before listing.
     </div>
   </div>
