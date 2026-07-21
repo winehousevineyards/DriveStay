@@ -1705,6 +1705,21 @@ input,textarea,select{color:var(--text,#0f172a);}
 [data-theme="dark"] .us-row{background:#0f2a1c;}
 [data-theme="dark"] .partner-section{background:#0f172a;}
 [data-theme="dark"] .partner-card{background:#1e293b;border-color:#334155;} [data-theme="dark"] .fee-red{color:#f87171;}
+
+/* dark-mode global: hardcoded light card backgrounds */
+[data-theme="dark"] [style*="background:#fff"],[data-theme="dark"] [style*="background: #fff"],[data-theme="dark"] [style*="background:#ffffff"],[data-theme="dark"] [style*="background:white"],[data-theme="dark"] [style*="background:var(--card-bg,#fff)"]{background:#1e293b !important;}
+[data-theme="dark"] [style*="background:#f0fdf4"]{background:#122a1c !important;}
+[data-theme="dark"] [style*="background:#f8fafc"],[data-theme="dark"] [style*="background:#f8fdf8"],[data-theme="dark"] [style*="background:#f1f5f9"]{background:#162134 !important;}
+[data-theme="dark"] [style*="background:#fefce8"]{background:#292312 !important;}
+[data-theme="dark"] [style*="background:#fff1f2"]{background:#2b1418 !important;}
+[data-theme="dark"] [style*="background:#fef3c7"]{background:#2c250f !important;}
+[data-theme="dark"] [style*="color:#92400e"]{color:#fbbf24 !important;}
+[data-theme="dark"] [style*="color:#713f12"]{color:#fde68a !important;}
+[data-theme="dark"] [style*="color:#14532d"]{color:#86efac !important;}
+[data-theme="dark"] .merch-card,[data-theme="dark"] .merch-body,[data-theme="dark"] .blog-card,[data-theme="dark"] .blog-thumb,[data-theme="dark"] .faq-item,[data-theme="dark"] .ecc-card,[data-theme="dark"] .ecc-icon,[data-theme="dark"] .attendant-feature,[data-theme="dark"] .host-req-item{background:#1e293b !important;}
+[data-theme="dark"] .faq-q{color:#f1f5f9;}
+[data-theme="dark"] .verify-badge.verified{background:#14331f !important;}
+[data-theme="dark"] .sl-tier-title,[data-theme="dark"] .sl-dnd-header{color:#fda4af !important;}
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
@@ -3697,7 +3712,7 @@ function buildListingCard(l) {
         ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
         ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
         ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="background:#b45309">&#128666; Food Truck Spot</span>`:''}
+        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="color:#fff;background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="color:#fff;background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="color:#fff;background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="color:#fff;background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="color:#fff;background:#b45309">&#128666; Food Truck Spot</span>`:''}
       </div>
     </div>
   </div>`;
