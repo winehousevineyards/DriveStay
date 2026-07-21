@@ -6791,7 +6791,14 @@ async function printBooking(b) {
     + '.qs{color:#64748b;font-size:.72rem;margin-top:2px}'
     + '.foot{margin-top:12px;font-size:.68rem;color:#94a3b8;text-align:center}'
     + '@media print{body{background:#fff;padding:0}}'
-    + '</style></head><body><div class="pass">'
+    + '
+.merch-thumb{background:linear-gradient(180deg,#f8fafc,#e2e8f0)!important;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.merch-thumb svg{width:72%;max-height:88%;height:auto;display:block;}
+[data-theme="dark"] .merch-thumb{background:linear-gradient(180deg,#293548,#1e293b)!important;}
+input,textarea,select{color:var(--text,#0f172a);}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background-color:#1e293b;color:#f1f5f9;border-color:#334155;}
+[data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:#94a3b8;}
+</style></head><body><div class="pass">'
     + '<div class="top"><div class="logo"><img src="https://drivewayhost.com/logo.jpg"/> Driveway Host</div><div class="type">' + type + ' PASS</div></div>'
     + '<div class="plate">' + plate + '</div><div class="pl">License Plate</div>'
     + '<div class="grid">'
@@ -8181,7 +8188,7 @@ handleStripeConnectCallback();
       <div class="merch-grid">
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#14532d,#22c55e)">
-            <span>👕</span>
+            <svg viewBox="0 0 200 160"><path d="M62 28 L88 18 C92 30 108 30 112 18 L138 28 L156 54 L134 66 L134 138 L66 138 L66 66 L44 54 Z" fill="#16a34a" stroke="#0e6b33" stroke-width="3"/><path d="M88 18 C92 30 108 30 112 18" fill="none" stroke="#0e6b33" stroke-width="3"/><rect x="73" y="66" width="54" height="22" rx="5" fill="#ffffff"/><g font-family="Arial" text-anchor="middle"><text x="100" y="76" font-size="8" font-weight="bold" fill="#14532d">DRIVEWAY</text><text x="100" y="85" font-size="8" font-weight="bold" fill="#16a34a">HOST</text></g></svg>
             <span class="merch-badge">Bestseller</span>
           </div>
           <div class="merch-body">
@@ -8193,7 +8200,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#0f172a,#1e293b)">
-            <span>🧢</span>
+            <svg viewBox="0 0 200 160"><path d="M52 88 C52 52 78 34 100 34 C122 34 148 52 148 88 Z" fill="#14532d" stroke="#0b3b20" stroke-width="3"/><path d="M100 34 L100 88" stroke="#0b3b20" stroke-width="2"/><path d="M74 40 L84 88 M126 40 L116 88" stroke="#0b3b20" stroke-width="2" fill="none"/><path d="M50 88 L150 88 C168 88 178 96 178 104 C178 110 170 112 162 110 C140 100 120 96 100 96 C80 96 60 92 52 90 Z" fill="#16a34a" stroke="#0e6b33" stroke-width="3"/><circle cx="100" cy="64" r="15" fill="#ffffff"/><text x="100" y="69" font-family="Arial" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">DH</text></svg>
           </div>
           <div class="merch-body">
             <div class="merch-name">Snapback Hat</div>
@@ -8204,7 +8211,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#1e293b,#334155)">
-            <span>🧥</span>
+            <svg viewBox="0 0 200 160"><path d="M60 34 L84 22 C86 34 114 34 116 22 L140 34 L158 60 L136 72 L136 140 L64 140 L64 72 L42 60 Z" fill="#1f2937" stroke="#0f172a" stroke-width="3"/><path d="M84 22 C80 40 120 40 116 22 C118 30 118 38 100 40 C82 38 82 30 84 22 Z" fill="#111827"/><path d="M94 44 L94 60 M106 44 L106 60" stroke="#9ca3af" stroke-width="3" stroke-linecap="round"/><path d="M74 116 L126 116 L120 138 L80 138 Z" fill="#111827"/><g font-family="Arial" text-anchor="middle" fill="#22c55e" font-weight="bold"><text x="100" y="84" font-size="10">PARK HERE.</text><text x="100" y="97" font-size="10">EARN HERE.</text></g></svg>
             <span class="merch-badge" style="background:#7c3aed">New</span>
           </div>
           <div class="merch-body">
@@ -8216,7 +8223,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card" style="border-color:#bbf7d0;border-width:2px">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
-            <span>🪟</span>
+            <svg viewBox="0 0 200 160"><rect x="18" y="32" width="164" height="96" rx="12" fill="#14532d" stroke="#0b3b20" stroke-width="3"/><g stroke="#0e6b33" stroke-width="2"><line x1="41" y1="32" x2="41" y2="128"/><line x1="64" y1="32" x2="64" y2="128"/><line x1="87" y1="32" x2="87" y2="128"/><line x1="110" y1="32" x2="110" y2="128"/><line x1="133" y1="32" x2="133" y2="128"/><line x1="156" y1="32" x2="156" y2="128"/></g><rect x="48" y="56" width="104" height="48" rx="8" fill="#ffffff" opacity="0.96"/><g font-family="Arial" text-anchor="middle"><text x="100" y="72" font-size="11" font-weight="bold" fill="#14532d">DRIVEWAY HOST</text><text x="100" y="86" font-size="8" fill="#16a34a" font-weight="bold">GUEST PARKING</text><text x="100" y="97" font-size="6" fill="#64748b">drivewayhost.com</text></g></svg>
             <span class="merch-badge">Required</span>
           </div>
           <div class="merch-body">
@@ -8228,7 +8235,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
-            <span>🪪</span>
+            <svg viewBox="0 0 200 160"><rect x="68" y="14" width="64" height="132" rx="9" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><circle cx="100" cy="28" r="7" fill="none" stroke="#94a3b8" stroke-width="3"/><rect x="68" y="40" width="64" height="18" fill="#16a34a"/><text x="100" y="53" font-family="Arial" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">GUEST</text><g fill="#1e293b"><rect x="82" y="66" width="10" height="10"/><rect x="95" y="66" width="10" height="10"/><rect x="108" y="66" width="10" height="10"/><rect x="82" y="79" width="10" height="10"/><rect x="108" y="79" width="10" height="10"/><rect x="82" y="92" width="10" height="10"/><rect x="95" y="92" width="10" height="10"/><rect x="108" y="92" width="10" height="10"/></g><g font-family="Arial" text-anchor="middle"><text x="100" y="117" font-size="7" font-weight="bold" fill="#14532d">REGISTERED</text><text x="100" y="126" font-size="7" font-weight="bold" fill="#14532d">GUEST</text><text x="100" y="138" font-size="5.5" fill="#64748b">drivewayhost.com</text></g></svg>
           </div>
           <div class="merch-body">
             <div class="merch-name">Host Placard Pack (10)</div>
@@ -8239,7 +8246,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
-            <span>🛍️</span>
+            <svg viewBox="0 0 200 160"><path d="M70 44 C70 24 82 16 100 16 C118 16 130 24 130 44" fill="none" stroke="#b09a6a" stroke-width="6" stroke-linecap="round"/><path d="M56 44 L144 44 L136 140 L64 140 Z" fill="#f1e9d2" stroke="#cbb98a" stroke-width="3"/><g font-family="Arial" text-anchor="middle"><text x="100" y="88" font-size="11" font-weight="bold" fill="#14532d">DRIVEWAY</text><text x="100" y="101" font-size="11" font-weight="bold" fill="#16a34a">HOST</text><text x="100" y="116" font-size="6" fill="#8a7b52">PARK ANYWHERE.</text></g></svg>
           </div>
           <div class="merch-body">
             <div class="merch-name">Canvas Tote Bag</div>
@@ -8250,7 +8257,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
-            <span>📱</span>
+            <svg viewBox="0 0 200 160"><rect x="76" y="12" width="48" height="136" rx="13" fill="#14532d" stroke="#0b3b20" stroke-width="3"/><rect x="82" y="20" width="16" height="26" rx="8" fill="#0b3b20"/><circle cx="90" cy="28" r="4" fill="#1e293b"/><circle cx="90" cy="39" r="4" fill="#1e293b"/><circle cx="100" cy="86" r="16" fill="#ffffff"/><text x="100" y="91" font-family="Arial" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">DH</text><text x="100" y="126" font-family="Arial" text-anchor="middle" font-size="6" fill="#86efac">drivewayhost.com</text></svg>
             <span class="merch-badge" style="background:#2563eb">Coming Soon</span>
           </div>
           <div class="merch-body">
@@ -8262,7 +8269,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#fdf4ff,#ede9fe)">
-            <span>🧲</span>
+            <svg viewBox="0 0 200 160"><circle cx="74" cy="66" r="40" fill="#ffffff" stroke="#16a34a" stroke-width="6"/><g font-family="Arial" text-anchor="middle"><text x="74" y="62" font-size="10" font-weight="bold" fill="#14532d">DRIVEWAY</text><text x="74" y="74" font-size="10" font-weight="bold" fill="#16a34a">HOST</text></g><circle cx="132" cy="98" r="34" fill="#14532d" stroke="#0b3b20" stroke-width="4"/><text x="132" y="96" font-family="Arial" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">PARK</text><text x="132" y="108" font-family="Arial" text-anchor="middle" font-size="9" font-weight="bold" fill="#86efac">ANYWHERE.</text></svg>
           </div>
           <div class="merch-body">
             <div class="merch-name">Sticker Pack (10)</div>
@@ -8273,7 +8280,7 @@ handleStripeConnectCallback();
         </div>
         <div class="merch-card">
           <div class="merch-thumb" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">
-            <span>☕</span>
+            <svg viewBox="0 0 200 160"><path d="M74 30 L126 30 L124 42 L76 42 Z" fill="#334155"/><rect x="70" y="20" width="60" height="12" rx="6" fill="#475569"/><path d="M76 42 L124 42 L118 142 L82 142 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/><path d="M78 62 L122 62 L119 104 L81 104 Z" fill="#16a34a"/><g font-family="Arial" text-anchor="middle" fill="#ffffff"><text x="100" y="80" font-size="9" font-weight="bold">DRIVEWAY</text><text x="100" y="92" font-size="9" font-weight="bold">HOST</text></g></svg>
           </div>
           <div class="merch-body">
             <div class="merch-name">Insulated Travel Mug</div>
