@@ -4935,6 +4935,7 @@ async function editListing(listingId) {
       Array.from(vehiclesSel.options).forEach(opt => { opt.selected = l.vehicles.includes(opt.value); });
     }
     ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom','reqDayHours','reqFoodTruck'].forEach(function(id){ var el=document.getElementById(id); if (el) el.checked = true; });
+    document.querySelectorAll('#page-host select[required]').forEach(function(sel){ if (!sel.value) { for (var i=0;i<sel.options.length;i++){ if (sel.options[i].value){ sel.value=sel.options[i].value; break; } } } });
     // Mark as editing
     window._editListingId = listingId;
     document.querySelector('.submit-host-btn').textContent = 'Save Changes →';
