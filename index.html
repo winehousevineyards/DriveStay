@@ -4546,9 +4546,9 @@ async function submitListing(e) {
       showToast('Uploading photos...', 'info');
       listing.photos = await uploadListingPhotos();
     }
-    const { error } = await db.from('listings').insert(listing);
+    const { data: __newL, error } = await db.from('listings').insert(listing).select('id').single();
     if (error) throw error;
-    showToast("Listing submitted for review! It will go live within 48 hours.", 'success'); clearHostDraft();
+    showToast("Listing submitted for review! It will go live within 48 hours.", 'success'); clearHostDraft(); try { if (__newL && __newL.id) db.functions.invoke('send-booking-email', { body: { listing_id: __newL.id, event: 'listing_review' } }); } catch(__e) { console.warn('review email', __e); }
     document.getElementById('hostForm').reset();
     listingPhotoFiles = [];
     document.getElementById('listingPhotoThumbs').innerHTML = '';
