@@ -1691,6 +1691,13 @@ html,body{overflow-x:hidden}
 [data-theme="dark"] .nav-dropdown { background:#1e293b !important; border-color:#334155 !important; }
 [data-theme="dark"] .nav-dropdown a { color:#f1f5f9 !important; }
 [data-theme="dark"] .nav-dropdown a:hover { background:#334155 !important; color:#4ade80 !important; }
+
+.merch-thumb{background:linear-gradient(180deg,#f8fafc,#e2e8f0)!important;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.merch-thumb svg{width:72%;max-height:88%;height:auto;display:block;}
+[data-theme="dark"] .merch-thumb{background:linear-gradient(180deg,#293548,#1e293b)!important;}
+input,textarea,select{color:var(--text,#0f172a);}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background-color:#1e293b;color:#f1f5f9;border-color:#334155;}
+[data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:#94a3b8;}
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
@@ -6792,12 +6799,7 @@ async function printBooking(b) {
     + '.foot{margin-top:12px;font-size:.68rem;color:#94a3b8;text-align:center}'
     + '@media print{body{background:#fff;padding:0}}'
     + '
-.merch-thumb{background:linear-gradient(180deg,#f8fafc,#e2e8f0)!important;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.merch-thumb svg{width:72%;max-height:88%;height:auto;display:block;}
-[data-theme="dark"] .merch-thumb{background:linear-gradient(180deg,#293548,#1e293b)!important;}
-input,textarea,select{color:var(--text,#0f172a);}
-[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background-color:#1e293b;color:#f1f5f9;border-color:#334155;}
-[data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:#94a3b8;}
+
 </style></head><body><div class="pass">'
     + '<div class="top"><div class="logo"><img src="https://drivewayhost.com/logo.jpg"/> Driveway Host</div><div class="type">' + type + ' PASS</div></div>'
     + '<div class="plate">' + plate + '</div><div class="pl">License Plate</div>'
