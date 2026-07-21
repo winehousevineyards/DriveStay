@@ -1730,6 +1730,7 @@ html,body{overflow-x:hidden}
         <a onclick="showPage('events')"><i class="fa-solid fa-calendar-star" style="color:var(--green)"></i> Event Parking</a>
         <a onclick="showPage('commuter')"><i class="fa-solid fa-briefcase" style="color:#0284c7"></i> 9–5 Commuter</a>
         <a onclick="showPage('publiclands')"><i class="fa-solid fa-tree" style="color:#16a34a"></i> Public Lands Overnight</a>
+        <a onclick="showPage('parties')">&#127881; Party Parking</a>
         <a onclick="showPage('advertise')"><i class="fa-solid fa-bullhorn" style="color:#f59e0b"></i> Advertise</a>
         <a onclick="showPage('bigrigs')"><i class="fa-solid fa-truck" style="color:var(--orange)"></i> Big Rigs</a>
         <a onclick="showPage('security')"><i class="fa-solid fa-shield-halved" style="color:#2563eb"></i> Safety & Security</a>
@@ -1786,7 +1787,7 @@ html,body{overflow-x:hidden}
       <div class="booking-type-tabs" id="heroTypeTabs">
         <button class="btype-tab active" data-type="daily" onclick="setHeroBkType('daily',this)"><i class="fa-solid fa-sun"></i> Daily</button>
         <button class="btype-tab" data-type="monthly" onclick="setHeroBkType('monthly',this)"><i class="fa-solid fa-calendar-days"></i> Monthly</button>
-        <button class="btype-tab" data-type="event" onclick="setHeroBkType('event',this)"><i class="fa-solid fa-ticket"></i> Event</button><button class="btype-tab" onclick="showPage('commuter')"><i class="fa-solid fa-briefcase"></i> 9–5 Commuter</button>
+        <button class="btype-tab" data-type="event" onclick="setHeroBkType('event',this)"><i class="fa-solid fa-ticket"></i> Event</button><button class="btype-tab" onclick="showPage('commuter')"><i class="fa-solid fa-briefcase"></i> 9–5 Commuter</button><button class="btype-tab" onclick="showPage('parties')">&#127881; Parties</button>
       </div>
     </div>
     <div class="hero-search">
@@ -2434,6 +2435,10 @@ html,body{overflow-x:hidden}
         <input type="checkbox" id="reqRules"/>
         <label for="reqRules"><strong>I will respect quiet hours (10 PM – 7 AM)</strong> and ensure my hosting activity does not disturb neighbors or violate local ordinances.</label>
       </div>
+        <div class="host-req-item" id="dayReqItem" style="display:none">
+          <input type="checkbox" id="reqDayHours"/>
+          <label for="reqDayHours"><strong>Daytime turnover.</strong> Parkers arrive and leave within my posted hours. I will keep the space clear and accessible for the entire daily window, and I understand overnight rules do not apply to this listing.</label>
+        </div>
       <div class="host-req-item">
         <input type="checkbox" id="reqRestroom"/>
         <label for="reqRestroom"><strong>Restroom requirement (5+ vehicle spaces).</strong> If my listing can accommodate 5 or more vehicles at once, I will provide access to an indoor restroom or a serviced portable restroom on-site. <span style="color:var(--green);font-weight:700;cursor:pointer;text-decoration:underline" onclick="document.getElementById('portableRestroomInfo').style.display='block'">Portable restroom service is available to DH members →</span></label>
@@ -2590,7 +2595,7 @@ html,body{overflow-x:hidden}
         <label class="check-item" style="font-size:.9rem"><input type="checkbox" id="lInstantBook"/> Enable Instant Book for this listing</label>
       <div style="margin:12px 0">
         <label style="font-weight:700;font-size:.9rem;display:block;margin-bottom:4px">Listing category</label>
-        <select id="lCategory" onchange="var r=document.getElementById('dayHoursRow'); if(r) r.style.display=this.value==='daytime'?'flex':'none';" style="max-width:360px">
+        <select id="lCategory" onchange="toggleCatReqs(this.value)" style="max-width:360px">
           <option value="overnight">Overnight driveway / space</option>
           <option value="daytime">Daytime commuter parking (you set the hours)</option>
           <option value="publicland">Public land — park / beach / agency lot</option>
@@ -3351,8 +3356,8 @@ function showPage(name, opts) {
     else history.pushState(null,'',location.pathname + location.search);
   }
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', publiclands:'Overnight Parking on Public Lands', advertise:'Advertise With Us', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
-  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', publiclands:'Permitted overnight parking at city parks, state beaches, and public lands — dated pass, plate on the placard.', advertise:'Put your business in front of drivers parking nearby.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', publiclands:'Overnight Parking on Public Lands', advertise:'Advertise With Us', parties:'Neighborhood Party Parking', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
+  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', publiclands:'Permitted overnight parking at city parks, state beaches, and public lands — dated pass, plate on the placard.', advertise:'Put your business in front of drivers parking nearby.', parties:'Reserve neighbors&apos; driveways for your party guests — passes for every car, clear streets, happy neighbors.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
   const metaEl = document.querySelector('meta[name="description"]');
   if (metaEl && descs[name]) metaEl.setAttribute('content', descs[name]);
   setPageTitle(titles[name] || null);
@@ -4370,7 +4375,8 @@ async function submitListing(e) {
   if (!currentUser) { requireAuth('host'); return; }
 
   // Validate host requirements checklist
-  const reqs = ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
+  const __cat = (document.getElementById('lCategory')||{}).value || 'overnight';
+    const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
   const maxVeh = parseInt(document.getElementById('lMaxVehicles')?.value || '0', 10);
   const reqsToCheck = maxVeh >= 5 ? reqs : reqs.filter(r => r !== 'reqRestroom');
   const unchecked = reqsToCheck.filter(id => !document.getElementById(id)?.checked);
@@ -7428,6 +7434,16 @@ function submitAttendantApplication(){var name=(document.getElementById("app-nam
 
 
 
+
+function toggleCatReqs(v) {
+  var day = v === 'daytime';
+  var hr = document.getElementById('dayHoursRow'); if (hr) hr.style.display = day ? 'flex' : 'none';
+  function itemOf(id){ var e = document.getElementById(id); return e ? e.closest('.host-req-item') : null; }
+  var pi = itemOf('reqPlacard'), qi = itemOf('reqRules'), di = document.getElementById('dayReqItem');
+  if (pi) pi.style.display = day ? 'none' : '';
+  if (qi) qi.style.display = day ? 'none' : '';
+  if (di) di.style.display = day ? '' : 'none';
+}
 function browseCat(c) {
   showPage('browse');
   setTimeout(function(){
@@ -7745,6 +7761,31 @@ handleStripeConnectCallback();
       <h2 style="font-family:var(--font-display);margin:0 0 8px;">Founding advertiser rates</h2>
       <p style="color:var(--muted);margin:0 0 16px;">We're launching &mdash; early local businesses lock in flat monthly pricing before rates go dynamic.</p>
       <button onclick="showPage('help')" style="padding:12px 28px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Get in Touch &rarr;</button>
+    </div>
+  </div>
+</div>
+<!-- ===== PARTIES PAGE ===== -->
+<div class="page" id="page-parties">
+  <div style="max-width:940px;margin:0 auto;padding:48px 20px;">
+    <div style="text-align:center;margin-bottom:38px;">
+      <div style="font-size:2.6rem">&#127881;</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(1.9rem,4vw,2.7rem);margin:8px 0;">Neighborhood Party Parking</h1>
+      <p style="color:var(--muted);font-size:1.05rem;max-width:660px;margin:0 auto;">Birthday, graduation, wedding, game-day barbecue &mdash; parties mean cars, and your street fills up fast. Reserve your neighbors' driveways for the day and give every guest a real spot.</p>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="showPage('browse')" style="padding:12px 26px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;cursor:pointer;font-size:1rem;">Find Driveways Near You</button>
+        <button onclick="showPage('host')" style="padding:12px 26px;border-radius:10px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-weight:800;cursor:pointer;font-size:1rem;">List Your Driveway</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:40px;">
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#128205;</div><h3 style="margin:8px 0 6px;font-size:1rem;">1. Search your street</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Find driveways within walking distance of your party address.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#128197;</div><h3 style="margin:8px 0 6px;font-size:1rem;">2. Book what you need</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">One driveway or five &mdash; reserve them all for your date.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#128424;&#65039;</div><h3 style="margin:8px 0 6px;font-size:1rem;">3. Print guest passes</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Each booked spot gets a placard with the date, plate, and address &mdash; hand them to your guests.</p></div>
+      <div style="background:var(--card,#fff);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:20px;"><div style="font-size:1.7rem">&#129309;</div><h3 style="margin:8px 0 6px;font-size:1rem;">4. Party without the chaos</h3><p style="margin:0;color:var(--muted);font-size:.9rem;">Guests park legally, neighbors earn instead of grumble, and the street stays clear.</p></div>
+    </div>
+    <div style="background:linear-gradient(135deg,#7c2d92,#c026d3);color:#fff;border-radius:16px;padding:26px 30px;">
+      <h2 style="font-family:var(--font-display);margin:0 0 8px;">Live on a street that parties?</h2>
+      <p style="margin:0 0 14px;opacity:.93;">Every graduation season, every holiday, every big game &mdash; someone nearby needs parking. List your driveway once and earn from every celebration on your block.</p>
+      <button onclick="showPage('host')" style="padding:11px 24px;border-radius:10px;background:#fff;color:#7c2d92;border:none;font-weight:800;cursor:pointer;">Start Earning &rarr;</button>
     </div>
   </div>
 </div>
@@ -8806,6 +8847,7 @@ handleStripeConnectCallback();
       <a onclick="showPage('events')">Event Parking</a>
       <a onclick="showPage('commuter')">9–5 Commuter Parking</a>
           <a onclick="showPage('publiclands')">Public Lands Overnight</a>
+          <a onclick="showPage('parties')">Party Parking</a>
           <a onclick="showPage('advertise')">Advertise With Us</a>
           <a onclick="showPage('bigrigs')">Big Rigs &amp; Commercial</a>
       <a onclick="showPage('attendants')">Parking Attendants</a>
