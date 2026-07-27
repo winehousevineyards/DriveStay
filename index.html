@@ -9029,6 +9029,7 @@ handleStripeConnectCallback();
         } catch(e) {}
         await new Promise(function(r){setTimeout(r,600);});
       }
+      if (done) { try { db.functions.invoke('send-booking-email', { body: { booking_id: bid, event: 'confirmed' } }); } catch(__em){} }
       if (typeof showToast==='function') showToast(done ? 'Payment received - your booking is confirmed!' : 'Payment received. Check your dashboard shortly.', done?'success':'info');
       if (typeof showPage==='function') showPage('dashboard');
     }
