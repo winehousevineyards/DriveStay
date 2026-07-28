@@ -1766,7 +1766,7 @@ input,textarea,select{color:var(--text,#0f172a);}
         <a onclick="showPage('commuter')"><i class="fa-solid fa-briefcase" style="color:#0284c7"></i> 9–5 Commuter</a>
         <a onclick="showPage('publiclands')"><i class="fa-solid fa-tree" style="color:#16a34a"></i> Public Lands Overnight</a>
         <a onclick="showPage('parties')">&#127881; Party Parking</a>
-        <a onclick="showPage('airport')">&#9992;&#65039; Airport Parking</a><a onclick="showPage('foodtruck')">&#128666; Food Truck Spots</a><a onclick="showPage('boat')">&#9875; Boat Slips</a>
+        <a onclick="showPage('airport')">&#9992;&#65039; Airport Parking</a><a onclick="showPage('foodtruck')">&#128666; Food Truck Spots</a>
         <a onclick="showPage('advertise')"><i class="fa-solid fa-bullhorn" style="color:#f59e0b"></i> Advertise</a>
         <a onclick="showPage('bigrigs')"><i class="fa-solid fa-truck" style="color:var(--orange)"></i> Big Rigs</a>
         <a onclick="showPage('security')"><i class="fa-solid fa-shield-halved" style="color:#2563eb"></i> Safety & Security</a>
@@ -2238,7 +2238,7 @@ input,textarea,select{color:var(--text,#0f172a);}
         <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
         <button class="filter-chip" onclick="setFilter('instant_book',this)"><i class="fa-solid fa-bolt"></i> Instant Book</button>
         <button class="filter-chip" onclick="setFilter('wifi',this)"><i class="fa-solid fa-wifi"></i> WiFi</button>
-        <button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('cat:overnight',this)">&#127769; Overnight</button><button class="filter-chip" onclick="setFilter('cat:daytime',this)"><i class="fa-solid fa-briefcase"></i> Daytime 9&ndash;5</button><button class="filter-chip" onclick="setFilter('cat:publicland',this)">&#127966;&#65039; Public Lands</button><button class="filter-chip" onclick="setFilter('cat:lot',this)">&#127981; Lots &amp; Industrial</button><button class="filter-chip" onclick="setFilter('cat:airport',this)">&#9992;&#65039; Airport</button><button class="filter-chip" onclick="setFilter('cat:foodtruck',this)">&#128666; Food Trucks</button><button class="filter-chip" onclick="setFilter('cat:boat',this)">&#9875; Boat Slips</button>
+        <button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('cat:overnight',this)">&#127769; Overnight</button><button class="filter-chip" onclick="setFilter('cat:daytime',this)"><i class="fa-solid fa-briefcase"></i> Daytime 9&ndash;5</button><button class="filter-chip" onclick="setFilter('cat:publicland',this)">&#127966;&#65039; Public Lands</button><button class="filter-chip" onclick="setFilter('cat:lot',this)">&#127981; Lots &amp; Industrial</button><button class="filter-chip" onclick="setFilter('cat:airport',this)">&#9992;&#65039; Airport</button><button class="filter-chip" onclick="setFilter('cat:foodtruck',this)">&#128666; Food Trucks</button>
         <button class="filter-chip" onclick="setFilter('electric',this)"><i class="fa-solid fa-charging-station"></i> EV Charging</button>
         <button class="filter-chip" onclick="setFilter('pets',this)"><i class="fa-solid fa-paw"></i> Pet OK</button>
         <button class="filter-chip" onclick="setFilter('dump',this)"><i class="fa-solid fa-recycle"></i> Dump Station</button>
@@ -2636,9 +2636,9 @@ input,textarea,select{color:var(--text,#0f172a);}
           <option value="daytime">Daytime commuter parking (you set the hours)</option>
           <option value="publicland">Public land — park / beach / agency lot</option>
           <option value="lot">Large lot / vacant industrial property</option>
-          <option value="airport">Airport parking (near an airport)</option><option value="foodtruck">Food truck / vending spot (commercial lot)</option><option value="boat">Boat Slip / Mooring Ball (harbor &amp; dock)</option>
+          <option value="airport">Airport parking (near an airport)</option><option value="foodtruck">Food truck / vending spot (commercial lot)</option>
         </select>
-        <div id="boatRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap"><select id="lMoorType" style="flex:1;min-width:200px"><option value="">Slip or mooring ball?</option><option value="slip">Dock slip</option><option value="mooring">Mooring ball</option></select><span style="font-size:.85rem;color:var(--muted,#64748b)">Boat spots: use the Length field for MAX BOAT LENGTH (ft)</span></div><div id="dayHoursRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap">
+        <div id="dayHoursRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap">
           <span style="font-size:.85rem;color:var(--muted)">Available from</span>
           <input type="time" id="lDayStart" value="09:00"/>
           <span style="font-size:.85rem;color:var(--muted)">to</span>
@@ -2872,7 +2872,7 @@ input,textarea,select{color:var(--text,#0f172a);}
     <div class="legal-section">
       <h2>Discount Structure</h2>
       <ul>
-        <li><strong>Weekly discount (20%):</strong> Automatically applied when stay is 7 or more nights.</li><li id="boatReqItem" style="display:none"><label><input type="checkbox" id="reqBoat"> Dock basics: solid cleats or mooring hardware, fenders and lines guidance, no fuel or waste discharge, dock left clean</label></li>
+        <li><strong>Weekly discount (20%):</strong> Automatically applied when stay is 7 or more nights.</li>
         <li><strong>Monthly discount (40%):</strong> Automatically applied when stay is 28 or more nights.</li>
         <li>Discounts apply to the base nightly rate before fees.</li>
       </ul>
@@ -3393,8 +3393,8 @@ function showPage(name, opts) {
     else history.pushState(null,'',location.pathname + location.search);
   }
   // Page title
-  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', publiclands:'Overnight Parking on Public Lands', advertise:'Advertise With Us', parties:'Neighborhood Party Parking', airport:'Airport Parking Near You', foodtruck:'Food Truck and Vending Spots',boat:'Boat Slips and Mooring Balls', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
-  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', publiclands:'Permitted overnight parking at city parks, state beaches, and public lands — dated pass, plate on the placard.', advertise:'Put your business in front of drivers parking nearby.', parties:'Reserve neighbors&apos; driveways for your party guests — passes for every car, clear streets, happy neighbors.', airport:'Reserved driveway parking near the airport — cheaper than the lots, booked before you fly.', foodtruck:'Commercial parking-lot spots for food trucks and mobile vendors - book by the day, week, or month.',boat:'Private slips, dock space and mooring balls priced by boat length - book by the night', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
+  const titles = { home:'Find Parking Near You', browse:'Browse Spaces', host:'List Your Space', legal:'How It Works', events:'Event Parking', bigrigs:'Big Rig & Commercial Parking', commuter:'9–5 Commuter Parking', publiclands:'Overnight Parking on Public Lands', advertise:'Advertise With Us', parties:'Neighborhood Party Parking', airport:'Airport Parking Near You', foodtruck:'Food Truck and Vending Spots', security:'Safety & Security', attendants:'Parking Attendants', merch:'Merchandise', blog:'Blog', 'blog-post':'Article', standards:'Community Standards', 'safe-stay':'Sleeping in Your Car: State Laws & Safety', help:'Help Center', dashboard:'My Dashboard', messages:'Messages', tos:'Terms of Service', privacy:'Privacy Policy', confirm:'Booking Confirmed', detail:'Listing Details', guest:'Guest View' };
+  const descs = { home:'Find and book private driveway parking near venues, airports, and events. Skip expensive lots - park safely from $15/night.', browse:'Search private driveway and parking spaces near you. Filter by price, availability, and amenities.', host:'List your driveway or parking space and earn money. Set your own price and availability.', events:'Book parking near concerts, sporting events, and festivals. Affordable, safe, and steps from the venue.', bigrigs:'Find large-vehicle-friendly parking for big rigs, RVs, and commercial trucks.', commuter:'Reserve weekday 9–5 parking in a private driveway near work. Daily, weekly, biweekly, or monthly — cheaper than a garage.', publiclands:'Permitted overnight parking at city parks, state beaches, and public lands — dated pass, plate on the placard.', advertise:'Put your business in front of drivers parking nearby.', parties:'Reserve neighbors&apos; driveways for your party guests — passes for every car, clear streets, happy neighbors.', airport:'Reserved driveway parking near the airport — cheaper than the lots, booked before you fly.', foodtruck:'Commercial parking-lot spots for food trucks and mobile vendors - book by the day, week, or month.', attendants:'Hire certified parking attendants for your event or venue.', security:'Learn how Driveway Host keeps hosts and guests safe.', tos:'Read the Driveway Host Terms of Service governing use of our marketplace.', privacy:'Read the Driveway Host Privacy Policy covering data collection and use.' };
   const metaEl = document.querySelector('meta[name="description"]');
   if (metaEl && descs[name]) metaEl.setAttribute('content', descs[name]);
   setPageTitle(titles[name] || null);
@@ -3718,7 +3718,7 @@ function buildListingCard(l) {
         ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
         ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
         ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="color:#fff;background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="color:#fff;background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="color:#fff;background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="color:#fff;background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="color:#fff;background:#b45309">&#128666; Food Truck Spot</span>`:''}${l.category==='boat'?`<span class="instant-badge" style="color:#fff;background:#0e7490">&#9875; Boat Slip</span>`:''}
+        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="color:#fff;background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="color:#fff;background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="color:#fff;background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="color:#fff;background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="color:#fff;background:#b45309">&#128666; Food Truck Spot</span>`:''}
       </div>
     </div>
   </div>`;
@@ -4414,7 +4414,7 @@ async function submitListing(e) {
 
   // Validate host requirements checklist
   const __cat = (document.getElementById('lCategory')||{}).value || 'overnight';
-    const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : __cat === 'boat' ? ['reqSecure','reqBoat','reqRules'] : __cat === 'foodtruck' ? ['reqOffStreet','reqSecure','reqAmenities','reqFoodTruck','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
+    const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : __cat === 'foodtruck' ? ['reqOffStreet','reqSecure','reqAmenities','reqFoodTruck','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
   const maxVeh = parseInt(document.getElementById('lMaxVehicles')?.value || '0', 10);
   const reqsToCheck = maxVeh >= 5 ? reqs : reqs.filter(r => r !== 'reqRestroom');
   const unchecked = reqsToCheck.filter(id => !document.getElementById(id)?.checked);
@@ -4479,7 +4479,7 @@ async function submitListing(e) {
     bathroom: document.getElementById('lBathroom').checked,
         amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})(),
     instant_book: document.getElementById('lInstantBook').checked,
-      category: (document.getElementById('lCategory')||{}).value || 'overnight', mooring_type: (function(){var mt=document.getElementById('lMoorType'); var cv=(document.getElementById('lCategory')||{}).value; return (cv==='boat'&&mt&&mt.value)?mt.value:null;})(),
+      category: (document.getElementById('lCategory')||{}).value || 'overnight',
       commuter: ((document.getElementById('lCategory')||{}).value === 'daytime'),
       day_start: (document.getElementById('lDayStart')||{}).value || null,
       day_end: (document.getElementById('lDayEnd')||{}).value || null,
@@ -4934,7 +4934,7 @@ async function editListing(listingId) {
     if (vehiclesSel && l.vehicles) {
       Array.from(vehiclesSel.options).forEach(opt => { opt.selected = l.vehicles.includes(opt.value); });
     }
-    ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom','reqDayHours','reqFoodTruck','reqBoat'].forEach(function(id){ var el=document.getElementById(id); if (el) el.checked = true; }); try{var __mt=document.getElementById('lMoorType'); if(__mt) __mt.value=(l&&l.mooring_type)||'';}catch(e){}
+    ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom','reqDayHours','reqFoodTruck'].forEach(function(id){ var el=document.getElementById(id); if (el) el.checked = true; });
     document.querySelectorAll('#page-host select[required]').forEach(function(sel){ if (!sel.value) { for (var i=0;i<sel.options.length;i++){ if (sel.options[i].value){ sel.value=sel.options[i].value; break; } } } });
     // Mark as editing
     window._editListingId = listingId;
@@ -7487,7 +7487,7 @@ function submitAttendantApplication(){var name=(document.getElementById("app-nam
 
 function toggleCatReqs(v) {
   var day = v === 'daytime';
-  var hr = document.getElementById('dayHoursRow'); if (hr) hr.style.display = (day || v==='foodtruck') ? 'flex' : 'none'; var __ft=document.getElementById('ftReqItem'); if (__ft) __ft.style.display = (v==='foodtruck') ? '' : 'none'; var __br=document.getElementById('boatRow'); if(__br) __br.style.display=(v==='boat')?'flex':'none'; var __bt=document.getElementById('boatReqItem'); if(__bt) __bt.style.display=(v==='boat')?'':'none';
+  var hr = document.getElementById('dayHoursRow'); if (hr) hr.style.display = (day || v==='foodtruck') ? 'flex' : 'none'; var __ft=document.getElementById('ftReqItem'); if (__ft) __ft.style.display = (v==='foodtruck') ? '' : 'none';
   function itemOf(id){ var e = document.getElementById(id); return e ? e.closest('.host-req-item') : null; }
   var pi = itemOf('reqPlacard'), qi = itemOf('reqRules'), di = document.getElementById('dayReqItem');
   if (pi) pi.style.display = day ? 'none' : '';
@@ -7840,7 +7840,7 @@ handleStripeConnectCallback();
   </div>
 </div>
 <!-- ===== AIRPORT PAGE ===== -->
-<div class="page" id="page-boat"><section style="max-width:1100px;margin:0 auto;padding:48px 20px"><h1 style="font-size:2.2rem;margin-bottom:8px">&#9875; Boat Slips &amp; Mooring Balls</h1><p style="color:var(--muted,#64748b);max-width:760px;font-size:1.05rem">Private dock slips and mooring balls from real waterfront owners. Priced by boat length, booked by the night &mdash; a simple alternative to marina waitlists.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:28px"><div style="background:var(--card,#fff);border-radius:16px;padding:26px;box-shadow:0 2px 12px rgba(0,0,0,.06)"><h3 style="margin-bottom:10px">Own a dock, slip or mooring?</h3><p style="color:var(--muted,#64748b)">That empty slip behind your house is income. List it free, set a nightly rate by max boat length, and approve exactly who ties up.</p><ul style="margin:12px 0 16px 18px;color:var(--muted,#64748b)"><li>List your slip or mooring ball free</li><li>Set max boat length and your own rules</li><li>Paid out direct to your bank</li></ul><a onclick="showPage(&#39;host&#39;)" style="display:inline-block;background:#065f46;color:#fff;padding:12px 22px;border-radius:10px;cursor:pointer;font-weight:700">List your dock &rarr;</a></div><div style="background:var(--card,#fff);border-radius:16px;padding:26px;box-shadow:0 2px 12px rgba(0,0,0,.06)"><h3 style="margin-bottom:10px">Boater looking for a spot?</h3><p style="color:var(--muted,#64748b)">Skip the marina waitlist. Find private slips and moorings near your harbor, check the max length that fits, and book by the night.</p><ul style="margin:12px 0 16px 18px;color:var(--muted,#64748b)"><li>See harbor and dock location on the map</li><li>Filter spots by your boat length</li><li>Message the owner before you arrive</li></ul><a onclick="showPage(&#39;browse&#39;);setFilter(&#39;cat:boat&#39;)" style="display:inline-block;background:#0e7490;color:#fff;padding:12px 22px;border-radius:10px;cursor:pointer;font-weight:700">Browse boat spots &rarr;</a></div></div><h2 style="margin:36px 0 14px">Boater ground rules</h2><ul style="margin-left:18px;color:var(--muted,#64748b);max-width:760px"><li>Fenders out and lines doubled &mdash; protect the dock and your hull</li><li>No fuel, oil, sewage or trash discharge &mdash; ever</li><li>Leave the dock clean; pack out what you brought</li><li>No liveaboard stays unless the host approves it</li><li>Respect quiet hours and no-wake zones in the harbor</li></ul><p style="margin-top:22px;padding:14px 18px;border-left:4px solid #0e7490;background:var(--card,#fff);border-radius:8px;max-width:760px;color:var(--muted,#64748b)"><b>Know your harbor:</b> mooring permits and dock rental rules vary by city and harbormaster. Confirm your local requirements before listing.</p></section></div><div class="page" id="page-foodtruck">
+<div class="page" id="page-foodtruck">
   <div style="max-width:900px;margin:0 auto;padding:40px 20px;">
     <h1 style="font-family:var(--font-display);font-size:2.4rem;margin:0 0 6px;">&#128666; Food Truck &amp; Vending Spots</h1>
     <p style="font-size:1.1rem;color:var(--text-muted);margin:0 0 28px;">Commercial parking-lot spaces for food trucks, coffee carts, and mobile vendors &mdash; rent by the day, week, or month.</p>
@@ -8954,7 +8954,7 @@ handleStripeConnectCallback();
       <a onclick="showPage('commuter')">9–5 Commuter Parking</a>
           <a onclick="showPage('publiclands')">Public Lands Overnight</a>
           <a onclick="showPage('parties')">Party Parking</a>
-          <a onclick="showPage('airport')">Airport Parking</a><a onclick="showPage('foodtruck')">&#128666; Food Truck Spots</a><a onclick="showPage('boat')">&#9875; Boat Slips</a>
+          <a onclick="showPage('airport')">Airport Parking</a><a onclick="showPage('foodtruck')">&#128666; Food Truck Spots</a>
           <a onclick="showPage('advertise')">Advertise With Us</a>
           <a onclick="showPage('bigrigs')">Big Rigs &amp; Commercial</a>
       <a onclick="showPage('attendants')">Parking Attendants</a>
