@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.drivewayhost.twa",
+    "sha256_cert_fingerprints": ["9F:05:5B:19:CC:07:DC:8E:7E:A9:75:DD:3E:3F:03:E4:F6:E5:20:61:C1:B4:B1:C7:BB:57:D8:64:22:82:21:EB"]
+  }
+}]
