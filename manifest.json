@@ -1,0 +1,14 @@
+{
+  "name": "Driveway Host - Rent & List Parking",
+  "short_name": "Driveway Host",
+  "description": "Book private driveways and parking spaces, or earn money renting yours.",
+  "start_url": "/?src=pwa",
+  "display": "standalone",
+  "background_color": "#f8f6f1",
+  "theme_color": "#065f46",
+  "icons": [
+    {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

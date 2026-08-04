@@ -1758,7 +1758,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
       }
     })();
   </script>
-</head>
+<link rel="manifest" href="/manifest.json"/><meta name="theme-color" content="#065f46"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="Driveway Host"/></head>
 <body>
 
 <!-- NAV -->
@@ -9057,5 +9057,5 @@ handleStripeConnectCallback();
 async function pauseAllListings(){try{var u=(await db.auth.getUser()).data.user;if(!u){alert("Please log in");return;}if(!confirm("Pause ALL your active listings? They disappear from Browse until you reactivate."))return;var r=await db.from("listings").update({status:"paused"}).eq("host_id",u.id).eq("status","active").select("id");if(r.error){alert("Error: "+r.error.message);return;}alert((r.data?r.data.length:0)+" listing(s) paused. Enjoy your time off!");location.reload();}catch(e){alert("Error: "+e.message);}}
 async function reactivateAllListings(){try{var u=(await db.auth.getUser()).data.user;if(!u){alert("Please log in");return;}var r=await db.from("listings").update({status:"active"}).eq("host_id",u.id).eq("status","paused").select("id");if(r.error){alert("Error: "+r.error.message);return;}alert((r.data?r.data.length:0)+" listing(s) reactivated.");location.reload();}catch(e){alert("Error: "+e.message);}}
 </script>
-</body>
+<script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body>
 </html>
