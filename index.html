@@ -2659,7 +2659,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
           <option value="publicland">Public land — park / beach / agency lot</option>
           <option value="lot">Large lot / vacant industrial property</option>
           <option value="airport">Airport parking (near an airport)</option><option value="foodtruck">Food truck / vending spot (commercial lot)</option>
-        </select><label style="display:block;margin-top:10px;font-weight:700">Listing Tier <span style="font-weight:400;color:#64748b">(optional - how guests should see your space)</span></label><select id="lTier" style="max-width:360px"><option value="">No tier</option><option value="1">Tier 1 - Getaway with views (destination spot)</option><option value="2">Tier 2 - Safe overnight stays</option><option value="3">Tier 3 - Busy-area parking (events and city)</option><option value="4">Tier 4 - All of the above</option><option value="5">Tier 5 - Camper van travelers (overnight in your van)</option></select>
+        </select><label style="display:block;margin-top:10px;font-weight:700">Listing Tier <span style="font-weight:400;color:#64748b">(optional - how guests should see your space)</span></label><select id="lTier" style="max-width:360px"><option value="">No tier</option><option value="1">Tier 1 - Getaway with views (destination spot)</option><option value="2">Tier 2 - Safe overnight stays</option><option value="3">Tier 3 - Busy-area parking (events and city)</option><option value="4">Tier 4 - All of the above</option><option value="5">Tier 5 - Camper van travelers (overnight in your van)</option></select><label style="display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:.85rem;line-height:1.5;max-width:640px"><input type="checkbox" id="lLegalAgree" style="margin-top:3px"/> <span><b>Host Legal Agreement (required):</b> I confirm I have checked my local, federal, county, and HOA rules and my insurance policy (including whether a commercial endorsement is required), and I agree to the <a href="#page-tos">Host Terms</a>: Driveway Host LLC is not liable for claims to persons, animals, property, structures, or vehicles, or towing costs; disputes are resolved directly between host and renter through binding arbitration at the parties&#39; cost.</span></label>
         <div id="dayHoursRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap">
           <span style="font-size:.85rem;color:var(--muted)">Available from</span>
           <input type="time" id="lDayStart" value="09:00"/>
@@ -2932,7 +2932,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
 </div>
 
 <!-- ===== TERMS OF SERVICE ===== -->
-<div class="page" id="page-tos" style="max-width:760px;margin:0 auto;padding:40px 20px">
+<div class="page" id="page-tos" style="max-width:760px;margin:0 auto;padding:40px 20px"><div style="max-width:900px;margin:20px auto;padding:18px 22px;border:2px solid #b45309;border-radius:12px;background:rgba(245,158,11,.08)"><h3 style="margin-top:0">Host Legal Agreement &amp; Platform Liability</h3><p><b>Host compliance.</b> Hosts are solely responsible for confirming that renting their space is permitted under all applicable federal, state, county, and city laws and ordinances, zoning rules, HOA or CC&amp;R rules, and any lease terms, and for checking with their insurance carrier that no commercial endorsement or additional coverage is required before listing.</p><p><b>No platform liability.</b> Driveway Host and Driveway Host LLC provide a venue only and are not a party to any rental arrangement. To the fullest extent permitted by law, Driveway Host LLC is not liable for any claims involving injury to persons or animals; damage to property, structures, or vehicles; towing costs; or disputes arising out of any booking.</p><p><b>Disputes between users.</b> All claims shall be pursued directly between the property owner (host) and the person renting the space.</p><p><b>Arbitration.</b> Except where applicable law requires otherwise, any claim arising from a booking shall be resolved by binding arbitration between the parties to the dispute, with arbitration costs borne by those parties and at no cost to Driveway Host, Driveway Host LLC, or their employees, agents, or management.</p></div>
 <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:8px">Terms of Service</h1>
 <p style="color:var(--muted);margin-bottom:32px;font-size:.85rem">Last updated: June 2026</p>
 <div style="line-height:1.8;color:var(--text)">
@@ -4437,7 +4437,7 @@ async function submitListing(e) {
   if (!currentUser) { requireAuth('host'); return; }
 
   // Validate host requirements checklist
-  const __cat = (document.getElementById('lCategory')||{}).value || 'overnight';
+  if(!(document.getElementById('lLegalAgree')||{}).checked){ showToast('Please review and accept the Host Legal Agreement', 'error'); return; } const __cat = (document.getElementById('lCategory')||{}).value || 'overnight';
     const reqs = __cat === 'daytime' ? ['reqOffStreet','reqSecure','reqAmenities','reqDayHours','reqRestroom'] : __cat === 'foodtruck' ? ['reqOffStreet','reqSecure','reqAmenities','reqFoodTruck','reqRestroom'] : ['reqOffStreet','reqSecure','reqPlacard','reqAmenities','reqRules','reqRestroom'];
   const maxVeh = parseInt(document.getElementById('lMaxVehicles')?.value || '0', 10);
   const reqsToCheck = maxVeh >= 5 ? reqs : reqs.filter(r => r !== 'reqRestroom');
@@ -4920,7 +4920,7 @@ async function editListing(listingId) {
     __set('lTitle', l.title || '');
     __set('lDesc', l.description || '');
     __set('lAddress', l.address || '');
-    __set('lCity', l.city || ''); __set('lTier', l.tier || '');
+    __set('lCity', l.city || ''); __set('lTier', l.tier || ''); __setc('lLegalAgree', true);
     __set('lState', l.state || '');
     __set('lPriceNight', l.price_nightly || '');
     __set('lPriceWeek', l.price_weekly || '');
