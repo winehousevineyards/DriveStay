@@ -2260,7 +2260,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
         <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
         <button class="filter-chip" onclick="setFilter('instant_book',this)"><i class="fa-solid fa-bolt"></i> Instant Book</button>
         <button class="filter-chip" onclick="setFilter('wifi',this)"><i class="fa-solid fa-wifi"></i> WiFi</button>
-        <button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('cat:overnight',this)">&#127769; Overnight</button><button class="filter-chip" onclick="setFilter('cat:daytime',this)"><i class="fa-solid fa-briefcase"></i> Daytime 9&ndash;5</button><button class="filter-chip" onclick="setFilter('cat:publicland',this)">&#127966;&#65039; Public Lands</button><button class="filter-chip" onclick="setFilter('cat:lot',this)">&#127981; Lots &amp; Industrial</button><button class="filter-chip" onclick="setFilter('cat:airport',this)">&#9992;&#65039; Airport</button><button class="filter-chip" onclick="setFilter('cat:foodtruck',this)">&#128666; Food Trucks</button>
+        <button class="filter-chip" onclick="setFilter('tier:1',this)">&#11088; Tier 1 &middot; Getaway</button><button class="filter-chip" onclick="setFilter('tier:2',this)">&#127769; Tier 2 &middot; Overnight</button><button class="filter-chip" onclick="setFilter('tier:3',this)">&#127961; Tier 3 &middot; City/Event</button><button class="filter-chip" onclick="setFilter('tier:4',this)">&#128081; Tier 4 &middot; All-Access</button><button class="filter-chip" onclick="setFilter('covered',this)"><i class="fa-solid fa-warehouse"></i> Covered</button><button class="filter-chip" onclick="setFilter('cat:overnight',this)">&#127769; Overnight</button><button class="filter-chip" onclick="setFilter('cat:daytime',this)"><i class="fa-solid fa-briefcase"></i> Daytime 9&ndash;5</button><button class="filter-chip" onclick="setFilter('cat:publicland',this)">&#127966;&#65039; Public Lands</button><button class="filter-chip" onclick="setFilter('cat:lot',this)">&#127981; Lots &amp; Industrial</button><button class="filter-chip" onclick="setFilter('cat:airport',this)">&#9992;&#65039; Airport</button><button class="filter-chip" onclick="setFilter('cat:foodtruck',this)">&#128666; Food Trucks</button>
         <button class="filter-chip" onclick="setFilter('electric',this)"><i class="fa-solid fa-charging-station"></i> EV Charging</button>
         <button class="filter-chip" onclick="setFilter('pets',this)"><i class="fa-solid fa-paw"></i> Pet OK</button>
         <button class="filter-chip" onclick="setFilter('dump',this)"><i class="fa-solid fa-recycle"></i> Dump Station</button>
@@ -2659,7 +2659,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
           <option value="publicland">Public land — park / beach / agency lot</option>
           <option value="lot">Large lot / vacant industrial property</option>
           <option value="airport">Airport parking (near an airport)</option><option value="foodtruck">Food truck / vending spot (commercial lot)</option>
-        </select>
+        </select><label style="display:block;margin-top:10px;font-weight:700">Listing Tier <span style="font-weight:400;color:#64748b">(optional - how guests should see your space)</span></label><select id="lTier" style="max-width:360px"><option value="">No tier</option><option value="1">Tier 1 - Getaway with views (destination spot)</option><option value="2">Tier 2 - Safe overnight stays</option><option value="3">Tier 3 - Busy-area parking (events and city)</option><option value="4">Tier 4 - All of the above</option></select>
         <div id="dayHoursRow" style="display:none;margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap">
           <span style="font-size:.85rem;color:var(--muted)">Available from</span>
           <input type="time" id="lDayStart" value="09:00"/>
@@ -3671,7 +3671,7 @@ function applyFilter() {
   const q = (document.getElementById('navSearch')?.value || '').toLowerCase();
   const maxP = Number(document.getElementById('priceSlider')?.value || 500);
   filteredListings = allListings.filter(l => {
-    const mf = currentFilter === 'all' || (currentFilter.indexOf('cat:') === 0 ? (l.category || 'overnight') === currentFilter.slice(4) : !!l[currentFilter]);
+    const mf = currentFilter === 'all' || (currentFilter.indexOf('cat:') === 0 ? (l.category || 'overnight') === currentFilter.slice(4) : currentFilter.indexOf('tier:') === 0 ? String(l.tier||'') === currentFilter.slice(5) : !!l[currentFilter]);
     const ms = !q || (l.title||'').toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q) || (l.state||'').toLowerCase().includes(q);
     const mp = maxP >= 500 || Number(l.price_nightly||0) <= maxP;
     const mv = !_heroVehicle || (l.vehicles || []).some(v => v.toLowerCase() === _heroVehicle.toLowerCase());
@@ -3740,7 +3740,7 @@ function buildListingCard(l) {
         ${l.laundry?'<span class="tag"><i class="fa-solid fa-shirt"></i> Laundry</span>':''}
         ${l.outdoor_shower?'<span class="tag"><i class="fa-solid fa-shower"></i> Shower</span>':''}
         ${l.bathroom?'<span class="tag"><i class="fa-solid fa-toilet"></i> Bathroom</span>':''}
-        ${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="color:#fff;background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="color:#fff;background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="color:#fff;background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="color:#fff;background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="color:#fff;background:#b45309">&#128666; Food Truck Spot</span>`:''}
+        ${tierBadge(l)}${l.featured?`<span class="featured-badge"><i class="fa-solid fa-star" style="margin-right:2px"></i>Featured</span>`:''} ${l.instant_book?`<span class="instant-badge"><i class="fa-solid fa-bolt"></i> Instant Book</span>`:''} ${(l.category==='daytime'||l.commuter)?`<span class="instant-badge" style="color:#fff;background:#0284c7"><i class="fa-solid fa-briefcase"></i> ${(l.day_start&&l.day_end)?l.day_start.slice(0,5)+'-'+l.day_end.slice(0,5):'9-5'}</span>`:''}${l.category==='publicland'?`<span class="instant-badge" style="color:#fff;background:#16a34a">&#127966;&#65039; Public Land</span>`:''}${l.category==='lot'?`<span class="instant-badge" style="color:#fff;background:#7c3aed">&#127981; Lot</span>`:''}${l.category==='airport'?`<span class="instant-badge" style="color:#fff;background:#0369a1">&#9992;&#65039; Airport</span>`:''}${l.category==='foodtruck'?`<span class="instant-badge" style="color:#fff;background:#b45309">&#128666; Food Truck Spot</span>`:''}
       </div>
     </div>
   </div>`;
@@ -4503,7 +4503,7 @@ async function submitListing(e) {
     bathroom: document.getElementById('lBathroom').checked,
         amenity_fees: (()=>{const af={};[['lWifiFee','wifi'],['lElecFee','elec'],['lWaterFee','water'],['lDumpFee','dump'],['lPoolFee','pool'],['lSpaFee','spa'],['lSaunaFee','sauna'],['lLaundryFee','laundry'],['lBathroomFee','bathroom'],['lOutdoorShowerFee','outdoor_shower'],['lCoveredFee','covered'],['lRvFriendlyFee','rv_friendly']].forEach(([id,k])=>{const v=parseFloat(document.getElementById(id)?.value)||0;if(v>0)af[k]=v;});return af;})(),
     instant_book: document.getElementById('lInstantBook').checked,
-      category: (document.getElementById('lCategory')||{}).value || 'overnight',
+      category: (document.getElementById('lCategory')||{}).value || 'overnight', tier: parseInt((document.getElementById('lTier')||{}).value)||null,
       commuter: ((document.getElementById('lCategory')||{}).value === 'daytime'),
       day_start: (document.getElementById('lDayStart')||{}).value || null,
       day_end: (document.getElementById('lDayEnd')||{}).value || null,
@@ -4920,7 +4920,7 @@ async function editListing(listingId) {
     __set('lTitle', l.title || '');
     __set('lDesc', l.description || '');
     __set('lAddress', l.address || '');
-    __set('lCity', l.city || '');
+    __set('lCity', l.city || ''); __set('lTier', l.tier || '');
     __set('lState', l.state || '');
     __set('lPriceNight', l.price_nightly || '');
     __set('lPriceWeek', l.price_weekly || '');
@@ -9109,5 +9109,5 @@ async function loadAdminTools(){
 }
 async function admToggleListing(id,st){await db.from('listings').update({status:st}).eq('id',id);loadAdminTools();}
 var _origLAP=loadAdminPanel;loadAdminPanel=function(){_origLAP.apply(this,arguments);loadAdminTools();};
-</script></body>
+</script><script>function tierBadge(l){if(!l||!l.tier)return '';var n=['','&#11088; Tier 1 &middot; Getaway','&#127769; Tier 2 &middot; Safe Overnight','&#127961; Tier 3 &middot; City/Event','&#128081; Tier 4 &middot; All-Access'];var c=['','#b45309','#4338ca','#c2410c','#065f46'];return '<span class="instant-badge" style="background:'+c[l.tier]+';color:#fff">'+n[l.tier]+'</span>';}</script></body>
 </html>
