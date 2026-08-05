@@ -2426,7 +2426,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
             <div class="price-row"><span id="bkBaseLabel">0 nights x $0</span><span id="bkBaseAmt">$0</span></div>
             <div class="price-row hidden" id="bkPromoRow"><span id="bkPromoLabel"><i class="fa-solid fa-tag" style="color:var(--green);margin-right:3px"></i> Promo discount</span><span id="bkPromoAmt"></span></div>
             <div class="price-row hidden" id="bkDiscRow"><span id="bkDiscLabel"></span><span id="bkDiscAmt"></span></div>
-            <div class="price-row"><span>Guest service fee (14%)</span></span><span id="bkBroker">$0</span></div>
+            <div class="price-row"><span>Guest service fee (14%)</span></span><span id="bkBroker">$0</span></div><div class="price-row"><span>Payment processing</span><span id="bkProc">$0.00</span></div>
             <div class="price-row"><span><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:4px"></i>Guest protection (4%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— trip &amp; liability</span></span><span id="bkGuestProt">$0</span></div>
             <div class="price-row"><span><i class="fa-solid fa-house-chimney-crack" style="color:var(--green);margin-right:4px"></i>Host protection (3%) <span style="font-size:.7rem;color:var(--muted);font-weight:400">— property damage</span></span><span id="bkHostProt">$0</span></div>
             <div class="price-row hidden" id="bkFeeCleanRow"><span><i class="fa-solid fa-broom" style="color:var(--muted);margin-right:4px"></i>Cleaning fee</span><span id="bkFeeClean">$0</span></div>
@@ -2889,7 +2889,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
     <div class="legal-section">
       <h2>How Driveway Host Works</h2>
       <p>Driveway Host is a peer-to-peer marketplace connecting property owners ("Hosts") who have spare driveway or parking space with travelers and commuters ("Guests") seeking convenient, affordable parking.</p>
-      <p>We charge hosts a <strong>3% host fee</strong> and guests a <strong>14% service fee</strong> on each booking subtotal. Hosts receive their payout via Stripe Connect within 24 hours of guest check-in.</p>
+      <p>We charge hosts a <strong>3% host fee</strong> and guests a <strong>14% service fee</strong> plus a <strong>payment-processing fee (3.5% + $0.35)</strong> on each booking subtotal. Hosts receive their payout via Stripe Connect within 24 hours of guest check-in.</p>
     </div>
     <div class="legal-section">
       <h2>Discount Structure</h2>
@@ -4219,7 +4219,7 @@ function calcBooking() {
         const esTotal=Array.from(document.querySelectorAll('#bkExtraSvcList .es-check:checked')).reduce(function(sum,cb){return sum+parseFloat(cb.dataset.price||0);},0);
   const hostBase = afterPromo + feeClean + feePet + feeDeposit + esTotal + feeAmenity;
         broker = Math.round(hostBase * 0.14); // 14 pct guest service fee
-        const total = hostBase + broker;
+        const procFee = Math.round((hostBase*0.035+0.35)*100)/100; const total = Math.round((hostBase + broker + procFee)*100)/100;
 
   document.getElementById('bkNights').textContent = nights + ' night' + (nights!==1?'s':'');
   document.getElementById('bkBaseLabel').textContent = `${nights} night${nights!==1?'s':''} x $${l.price_nightly}`;
@@ -4230,7 +4230,7 @@ function calcBooking() {
     document.getElementById('bkDiscLabel').innerHTML = discLabel + ' <span class="discount-badge">SAVE</span>';
     document.getElementById('bkDiscAmt').textContent = '-$' + discount;
   } else { dRow.classList.add('hidden'); }
-  document.getElementById('bkBroker').textContent = '$' + broker;
+  document.getElementById('bkBroker').textContent = '$' + broker; var _bp=document.getElementById('bkProc'); if(_bp)_bp.textContent='$'+procFee.toFixed(2);
   (function(){var el=document.getElementById('bkGuestProt');if(el){el.textContent='$'+guestProt;var row=el.parentElement;if(row)row.style.display=guestProt>0?'':'none';}})();
   (function(){var el=document.getElementById('bkHostProt');if(el){el.textContent='$'+hostProt;var row=el.parentElement;if(row)row.style.display=hostProt>0?'':'none';}})();
   const _sfr = (rId, aId, v) => { const row = document.getElementById(rId); if (row) { row.classList.toggle('hidden', !v); if (v) { const el = document.getElementById(aId); if (el) el.textContent = '$' + v; } } };
@@ -4250,7 +4250,7 @@ function calcBooking() {
   // Asynchronously verify availability
   btn.disabled = true;
   btn.textContent = 'Checking availability...';
-  window._bkCtx = { nights, base, discount, subtotal, broker, guestProt, hostProt, ins, total, checkIn, checkOut, totalCents: Math.round(total * 100), hostBaseCents: Math.round(hostBase * 100) };
+  window._bkCtx = { nights, base, discount, subtotal, broker, guestProt, hostProt, ins, total, checkIn, checkOut, procFee: procFee, totalCents: Math.round(total * 100), hostBaseCents: Math.round(hostBase * 100) };
 
   checkAvailability(l.id, inV, outV).then(available => {
     if (available) {
@@ -4327,7 +4327,7 @@ function showConfirmPage(l, ctx, bookingId) {
     <div class="confirm-row"><span>Check In</span><span>${escapeHtml(ctx.checkIn.toLocaleDateString())}</span></div>
     <div class="confirm-row"><span>Check Out</span><span>${escapeHtml(ctx.checkOut.toLocaleDateString())}</span></div>
     <div class="confirm-row"><span>${Number(ctx.nights)|0} night${(Number(ctx.nights)|0)!==1?'s':''}</span><span>$${Number(ctx.base)|0}</span></div>
-    <div class="confirm-row"><span>Service fee (14%)</span><span>$${Number(ctx.broker)|0}</span></div>
+    <div class="confirm-row"><span>Service &amp; processing fees</span><span>$${Number(ctx.broker)|0}</span></div>
     <div class="confirm-row"><span><b>Total</b></span><span><b>$${Number(ctx.total)|0}</b></span></div>
     <div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:.8rem;color:#166534;text-align:center">
       <i class="fa-solid fa-shield-halved"></i> Booking documented — receipt and records saved to your account</div>`;
@@ -8522,7 +8522,7 @@ handleStripeConnectCallback();
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">What is the host service fee? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
-          <div class="faq-a">Hosts pay a 3% fee, deducted from the payout. Example: your space is $40/night and a guest books 2 nights ($80 subtotal): you receive $77.60. Guests pay a 14% service fee at checkout, which covers payment processing and platform costs.</div>
+          <div class="faq-a">Hosts pay a 3% fee, deducted from the payout. Example: your space is $40/night and a guest books 2 nights ($80 subtotal): you receive $77.60. Guests pay a 14% service fee plus a small payment-processing fee (3.5% + $0.35) at checkout.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">Can I decline a booking request? <i class="fa-solid fa-chevron-down faq-chevron"></i></div>
