@@ -1741,6 +1741,13 @@ input,textarea,select{color:var(--text,#0f172a);}
 [data-theme="dark"] #page-host strong,[data-theme="dark"] #page-detail strong{color:#86efac}
 [data-theme="dark"] #page-blog span{color:#94a3b8}
 html:not([data-theme="dark"]) .amenity.no{color:#64748b}
+
+#admToolsWrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:14px 0}
+.adm-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;font-size:.85rem;overflow:auto;max-height:340px}
+.adm-card h3{margin:0 0 8px;font-size:.95rem}
+.adm-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid rgba(148,163,184,.25);align-items:center;flex-wrap:wrap}
+.adm-btn{border:none;border-radius:7px;padding:4px 10px;font-weight:700;cursor:pointer;font-size:.72rem}
+[data-theme="dark"] .adm-card{background:var(--card-bg,#1e293b);border-color:#334155}
 </style>
 
   <!-- Sentry Error Monitoring: create free account at sentry.io, then replace YOUR_SENTRY_DSN_HERE -->
@@ -2841,7 +2848,7 @@ html:not([data-theme="dark"]) .amenity.no{color:#64748b}
       </div>
     </div>
     <div class="dash-panel" id="dashSaved"><div id="savedListEl"></div></div>
-    <div class="dash-panel" id="dashAdmin">
+    <div class="dash-panel" id="dashAdmin"><div id="admToolsWrap"><div class="adm-card"><h3>&#128202; Revenue &amp; Totals</h3><div id="admRevenue">Loading...</div></div><div class="adm-card"><h3>&#128197; Recent Bookings</h3><div id="admBookings">Loading...</div></div><div class="adm-card"><h3>&#128101; Users</h3><div id="admUsers">Loading...</div></div><div class="adm-card"><h3>&#127968; Listings</h3><div id="admListingsT">Loading...</div></div><div class="adm-card"><h3>&#127873; Window Shade Winners</h3><div id="admShades">Loading...</div></div></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
         <h3 style="margin:0"><i class="fa-solid fa-shield-halved" style="color:var(--green);margin-right:8px"></i>Admin — Listing Approvals</h3>
         <button class="btn" style="padding:6px 16px;font-size:.82rem" onclick="loadAdminPanel()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
@@ -9077,5 +9084,30 @@ var r=await db.from('profiles').update({promo:code}).eq('id',u.id).select('id');
 if(r&&r.data&&r.data.length){localStorage.setItem('dh_promo_applied','1');var b=document.getElementById('shadePromoBar');if(b){b.style.display='block';b.innerHTML='<b>You are in!</b> Your free window shade is reserved &mdash; we will contact you to arrange delivery.';setTimeout(function(){b.style.display='none';},9000);}}
 }catch(e){}}
 setTimeout(applyShadePromo,3500);setInterval(applyShadePromo,15000);
+</script><script>
+async function loadAdminTools(){
+ try{
+  var r=await Promise.all([
+    db.from('bookings').select('id,check_in,check_out,total_amount,status,payment_intent_id,listing_id,guest_id,created_at').order('created_at',{ascending:false}).limit(200),
+    db.from('profiles').select('id,name,email,created_at,promo').order('created_at',{ascending:false}),
+    db.from('listings').select('id,title,status,host_id,created_at').order('created_at',{ascending:false})
+  ]);
+  var bks=r[0].data||[], pfs=r[1].data||[], lss=r[2].data||[];
+  var pmap={}; pfs.forEach(function(p){pmap[p.id]=p;});
+  var lmap={}; lss.forEach(function(l){lmap[l.id]=l;});
+  var conf=bks.filter(function(b){return b.status==='confirmed';});
+  var totC=0, moC=0, now=new Date();
+  conf.forEach(function(b){var a=(+b.total_amount||0); totC+=a; var d=new Date(b.created_at); if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear())moC+=a;});
+  function dol(c){return '$'+(c/100).toFixed(2);}
+  var q=function(id){return document.getElementById(id);};
+  q('admRevenue').innerHTML='<div class="adm-row"><span>Confirmed bookings</span><b>'+conf.length+'</b></div><div class="adm-row"><span>Gross volume (all time)</span><b>'+dol(totC)+'</b></div><div class="adm-row"><span>Gross volume (this month)</span><b>'+dol(moC)+'</b></div><div class="adm-row"><span>Est. platform cut</span><b>'+dol(Math.round(totC*0.149))+'</b></div><div class="adm-row"><span>Users</span><b>'+pfs.length+'</b></div><div class="adm-row"><span>Listings</span><b>'+lss.length+'</b></div>';
+  q('admBookings').innerHTML=bks.slice(0,20).map(function(b){var g=pmap[b.guest_id]||{},l=lmap[b.listing_id]||{};var pi=b.payment_intent_id?' <a class="adm-btn" style="background:#635bff;color:#fff;text-decoration:none" target="_blank" href="https://dashboard.stripe.com/payments/'+b.payment_intent_id+'">Stripe</a>':'';return '<div class="adm-row"><span>'+(b.check_in||'')+' &middot; '+String(l.title||'?').slice(0,18)+' &middot; '+String(g.name||g.email||'?').slice(0,14)+'</span><span><b>'+dol(+b.total_amount||0)+'</b> <i style="opacity:.7">'+b.status+'</i>'+pi+'</span></div>';}).join('')||'No bookings yet';
+  q('admUsers').innerHTML=pfs.slice(0,30).map(function(p){var host=lss.some(function(l){return l.host_id===p.id;});return '<div class="adm-row"><span>'+String(p.name||'-').slice(0,16)+' <i style="opacity:.6">'+(p.email||'')+'</i></span><span>'+(host?'HOST':'')+(p.promo?' &#127873;':'')+'</span></div>';}).join('')||'No users';
+  q('admShades').innerHTML=pfs.filter(function(p){return p.promo;}).map(function(p){return '<div class="adm-row"><span>'+(p.name||'?')+'</span><span>'+(p.email||'')+'</span></div>';}).join('')||'No promo signups yet';
+  q('admListingsT').innerHTML=lss.slice(0,40).map(function(l){var on=l.status==='active';var ns=on?'inactive':'active';return '<div class="adm-row"><span>'+String(l.title||'?').slice(0,24)+' <i style="opacity:.6">'+l.status+'</i></span><button class="adm-btn" style="background:'+(on?'#b45309':'#065f46')+';color:#fff" onclick="admToggleListing(&#39;'+l.id+'&#39;,&#39;'+ns+'&#39;)">'+(on?'Hide':'Show')+'</button></div>';}).join('');
+ }catch(e){console.warn('admin tools',e);}
+}
+async function admToggleListing(id,st){await db.from('listings').update({status:st}).eq('id',id);loadAdminTools();}
+var _origLAP=loadAdminPanel;loadAdminPanel=function(){_origLAP.apply(this,arguments);loadAdminTools();};
 </script></body>
 </html>
